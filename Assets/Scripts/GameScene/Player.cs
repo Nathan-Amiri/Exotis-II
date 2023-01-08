@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
+using FishNet.Managing.Scened;
 
 public class Player : NetworkBehaviour
 {
@@ -33,14 +34,7 @@ public class Player : NetworkBehaviour
     private GameObject healthBar; //is actually the health bar's pivot point
     private GameObject missileBar; //is actually the missile bar's pivot point
 
-    public override void OnStartClient()
-    {
-        base.OnStartClient();
-
-        OnSpawn();
-    }
-
-    private void OnSpawn()
+    public void OnSpawn()
     {
         //these values need to be set by teambuilder
         playerNumber = IsHost ? (IsOwner ? 1 : 2) : (IsOwner ? 2 : 1);
@@ -62,12 +56,6 @@ public class Player : NetworkBehaviour
         missileFillSpeed = 1;
         missileAmount = 3;
         maxMissileBarWidth = missileBar.transform.localScale.x;
-
-        if (playerNumber == 1)
-        {
-            GameObject.Find("EditorGrid").SetActive(false);
-            GameObject.Find("NetworkHudCanvas").SetActive(false);
-        }
 
         startUpdate = true;
     }
@@ -132,7 +120,7 @@ public class Player : NetworkBehaviour
             CreateMissile(caster, fireDirection);
     }
     private void CreateMissile(Player caster, Vector2 fireDirection)
-    {
+    {        
         MissileInfo missileInfo = ObjectPool.sharedInstance.GetPooledInfo();
 
         GameObject newMissile = missileInfo.obj;
