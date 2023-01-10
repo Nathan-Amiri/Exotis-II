@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3249571368721494047}
   m_Layer: 0
   m_Name: GameManager
-  m_TagString: Untagged
+  m_TagString: GameManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3249571368721494044}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.0628786, y: -0.92240053, z: 0.017907687}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -48,7 +48,7 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 3249571368721494047}
   _networkObjectCache: {fileID: 3249571368721494047}
-  charSelect: {fileID: 0}
+  numberOfPlayers: 0
 --- !u!114 &3249571368721494047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71,10 +71,10 @@ MonoBehaviour:
   _isGlobal: 1
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: -1
+  <PrefabId>k__BackingField: 7
   _scenePathHash: 2332773068
   <SceneId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 17981935845437572623
+  <AssetPathHash>k__BackingField: 9742123980755451794
   _sceneNetworkObjects:
   - {fileID: 3249571368721494047}
   - {fileID: 0}

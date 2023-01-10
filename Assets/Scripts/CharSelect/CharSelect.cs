@@ -9,9 +9,9 @@ using FishNet.Managing.Scened;
 
 public class CharSelect : NetworkBehaviour
 {
-    [HideInInspector] public GameManager gameManager; //^
-
     public Sprite emptyAvatar; //assigned in inspector
+
+    [HideInInspector] public GameManager gameManager;
 
     public Image[] avatars;
     public Image p1Avatar; //^
@@ -40,12 +40,20 @@ public class CharSelect : NetworkBehaviour
         avatars[2] = p3Avatar;
         avatars[3] = p4Avatar;
     }
-
-    public void OnSpawn()
+    private void OnEnable()
     {
-        nobCanvas.SetActive(true); //it isn't active already because of a bug, this is a workaround
+        GameManager.OnClientConnectOrLoad += OnSpawn;
+    }
+    private void OnDisable()
+    {
+        GameManager.OnClientConnectOrLoad -= OnSpawn;
+    }
 
-        RpcGetCurrentAvatars(InstanceFinder.ClientManager.Connection, GameManager.playerNumber);
+    public void OnSpawn(GameManager gm)
+    {
+        gameManager = gm;
+
+        RpcGetCurrentAvatars(InstanceFinder.ClientManager.Connection, gameManager.playerNumber);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -69,7 +77,7 @@ public class CharSelect : NetworkBehaviour
 
     public void SelectElemental(string elemental, string type1, string type2, string stat1, string stat2)
     {
-        RpcServerChangeAvatar(GameManager.playerNumber, "Empty");
+        RpcServerChangeAvatar(gameManager.playerNumber, "Empty");
 
         selectedElemental = elemental;
 
@@ -88,11 +96,13 @@ public class CharSelect : NetworkBehaviour
     public void SelectReady()
     {
         readyButton.interactable = false;
-        CharSelectInfo charSelectInfo = new();
-        //fill here
+        CharSelectInfo charSelectInfo = new()
+        {
+            elementalName = selectedElemental
+        };
         gameManager.charSelectInfo = charSelectInfo;
 
-        RpcServerChangeAvatar(GameManager.playerNumber, selectedElemental);
+        RpcServerChangeAvatar(gameManager.playerNumber, selectedElemental);
         RpcCheckIfReady();
     }
 

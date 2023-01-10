@@ -4,7 +4,6 @@ using UnityEngine;
 using FishNet;
 using FishNet.Object;
 using FishNet.Connection;
-using FishNet.Managing.Scened;
 
 public class Setup : NetworkBehaviour
 {
@@ -14,9 +13,20 @@ public class Setup : NetworkBehaviour
 
     public CharSelectInfo charSelectInfo;
 
-    public void OnSpawn() //called by GameManager
+    private void OnEnable()
+    {
+        GameManager.OnClientConnectOrLoad += OnSpawn;
+    }
+    private void OnDisable()
+    {
+        GameManager.OnClientConnectOrLoad -= OnSpawn;
+    }
+    public void OnSpawn(GameManager gm)
     {
         editorGrid.SetActive(false);
+
+        charSelectInfo = gm.charSelectInfo;
+        
         SpawnPlayer(InstanceFinder.ClientManager.Connection);
     }
 
@@ -25,12 +35,13 @@ public class Setup : NetworkBehaviour
     {
         GameObject newPlayer = Instantiate(playerPref);
         InstanceFinder.ServerManager.Spawn(newPlayer, conn);
-        RpcStartPlayer(newPlayer);
+        RpcStartPlayer(conn, newPlayer);
     }
 
-    [ObserversRpc]
-    private void RpcStartPlayer(GameObject newPlayer)
+    [TargetRpc]
+    private void RpcStartPlayer(NetworkConnection conn, GameObject newPlayer)
     {
+        Debug.Log(charSelectInfo.elementalName);
         newPlayer.GetComponent<Player>().OnSpawn();
     }
 }
