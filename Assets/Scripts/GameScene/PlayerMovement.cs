@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using FishNet.Object;
+using FishNet.Object.Synchronizing;
 
 public class PlayerMovement : NetworkBehaviour
 {
@@ -12,6 +13,8 @@ public class PlayerMovement : NetworkBehaviour
     private readonly float fallMultiplier = 1; //fastfall
 
     [HideInInspector] public bool isGrounded; //read by GroundCheck
+    [SyncVar]
+    [HideInInspector] public bool isStunned; //read by player
 
     public Rigidbody2D rb; //assigned in inspector
     
@@ -22,7 +25,10 @@ public class PlayerMovement : NetworkBehaviour
 
     private void Update()
     {
-        if (!IsOwner)
+        if (!IsOwner || !IsClient)
+            return;
+
+        if (isStunned)
             return;
 
         moveInput = Input.GetAxisRaw("Horizontal");
@@ -76,5 +82,31 @@ public class PlayerMovement : NetworkBehaviour
     {
         yield return new WaitForSeconds(.07f);
         isGrounded = false;
+    }
+
+    [ObserversRpc]
+    public void BecomeStunned(float duration, bool permanent)
+    {
+        if (IsOwner)
+        {
+            if (permanent)
+                rb.constraints = RigidbodyConstraints2D.FreezeAll;
+            else
+                StartCoroutine(Stun(duration));
+        }
+    }
+    public IEnumerator Stun(float duration) //called by player
+    {
+        Vector2 cachedVelocity = rb.velocity;
+        rb.constraints = RigidbodyConstraints2D.FreezeAll;
+        yield return new WaitForSeconds(duration);
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        rb.velocity = cachedVelocity;
+        EndStun();
+    }
+    [ServerRpc]
+    private void EndStun()
+    {
+        isStunned = false;
     }
 }

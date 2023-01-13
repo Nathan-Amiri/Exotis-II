@@ -8,8 +8,10 @@ public class Player : NetworkBehaviour
 {
     //layers: -2 = background, -1 = editorgrid, 0 = terrain, 1 = players/some HUD, 2 = missiles/spells/more HUD
 
-    public PlayerMovement playerMovement; //assigned in inspector
-    public SpriteRenderer spriteRenderer; //^
+    public SpriteRenderer spriteRenderer; //assigned in inspector
+    public Animator animator; //^
+    public PlayerMovement playerMovement; //^, read by Setup
+
 
     [HideInInspector] public float maxHealth = 15; //altered by index
 
@@ -24,6 +26,9 @@ public class Player : NetworkBehaviour
 
     [SyncVar]
     private float health;
+    [SyncVar]
+    [HideInInspector] public bool isImmune = false;
+
     private float maxHealthBarWidth;
 
     private float missileFillSpeed;
@@ -42,6 +47,8 @@ public class Player : NetworkBehaviour
 
     public void OnSpawn(Index index)
     {
+        playerMovement.isStunned = true;
+
         name = charSelectInfo[0];
         index.LoadAttributes(this, charSelectInfo); //add stats and spells
         //spriteRenderer.sprite = Resources.Load<Sprite>("Elementals/" + name);
@@ -76,11 +83,17 @@ public class Player : NetworkBehaviour
 
         mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        if (Input.GetButtonDown("Missile") && missileAmount >= 1)
+        if (Input.GetButtonDown("Missile") && IsClient && !playerMovement.isStunned && missileAmount >= 1)
         {
-            Vector2 fireDirection = (mousePosition - new Vector2(transform.position.x, transform.position.y)).normalized;
-            RpcServerCreateMissile(this, fireDirection);
+            Test();
+            //Vector2 fireDirection = (mousePosition - new Vector2(transform.position.x, transform.position.y)).normalized;
+            //RpcServerCreateMissile(this, fireDirection);
         }
+    }
+    [ServerRpc (RequireOwnership = false)]
+    private void Test()
+    {
+        HealthChange(-1);
     }
 
     private void HealthBar() //run in update
@@ -93,8 +106,11 @@ public class Player : NetworkBehaviour
             healthBar.transform.localScale += new Vector3(Time.deltaTime, 0);
     }
 
-    public void HealthChange(float amount)
+    public void HealthChange(float amount) //run on server
     {
+        if (isImmune)
+            return;
+
         health += amount;
 
         if (health > maxHealth)
@@ -103,8 +119,26 @@ public class Player : NetworkBehaviour
         {
             health = 0;
             Eliminate();
+            return;
+        }
+
+        if (amount < 0)
+        {
+            StartCoroutine(BecomeImmune(.7f));
+            playerMovement.isStunned = true;
+            playerMovement.BecomeStunned(.35f, false);
         }
     }
+
+    private IEnumerator BecomeImmune(float duration) //run on server
+    {
+        isImmune = true;
+        animator.SetTrigger("TakeDamage");
+        yield return new WaitForSeconds(duration);
+        animator.SetTrigger("Empty");
+        isImmune = false;
+    }
+
 
     public void StatChange(string stat, int amount) //amount = number of stages (-2, -1, 1, or 2)
     {
@@ -143,8 +177,10 @@ public class Player : NetworkBehaviour
 
     private void Eliminate()
     {
+        playerMovement.isStunned = true;
+        playerMovement.BecomeStunned(0, true);
         Debug.Log(name + " has been eliminated");
-        //move player away but don't despawn player. Makes rematching easier and ensures that health bar fades down after elimination
+        transform.position = new Vector2(50, 0);
     }
 
     [ServerRpc]

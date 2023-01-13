@@ -17,6 +17,7 @@ public class Setup : NetworkBehaviour
     public Index index; //^
 
     private GameManager gameManager;
+    private Player player;
 
     private void OnEnable()
     {
@@ -47,6 +48,8 @@ public class Setup : NetworkBehaviour
     private void RpcStartPlayer(GameObject newPlayerObject, int newPlayerNumber, string[] newInfo)
     {
         Player newPlayer = newPlayerObject.GetComponent<Player>();
+        if (newPlayer.Owner == InstanceFinder.ClientManager.Connection)
+            player = newPlayer;
         newPlayer.charSelectInfo = newInfo;
         newPlayer.playerHud = hud.transform.GetChild(newPlayerNumber - 1).gameObject;
         newPlayer.OnSpawn(index);
@@ -67,5 +70,6 @@ public class Setup : NetworkBehaviour
         yield return new WaitForSeconds(.9f);
         countdownText.text = "Go!";
         countdownAnim.SetTrigger("TrCountdown");
+        player.playerMovement.isStunned = false;
     }
 }
