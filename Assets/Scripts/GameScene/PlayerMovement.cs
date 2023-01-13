@@ -5,31 +5,20 @@ using FishNet.Object;
 
 public class PlayerMovement : NetworkBehaviour
 {
-    private float speed;
-    private float jumpForce;
+    [HideInInspector] public float speed = 3; //changed by Player
+    [HideInInspector] public float jumpForce = 7; //^
 
-    private float fallMultiplier; //fastfall
-    private float lowJumpMultiplier; //used for dynamic jump
+    [HideInInspector] public float lowJumpMultiplier = 4; //^, used for dynamic jump
+    private readonly float fallMultiplier = 1; //fastfall
 
     [HideInInspector] public bool isGrounded; //read by GroundCheck
 
-    private Rigidbody2D rb;
+    public Rigidbody2D rb; //assigned in inspector
     
     private float moveInput;
     private bool jumpInputDown;
     private bool jumpInput;
     private bool jumpBuffering;
-
-    private void Awake()
-    {
-        speed = 3;
-        jumpForce = 7;
-
-        fallMultiplier = 1f;
-        lowJumpMultiplier = 4f;
-
-        rb = GetComponent<Rigidbody2D>();
-    }
 
     private void Update()
     {

@@ -3,18 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
-using FishNet.Managing.Scened;
 
 public class Player : NetworkBehaviour
 {
     //layers: -2 = background, -1 = editorgrid, 0 = terrain, 1 = players/some HUD, 2 = missiles/spells/more HUD
 
-    private int playerNumber;
+    public PlayerMovement playerMovement; //assigned in inspector
+    public SpriteRenderer spriteRenderer; //^
 
-    private float maxHealth;
-    private float power;
-    //private float speed;
-    private float range;
+    [HideInInspector] public float maxHealth = 15; //altered by index
+
+    private float power = 3;
+    private float range = 10;
+    private readonly float speedMultipler = 1.2f;
+    private readonly float jumpMultiplier = 1.1f;
+    private readonly float rangeMultiplier = 1.3f;
+
+
+    [HideInInspector] public string[] charSelectInfo = new string[4];
 
     [SyncVar]
     private float health;
@@ -30,25 +36,22 @@ public class Player : NetworkBehaviour
 
     public GameObject missile; //set in inspector
 
-    private GameObject playerHud;
+    [HideInInspector] public GameObject playerHud;
     private GameObject healthBar; //is actually the health bar's pivot point
     private GameObject missileBar; //is actually the missile bar's pivot point
 
-    public void OnSpawn()
+    public void OnSpawn(Index index)
     {
-        //these values need to be set by teambuilder
-        playerNumber = IsHost ? (IsOwner ? 1 : 2) : (IsOwner ? 2 : 1);
-        maxHealth = 15;
-        power = 3;
-        //speed = 1;
-        range = 10;
+        name = charSelectInfo[0];
+        index.LoadAttributes(this, charSelectInfo); //add stats and spells
+        //spriteRenderer.sprite = Resources.Load<Sprite>("Elementals/" + name);
+        playerHud.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Elementals/" + name);
 
         if (IsOwner)
             GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
 
-        playerHud = GameObject.Find("HUD").transform.GetChild(playerNumber - 1).gameObject;
-        healthBar = playerHud.transform.GetChild(3).gameObject;
-        missileBar = playerHud.transform.GetChild(4).GetChild(1).gameObject;
+        healthBar = playerHud.transform.GetChild(2).gameObject;
+        missileBar = playerHud.transform.GetChild(3).GetChild(1).gameObject;
         
         health = maxHealth;
         maxHealthBarWidth = healthBar.transform.localScale.x;
@@ -88,17 +91,54 @@ public class Player : NetworkBehaviour
             healthBar.transform.localScale -= new Vector3(Time.deltaTime, 0);
         else if (healthBar.transform.localScale.x < maxHealthBarWidth / proportion)
             healthBar.transform.localScale += new Vector3(Time.deltaTime, 0);
-
-        if (health > maxHealth)
-            health = maxHealth;
     }
 
     public void HealthChange(float amount)
     {
         health += amount;
 
-        if (health <= 0)
+        if (health > maxHealth)
+            health = maxHealth;
+        else if (health <= 0)
+        {
+            health = 0;
             Eliminate();
+        }
+    }
+
+    public void StatChange(string stat, int amount) //amount = number of stages (-2, -1, 1, or 2)
+    {
+        if (stat == "power")
+            power += amount;
+        else
+        {
+            bool multiply = amount > 0;
+            amount = Mathf.Abs(amount);
+            if (stat == "speed")
+            {
+                for (int i = 0; i < amount; i++)
+                    if (multiply)
+                    {
+                        playerMovement.speed *= speedMultipler;
+                        playerMovement.jumpForce *= jumpMultiplier;
+                        playerMovement.lowJumpMultiplier /= jumpMultiplier;
+                    }
+                    else
+                    {
+                        playerMovement.speed /= speedMultipler;
+                        playerMovement.jumpForce /= jumpMultiplier;
+                        playerMovement.lowJumpMultiplier *= jumpMultiplier;
+                    }
+            }
+            else if (stat == "range")
+            {
+                for (int i = 0; i < amount; i++)
+                    if (multiply)
+                        range *= rangeMultiplier;
+                    else
+                        range /= rangeMultiplier;
+            }
+        }
     }
 
     private void Eliminate()

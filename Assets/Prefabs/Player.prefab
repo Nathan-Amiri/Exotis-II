@@ -284,7 +284,12 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: -4158588309664115983}
   _networkObjectCache: {fileID: -4158588309664115983}
+  speed: 3
+  jumpForce: 7
+  fallMultiplier: 1
+  lowJumpMultiplier: 4
   isGrounded: 0
+  rb: {fileID: 4696052625515170072}
 --- !u!114 &1776539745
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -300,7 +305,16 @@ MonoBehaviour:
   _componentIndexCache: 1
   _addedNetworkObject: {fileID: -4158588309664115983}
   _networkObjectCache: {fileID: -4158588309664115983}
+  playerMovement: {fileID: 4696052625515170087}
+  spriteRenderer: {fileID: 4696052625515170075}
+  maxHealth: 15
+  charSelectInfo:
+  - 
+  - 
+  - 
+  - 
   missile: {fileID: 7543987559241770783, guid: f00153e719f265640a2aeeab40c12739, type: 3}
+  playerHud: {fileID: 0}
 --- !u!114 &-4158588309664115983
 MonoBehaviour:
   m_ObjectHideFlags: 0

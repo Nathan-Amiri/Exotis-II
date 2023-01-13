@@ -23,6 +23,6 @@ public class ElementalButton : MonoBehaviour
 
     public void ButtonPress()
     {
-        charSelect.SelectElemental(name, type1, type2, stat1, stat2);
+        charSelect.SelectElemental(name,  type1, type2, stat1, stat2);
     }
 }

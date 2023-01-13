@@ -131,6 +131,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 6607897615923786514, guid: 0b650fca685f2eb41a86538aa883e4c1, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6607897615923786514, guid: 0b650fca685f2eb41a86538aa883e4c1, type: 3}
       propertyPath: _playerPrefab
       value: 
       objectReference: {fileID: 3954846544778375738, guid: d1f5f71e116198c469ebb0b203ed23ee, type: 3}
@@ -1991,6 +1995,7 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 1303231437}
   _networkObjectCache: {fileID: 1303231437}
+  index: {fileID: 0}
   emptyAvatar: {fileID: 21300000, guid: be7eece4b1e3e3a4596cd2780ed76ed6, type: 3}
   gameManager: {fileID: 0}
   avatars: []

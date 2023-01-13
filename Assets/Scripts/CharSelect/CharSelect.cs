@@ -9,6 +9,7 @@ using FishNet.Managing.Scened;
 
 public class CharSelect : NetworkBehaviour
 {
+    public Index index;
     public Sprite emptyAvatar; //assigned in inspector
 
     [HideInInspector] public GameManager gameManager;
@@ -96,10 +97,9 @@ public class CharSelect : NetworkBehaviour
     public void SelectReady()
     {
         readyButton.interactable = false;
-        CharSelectInfo charSelectInfo = new()
-        {
-            elementalName = selectedElemental
-        };
+        string[] charSelectInfo = new string[4];
+        charSelectInfo[0] = selectedElemental;
+
         gameManager.charSelectInfo = charSelectInfo;
 
         RpcServerChangeAvatar(gameManager.playerNumber, selectedElemental);

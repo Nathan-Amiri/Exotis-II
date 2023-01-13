@@ -12,7 +12,8 @@ public class GameManager : NetworkBehaviour
     //general GameManager code:
 
     //server variables:
-    public int[] playerNumbers = new int[10];
+    private readonly int[] playerNumbers = new int[10];
+    private readonly int[] playerIDs = new int[10];
 
     //client variables:
     public int playerNumber;
@@ -42,6 +43,7 @@ public class GameManager : NetworkBehaviour
             if (playerNumbers[i] == 0)
             {
                 playerNumbers[i] = i + 1;
+                playerIDs[i] = playerConnection.ClientId;
                 RpcAssignPlayerNumber(playerConnection, i + 1);
                 return;
             }
@@ -78,22 +80,19 @@ public class GameManager : NetworkBehaviour
     {
         if (arg2.ConnectionState == RemoteConnectionState.Stopped)
         {
-            int i = playerNumbers.Length;
-            playerNumbers = new int[i]; //reset playerNumbers
-            RpcCheckIfConnected(); //check which clients are still connected
+            for (int i = 0; i < playerIDs.Length; i++)
+                if (playerIDs[i] == arg2.ConnectionId)
+                {
+                    playerIDs[i] = 0;
+                    playerNumbers[i] = 0;
+                    return;
+                }
         }
     }
-
-    [ObserversRpc]
-    private void RpcCheckIfConnected()
+    public override void OnStopClient()
     {
-        RpcUpdatePlayerNumbers(playerNumber);
-    }
-
-    [ServerRpc (RequireOwnership = false)]
-    private void RpcUpdatePlayerNumbers(int newPlayer)
-    {
-        playerNumbers[newPlayer - 1] = newPlayer;
+        base.OnStopClient();
+        playerNumber = 0;
     }
 
     public delegate void OnClientConnectOrLoadAction(GameManager gm);
@@ -107,10 +106,5 @@ public class GameManager : NetworkBehaviour
 
         //game-specific code:
 
-    [HideInInspector] public CharSelectInfo charSelectInfo; //filled by CharSelect, accessed by Setup
-}
-public struct CharSelectInfo
-{
-    public string elementalName;
-    //spells
+    [HideInInspector] public string[] charSelectInfo = new string[4]; //filled by CharSelect, accessed by Setup
 }
