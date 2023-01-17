@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
+using System.Security.Cryptography.X509Certificates;
 
 public class Player : NetworkBehaviour
 {
@@ -63,9 +64,6 @@ public class Player : NetworkBehaviour
         name = charSelectInfo[0];
         index.LoadAttributes(this, charSelectInfo); //add stats and spells
 
-        spriteRenderer.color = lighterColor;
-        coreSpriteRenderer.color = darkerColor;
-
         playerHud.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Elementals/" + name);
 
         if (IsOwner)
@@ -92,6 +90,12 @@ public class Player : NetworkBehaviour
         MissileBar();
 
         MissileTimer();
+
+        if (!animator.enabled)
+        {
+            spriteRenderer.color = lighterColor;
+            coreSpriteRenderer.color = darkerColor;
+        }
 
         if (!IsOwner)
             return;
@@ -149,11 +153,12 @@ public class Player : NetworkBehaviour
 
     private IEnumerator DamageAnimation(float duration)
     {
+        animator.enabled = true;
         animator.SetTrigger("TakeDamage");
         MainCamera.screenShakeIntensity += 1;
         yield return new WaitForSeconds(duration);
         animator.StopPlayback();
-        //animator.SetTrigger("Empty");
+        animator.enabled = false;
     }
 
     private IEnumerator BecomeImmune(float duration) //run on server
@@ -343,7 +348,8 @@ public class Player : NetworkBehaviour
 
         //new code:
 
-        //Vector3 displacement = fireDirection * ((passedTime / 2.778f) * (caster.range / 10));
+        //float displacementMagnitude = passedTime == 0 ? 0 : passedTime / 2.778f;
+        //Vector3 displacement = fireDirection * (displacementmagnitude * (caster.range / 10));
         //Vector3 castPosition = firePosition + new Vector3(fireDirection.x, fireDirection.y) * .5f;
         //newMissile.transform.position = castPosition += displacement;
         //missileScript.rb.velocity = fireDirection * caster.range;
