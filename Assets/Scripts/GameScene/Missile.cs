@@ -10,6 +10,7 @@ public class Missile : MonoBehaviour
 
     public Rigidbody2D rb; //assigned in inspector
     public SpriteRenderer spriteRenderer; //assigned in inspector, read by Player
+    public SpriteRenderer coreSprireRenderer; //^
 
     void Update()
     {

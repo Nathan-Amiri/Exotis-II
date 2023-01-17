@@ -4,12 +4,7 @@ using UnityEngine;
 
 public class GroundCheck : MonoBehaviour
 {
-    private PlayerMovement playerMovement;
-
-    private void Awake()
-    {
-        playerMovement = transform.parent.GetComponent<PlayerMovement>();
-    }
+    public PlayerMovement playerMovement; //assigned in inspector
 
     private void OnTriggerStay2D(Collider2D col)
     {
