@@ -4,6 +4,7 @@ using UnityEngine;
 using FishNet.Object;
 using FishNet;
 using FishNet.Connection;
+using FishNet.Transporting.Tugboat;
 
 public class Beacon : NetworkBehaviour //spawns a gamemanager in a scene and, once a client has fully loaded into a scene, sends a signal to the GameManager
 {
@@ -31,5 +32,12 @@ public class Beacon : NetworkBehaviour //spawns a gamemanager in a scene and, on
     private void RpcSendSignal(NetworkConnection conn)
     {
         Signal?.Invoke();
+    }
+
+    public override void OnStartServer() //ensures that ServerManager.StartConnection will always create a host
+    {
+        base.OnStartServer();
+        if (!IsClient)
+            ClientManager.StartConnection();
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
-using System.Security.Cryptography.X509Certificates;
 
 public class Player : NetworkBehaviour
 {

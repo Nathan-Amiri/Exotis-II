@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using FishNet;
 using FishNet.Object;
 using FishNet.Connection;
-using FishNet.Managing.Scened;
 
 public class CharSelect : NetworkBehaviour
 {

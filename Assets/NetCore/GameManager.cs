@@ -9,6 +9,8 @@ using FishNet.Transporting;
 
 public class GameManager : NetworkBehaviour
 {
+    //networked game manager
+
     //general GameManager code:
 
     //server variables:
@@ -70,6 +72,13 @@ public class GameManager : NetworkBehaviour
     }
 
     //disconnect:
+    public void Disconnect()
+    {
+        if (IsServer)
+            ServerManager.StopConnection(false);
+        else
+            ClientManager.StopConnection();
+    }
     public override void OnSpawnServer(NetworkConnection conn)
     {
         base.OnSpawnServer(conn);
@@ -93,6 +102,7 @@ public class GameManager : NetworkBehaviour
     {
         base.OnStopClient();
         playerNumber = 0;
+        UnityEngine.SceneManagement.SceneManager.LoadScene("CharSelect");
     }
 
     public delegate void OnClientConnectOrLoadAction(GameManager gm);
