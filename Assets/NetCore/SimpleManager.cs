@@ -10,12 +10,14 @@ public class SimpleManager : MonoBehaviour
 {
     //non-networked game manager
 
-    public GameObject escapeMenu; //assigned in inspector
+    public GameObject escapeMenu; //assigned in prefab
     public TMP_Text exitDisconnectText; //^
     public Button joinLobby;
     public TMP_InputField ipAddress; //^
     public TextMeshProUGUI placeHolder; //^
-    public Tugboat tugboat; //^
+    public Tugboat tugboat; //assigned in scene
+
+    private GameManager gameManager;
 
     public static SimpleManager instance = null;
 
@@ -32,11 +34,25 @@ public class SimpleManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    private void OnEnable()
+    {
+        GameManager.OnClientConnectOrLoad += OnClientConnectOrLoad;
+    }
+    private void OnDisable()
+    {
+        GameManager.OnClientConnectOrLoad -= OnClientConnectOrLoad;
+    }
+
+    private void OnClientConnectOrLoad(GameManager gm)
+    {
+        gameManager = gm;
+    }
+
     private void Update()
     {
         if (Input.GetButtonDown("EscapeMenu"))
         {
-            exitDisconnectText.text = InstanceFinder.IsClient ? "Exit Game" : "Disconnect";
+            exitDisconnectText.text = gameManager == null ? "Exit Game" : "Disconnect";
             escapeMenu.SetActive(!escapeMenu.activeSelf);
         }
 
@@ -62,9 +78,9 @@ public class SimpleManager : MonoBehaviour
     {
         escapeMenu.SetActive(false);
 
-        if (!InstanceFinder.IsClient)
+        if (gameManager == null)
             Application.Quit();
         else
-            InstanceFinder.ClientManager.StopConnection();
+            gameManager.Disconnect();
     }
 }
