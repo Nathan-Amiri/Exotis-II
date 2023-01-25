@@ -63,6 +63,7 @@ public class Player : NetworkBehaviour
         name = charSelectInfo[0];
         index.LoadAttributes(this, charSelectInfo); //add stats and spells
 
+        playerHud.SetActive(true);
         playerHud.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Elementals/" + name);
 
         if (IsOwner)
@@ -110,45 +111,45 @@ public class Player : NetworkBehaviour
     }
 
     private void HealthBar() //run in update
-        {
-            float proportion = maxHealth / health; //maxHealth / health should equal the same proportion as maxHealthBarWidth / healthBar's scale.x
+    {
+        float proportion = maxHealth / health; //maxHealth / health should equal the same proportion as maxHealthBarWidth / healthBar's scale.x
 
-            if (healthBar.transform.localScale.x > maxHealthBarWidth / proportion)
-                healthBar.transform.localScale -= new Vector3(Time.deltaTime, 0);
-            else if (healthBar.transform.localScale.x < maxHealthBarWidth / proportion)
-                healthBar.transform.localScale += new Vector3(Time.deltaTime, 0);
-        }
+        if (healthBar.transform.localScale.x > maxHealthBarWidth / proportion)
+            healthBar.transform.localScale -= new Vector3(Time.deltaTime, 0);
+        else if (healthBar.transform.localScale.x < maxHealthBarWidth / proportion)
+            healthBar.transform.localScale += new Vector3(Time.deltaTime, 0);
+    }
 
     public void HealthChange(float amount) //run on server
+    {
+        if (isImmune)
+            return;
+
+        health += amount;
+
+        if (health > maxHealth)
+            health = maxHealth;
+        else if (health <= 0)
         {
-            if (isImmune)
-                return;
-
-            health += amount;
-
-            if (health > maxHealth)
-                health = maxHealth;
-            else if (health <= 0)
-            {
-                health = 0;
-                Eliminate();
-                return;
-            }
-
-            if (amount < 0)
-            {
-                StartCoroutine(BecomeImmune(.7f));
-                playerMovement.isStunned = true;
-                playerMovement.BecomeStunned(.35f, false);
-                RpcClientTakeDamage();
-            }
+            health = 0;
+            Eliminate();
+            return;
         }
+
+        if (amount < 0)
+        {
+            StartCoroutine(BecomeImmune(.7f));
+            playerMovement.isStunned = true;
+            playerMovement.BecomeStunned(.35f, false);
+            RpcClientTakeDamage();
+        }
+    }
 
     [ObserversRpc]
     private void RpcClientTakeDamage()
-        {
-            StartCoroutine(DamageAnimation(.7f));
-        }
+    {
+        StartCoroutine(DamageAnimation(.7f));
+    }
 
     private IEnumerator DamageAnimation(float duration)
     {
@@ -161,55 +162,55 @@ public class Player : NetworkBehaviour
     }
 
     private IEnumerator BecomeImmune(float duration) //run on server
-        {
-            isImmune = true;
-            yield return new WaitForSeconds(duration);
-            isImmune = false;
-        }
+    {
+        isImmune = true;
+        yield return new WaitForSeconds(duration);
+        isImmune = false;
+    }
 
 
     public void StatChange(string stat, int amount) //amount = number of stages (-2, -1, 1, or 2)
+    {
+        if (stat == "power")
+            power += amount;
+        else
         {
-            if (stat == "power")
-                power += amount;
-            else
+            bool multiply = amount > 0;
+            amount = Mathf.Abs(amount);
+            if (stat == "speed")
             {
-                bool multiply = amount > 0;
-                amount = Mathf.Abs(amount);
-                if (stat == "speed")
-                {
-                    for (int i = 0; i < amount; i++)
-                        if (multiply)
-                        {
-                            playerMovement.speed *= speedMultipler;
-                            playerMovement.jumpForce *= jumpMultiplier;
-                            playerMovement.lowJumpMultiplier /= jumpMultiplier;
-                        }
-                        else
-                        {
-                            playerMovement.speed /= speedMultipler;
-                            playerMovement.jumpForce /= jumpMultiplier;
-                            playerMovement.lowJumpMultiplier *= jumpMultiplier;
-                        }
-                }
-                else if (stat == "range")
-                {
-                    for (int i = 0; i < amount; i++)
-                        if (multiply)
-                            range *= rangeMultiplier;
-                        else
-                            range /= rangeMultiplier;
-                }
+                for (int i = 0; i < amount; i++)
+                    if (multiply)
+                    {
+                        playerMovement.speed *= speedMultipler;
+                        playerMovement.jumpForce *= jumpMultiplier;
+                        playerMovement.lowJumpMultiplier /= jumpMultiplier;
+                    }
+                    else
+                    {
+                        playerMovement.speed /= speedMultipler;
+                        playerMovement.jumpForce /= jumpMultiplier;
+                        playerMovement.lowJumpMultiplier *= jumpMultiplier;
+                    }
+            }
+            else if (stat == "range")
+            {
+                for (int i = 0; i < amount; i++)
+                    if (multiply)
+                        range *= rangeMultiplier;
+                    else
+                        range /= rangeMultiplier;
             }
         }
+    }
 
     private void Eliminate()
-        {
-            playerMovement.isStunned = true;
-            playerMovement.BecomeStunned(0, true);
-            Debug.Log(name + " has been eliminated");
-            transform.position = new Vector2(50, 0);
-        }
+    {
+        playerMovement.isStunned = true;
+        playerMovement.BecomeStunned(0, true);
+        Debug.Log(name + " has been eliminated");
+        transform.position = new Vector2(50, 0);
+    }
 
 
 

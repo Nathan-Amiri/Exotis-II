@@ -7,7 +7,7 @@ using FishNet.Object.Synchronizing;
 public class PlayerMovement : NetworkBehaviour
 {
     [HideInInspector] public float speed = 3; //changed by Player
-    [HideInInspector] public float jumpForce = 6; //^
+    [HideInInspector] public float jumpForce = 5; //^
 
     [HideInInspector] public float lowJumpMultiplier = 4; //^, used for dynamic jump
     private readonly float fallMultiplier = 1; //fastfall

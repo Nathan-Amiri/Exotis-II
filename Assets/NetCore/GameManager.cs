@@ -14,7 +14,7 @@ public class GameManager : NetworkBehaviour
     //general GameManager code:
 
     //server variables:
-    private readonly int[] playerNumbers = new int[10];
+    [HideInInspector] public int[] playerNumbers = new int[10]; //checked by CharSelect
     private readonly int[] playerIDs = new int[10];
 
     //client variables:

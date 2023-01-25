@@ -5,23 +5,33 @@ using UnityEngine.UI;
 using FishNet;
 using FishNet.Object;
 using FishNet.Connection;
+using TMPro;
 
 public class CharSelect : NetworkBehaviour
 {
-    public Index index;
-    public Sprite emptyAvatar; //assigned in inspector
-
     [HideInInspector] public GameManager gameManager;
 
-    public Image[] avatars;
-    public Image p1Avatar; //^
-    public Image p2Avatar; //^
-    public Image p3Avatar; //^
-    public Image p4Avatar; //^
+    public CharImage[] avatars; //assigned in inspector
+    public CharImage p1Avatar; //^
+    public CharImage p2Avatar; //^
+    public CharImage p3Avatar; //^
+    public CharImage p4Avatar; //^
 
-    public Image charImage; //^
+    //colors from lightest to darkest: (copied from Player) (must be public so they can be found in SelectElemental using GetField)
+    [HideInInspector] public Color32 frost = new(140, 228, 232, 255); //^
+    [HideInInspector] public Color32 wind = new(205, 205, 255, 255); //^
+    [HideInInspector] public Color32 lightning = new(255, 236, 0, 255); //^
+    [HideInInspector] public Color32 flame = new(255, 122, 0, 255); //^
+    [HideInInspector] public Color32 water = new(35, 182, 255, 255); //^
+    [HideInInspector] public Color32 venom = new(23, 195, 0, 255); //^
+
+    private readonly Color32[] emptyColors = new Color32[2];
+
+    public CharImage charImage; //assigned in inspector
     public Image charType1; //^
     public Image charType2; //^
+
+    public TMP_Text charName; //^
 
     public GameObject highlight1; //^
     public GameObject highlight2; //^
@@ -31,14 +41,20 @@ public class CharSelect : NetworkBehaviour
     public Button readyButton; //^
 
     private string selectedElemental;
+    private readonly Color32[] currentColors = new Color32[2]; //currentColors[0] = lighter color, [1] = darker color
+
+    private readonly bool[] readyPlayers = new bool[10]; //server only
 
     private void Awake()
     {
-        avatars = new Image[4];
+        avatars = new CharImage[4];
         avatars[0] = p1Avatar;
         avatars[1] = p2Avatar;
         avatars[2] = p3Avatar;
         avatars[3] = p4Avatar;
+
+        emptyColors[0] = Color.black;
+        emptyColors[1] = Color.gray;
     }
     private void OnEnable()
     {
@@ -59,36 +75,53 @@ public class CharSelect : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void RpcGetCurrentAvatars(NetworkConnection conn, int newPlayer)
     {
-        ChangeAvatar(newPlayer, "Empty");
+        ChangeAvatar(newPlayer, emptyColors);
 
-        string[] serverAvatars = new string[4];
-        for (int i = 0; i < avatars.Length; i++)
-            if (avatars[i].sprite != null)
-                serverAvatars[i] = avatars[i].sprite.name;
+        Color32[] serverColors = new Color32[8];
 
-        RpcClientGetCurrentAvatars(conn, serverAvatars);
+        int x = 0;
+        for (int i = 0; i < 4; i ++)
+        {
+            serverColors[x] = avatars[i].charShell.color;
+            serverColors[x + 1] = avatars[i].charCore.color;
+            x += 2; //i increases by 1, x increases by 2
+        }
+
+        RpcClientGetCurrentAvatars(conn, serverColors);
     }
     [TargetRpc]
-    private void RpcClientGetCurrentAvatars(NetworkConnection conn, string[] serverAvatars)
+    private void RpcClientGetCurrentAvatars(NetworkConnection conn, Color32[] serverColors)
     {
-        for (int i = 0; i < avatars.Length; i++)
-            ChangeAvatar(i + 1, serverAvatars[i]);
+        int x = 0;
+        for (int i = 0; i < 4; i++)
+        {
+            avatars[i].charShell.color = serverColors[x];
+            avatars[i].charCore.color = serverColors[x + 1];
+            x += 2; //i increases by 1, x increases by 2
+        }
     }
 
     public void SelectElemental(string elemental, string type1, string type2, string stat1, string stat2)
     {
-        RpcServerChangeAvatar(gameManager.playerNumber, "Empty");
+        currentColors[0] = (Color32)GetType().GetField(type1).GetValue(this);
+        currentColors[1] = (Color32)GetType().GetField(type2).GetValue(this);
+
+        RpcServerChangeAvatar(gameManager.playerNumber, emptyColors);
+        RpcChangeReadyStatus(gameManager.playerNumber, false);
+
+        charImage.charShell.color = currentColors[0];
+        charImage.charCore.color = currentColors[1];
 
         selectedElemental = elemental;
+        charName.text = selectedElemental;
 
-        charImage.sprite = Resources.Load<Sprite>("Elementals/" + selectedElemental);
         charType1.sprite = Resources.Load<Sprite>("Elements/" + type1);
         charType2.sprite = Resources.Load<Sprite>("Elements/" + type2);
 
         highlight1.SetActive(true);
         highlight2.SetActive(true);
-        highlight1.transform.localPosition = new Vector2(167, stat1 == "Power" ? -220 : -285);
-        highlight2.transform.localPosition = new Vector2(167, stat2 == "Speed" ? -355 : -425);
+        highlight1.transform.localPosition = new Vector2(167, stat1 == "power" ? -220 : -285);
+        highlight2.transform.localPosition = new Vector2(167, stat2 == "speed" ? -355 : -425);
 
         readyButton.interactable = true;
     }
@@ -101,38 +134,41 @@ public class CharSelect : NetworkBehaviour
 
         gameManager.charSelectInfo = charSelectInfo;
 
-        RpcServerChangeAvatar(gameManager.playerNumber, selectedElemental);
-        RpcCheckIfReady();
+        RpcServerChangeAvatar(gameManager.playerNumber, currentColors);
+        RpcChangeReadyStatus(gameManager.playerNumber, true);
     }
 
     [ServerRpc (RequireOwnership = false)]
-    private void RpcServerChangeAvatar(int newPlayer, string newAvatar)
+    private void RpcServerChangeAvatar(int newPlayer, Color32[] newColors)
     {
-        ChangeAvatar(newPlayer, newAvatar);
-        RpcClientChangeAvatar(newPlayer, newAvatar);
+        ChangeAvatar(newPlayer, newColors);
+        RpcClientChangeAvatar(newPlayer, newColors);
     }
 
     [ObserversRpc]
-    private void RpcClientChangeAvatar(int newPlayer, string newAvatar)
+    private void RpcClientChangeAvatar(int newPlayer, Color32[] newColors)
     {
         if (IsClientOnly)
-            ChangeAvatar(newPlayer, newAvatar);
+            ChangeAvatar(newPlayer, newColors);
     }
 
-    private void ChangeAvatar(int newPlayer, string newAvatar)
+    private void ChangeAvatar(int newPlayer, Color32[] newColors)
     {
-        Image avatar = avatars[newPlayer - 1];
-        avatar.sprite = newAvatar == "Empty" ? emptyAvatar : Resources.Load<Sprite>("Elementals/" + newAvatar);
+        CharImage avatar = avatars[newPlayer - 1];
+
+        avatar.charShell.color = newColors[0];
+        avatar.charCore.color = newColors[1];
     }
 
     [ServerRpc (RequireOwnership = false)]
-    private void RpcCheckIfReady()
+    private void RpcChangeReadyStatus(int newPlayer, bool isReady)
     {
-        for (int i = 0; i < avatars.Length; i++)
-            if (avatars[i].sprite != null && avatars[i].sprite.name == "Empty")
+        readyPlayers[newPlayer - 1] = isReady;
+
+        for (int i = 0; i < readyPlayers.Length; i++)
+            if (gameManager.playerNumbers[i] != 0 && !readyPlayers[i])
                 return;
 
         gameManager.SceneChange("GameScene");
     }
-
 }

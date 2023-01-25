@@ -814,7 +814,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fef99ad9bd2233943a972b730c439d9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cam: {fileID: 519420031}
 --- !u!1001 &531154884
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3530,6 +3529,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Untagged
       objectReference: {fileID: 0}
+    - target: {fileID: 2857641003319043489, guid: 98b32448e10e0654f90296dc687df14a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2857641004432328430, guid: 98b32448e10e0654f90296dc687df14a, type: 3}
       propertyPath: m_Name
       value: HUD
@@ -3578,9 +3581,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2912816160194850752, guid: 98b32448e10e0654f90296dc687df14a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3548317907519761407, guid: 98b32448e10e0654f90296dc687df14a, type: 3}
       propertyPath: m_TagString
       value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 3859490379740873543, guid: 98b32448e10e0654f90296dc687df14a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3923425145319002265, guid: 98b32448e10e0654f90296dc687df14a, type: 3}
       propertyPath: m_IsActive
@@ -3601,6 +3612,10 @@ PrefabInstance:
     - target: {fileID: 5994400386955224702, guid: 98b32448e10e0654f90296dc687df14a, type: 3}
       propertyPath: m_TagString
       value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 7039642981212288057, guid: 98b32448e10e0654f90296dc687df14a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8278962121071073004, guid: 98b32448e10e0654f90296dc687df14a, type: 3}
       propertyPath: m_IsActive
