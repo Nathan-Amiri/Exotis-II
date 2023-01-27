@@ -32,6 +32,7 @@ public class CharSelect : NetworkBehaviour
     public Image charType2; //^
 
     public TMP_Text charName; //^
+    public TMP_Text error; //^
 
     public GameObject highlight1; //^
     public GameObject highlight2; //^
@@ -43,6 +44,7 @@ public class CharSelect : NetworkBehaviour
     private string selectedElemental;
     private readonly Color32[] currentColors = new Color32[2]; //currentColors[0] = lighter color, [1] = darker color
 
+    private readonly List<string> claimedElementals = new(); //server only
     private readonly bool[] readyPlayers = new bool[10]; //server only
 
     private void Awake()
@@ -101,19 +103,20 @@ public class CharSelect : NetworkBehaviour
         }
     }
 
-    public void SelectElemental(string elemental, string type1, string type2, string stat1, string stat2)
+    public void SelectElemental(string newElemental, string type1, string type2, string stat1, string stat2)
     {
         currentColors[0] = (Color32)GetType().GetField(type1).GetValue(this);
         currentColors[1] = (Color32)GetType().GetField(type2).GetValue(this);
 
         RpcServerChangeAvatar(gameManager.playerNumber, emptyColors);
-        RpcChangeReadyStatus(gameManager.playerNumber, false);
+        RpcChangeReadyStatus(gameManager.playerNumber, false, selectedElemental);
+
+        selectedElemental = newElemental;
+        charName.text = newElemental;
 
         charImage.charShell.color = currentColors[0];
         charImage.charCore.color = currentColors[1];
 
-        selectedElemental = elemental;
-        charName.text = selectedElemental;
 
         charType1.sprite = Resources.Load<Sprite>("Elements/" + type1);
         charType2.sprite = Resources.Load<Sprite>("Elements/" + type2);
@@ -128,6 +131,34 @@ public class CharSelect : NetworkBehaviour
 
     public void SelectReady()
     {
+        RpcCheckElementalAvailable(ClientManager.Connection, selectedElemental);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RpcCheckElementalAvailable(NetworkConnection conn, string newElemental)
+    {
+        foreach (string claimedElemental in claimedElementals) //check if elemental already exists
+            if (claimedElemental == newElemental)
+            {
+                RpcElementalNotApproved(conn);
+                return;
+            }
+
+        claimedElementals.Add(newElemental);
+        RpcElementalApproved(conn);
+    }
+
+    [TargetRpc]
+    private void RpcElementalNotApproved(NetworkConnection conn)
+    {
+        error.text = "Elemental has already been claimed. Please select another.";
+    }
+
+    [TargetRpc]
+    private void RpcElementalApproved(NetworkConnection conn)
+    {
+        error.text = "";
+
         readyButton.interactable = false;
         string[] charSelectInfo = new string[4];
         charSelectInfo[0] = selectedElemental;
@@ -135,8 +166,9 @@ public class CharSelect : NetworkBehaviour
         gameManager.charSelectInfo = charSelectInfo;
 
         RpcServerChangeAvatar(gameManager.playerNumber, currentColors);
-        RpcChangeReadyStatus(gameManager.playerNumber, true);
+        RpcChangeReadyStatus(gameManager.playerNumber, true, null);
     }
+
 
     [ServerRpc (RequireOwnership = false)]
     private void RpcServerChangeAvatar(int newPlayer, Color32[] newColors)
@@ -161,8 +193,16 @@ public class CharSelect : NetworkBehaviour
     }
 
     [ServerRpc (RequireOwnership = false)]
-    private void RpcChangeReadyStatus(int newPlayer, bool isReady)
+    private void RpcChangeReadyStatus(int newPlayer, bool isReady, string oldElemental)
     {
+        if (isReady == false)
+            for (int i = 0; i < claimedElementals.Count; i++) //remove old elemental
+                if (claimedElementals[i] == oldElemental)
+                {
+                    claimedElementals.RemoveAt(i);
+                    break;
+                }
+
         readyPlayers[newPlayer - 1] = isReady;
 
         for (int i = 0; i < readyPlayers.Length; i++)

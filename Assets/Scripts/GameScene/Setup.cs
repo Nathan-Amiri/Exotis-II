@@ -13,7 +13,7 @@ public class Setup : NetworkBehaviour
     public TMP_Text countdownText; //^
 
     public GameObject editorGrid; //^
-    public GameObject hud;
+    public GameObject hud; //^
     public Index index; //^
 
     private GameManager gameManager;
@@ -52,6 +52,7 @@ public class Setup : NetworkBehaviour
             player = newPlayer;
         newPlayer.charSelectInfo = newInfo;
         newPlayer.playerHud = hud.transform.GetChild(newPlayerNumber - 1).gameObject;
+        newPlayer.gameManager = gameManager;
         newPlayer.OnSpawn(index);
         StartCoroutine(Countdown());
     }

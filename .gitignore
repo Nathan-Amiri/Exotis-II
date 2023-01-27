@@ -5,8 +5,9 @@
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
+# to ignore the builds folder, uncomment these lines
+# /[Bb]uild/
+# /[Bb]uilds/
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 

@@ -84,8 +84,15 @@ public class PlayerMovement : NetworkBehaviour
         isGrounded = false;
     }
 
-    [ObserversRpc]
+    [Server]
     public void BecomeStunned(float duration, bool permanent)
+    {
+        isStunned = true;
+        RpcClientBecomeStunned(duration, permanent);
+    }
+
+    [ObserversRpc]
+    private void RpcClientBecomeStunned(float duration, bool permanent)
     {
         if (IsOwner)
         {

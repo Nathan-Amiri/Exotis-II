@@ -6,5 +6,5 @@ using UnityEngine.UI;
 public class CharImage : MonoBehaviour
 {
     public Image charShell; //assigned in inspector
-    public Image charCore; //assigned in inspector
+    public Image charCore; //^
 }

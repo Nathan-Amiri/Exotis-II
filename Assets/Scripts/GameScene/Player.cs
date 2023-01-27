@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
+using FishNet.Connection;
 
 public class Player : NetworkBehaviour
 {
@@ -56,6 +57,20 @@ public class Player : NetworkBehaviour
     private GameObject healthBar; //is actually the health bar's pivot point
     private GameObject missileBar; //is actually the missile bar's pivot point
 
+    [HideInInspector] public GameManager gameManager; //set by Setup
+    public static int alivePlayers = 0; //number of players not eliminated. used by server only
+    private bool isEliminated; //server only
+    public delegate void OnGameEndAction();
+    public static event OnGameEndAction OnGameEnd;
+    private void OnEnable()
+    {
+        OnGameEnd += GameEnd;
+    }
+    private void OnDisable()
+    {
+        OnGameEnd -= GameEnd;
+    }
+
     public void OnSpawn(Index index)
     {
         playerMovement.isStunned = true;
@@ -64,7 +79,8 @@ public class Player : NetworkBehaviour
         index.LoadAttributes(this, charSelectInfo); //add stats and spells
 
         playerHud.SetActive(true);
-        playerHud.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Elementals/" + name);
+        playerHud.transform.GetChild(0).GetComponent<SpriteRenderer>().color = lighterColor; //shell
+        playerHud.transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>().color = darkerColor; //core
 
         if (IsOwner)
             GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
@@ -78,6 +94,11 @@ public class Player : NetworkBehaviour
         missileFillSpeed = 1;
         missileAmount = 3;
         maxMissileBarWidth = missileBar.transform.localScale.x;
+        
+        if (IsServer && IsOwner)
+            for (int i = 0; i < gameManager.playerNumbers.Length; i++)
+                if (gameManager.playerNumbers[i] != 0)
+                    alivePlayers++;
 
         startUpdate = true;
     }
@@ -89,7 +110,7 @@ public class Player : NetworkBehaviour
         HealthBar();
         MissileBar();
 
-        MissileTimer();
+        //MissileTimer();
 
         if (!animator.enabled)
         {
@@ -120,7 +141,8 @@ public class Player : NetworkBehaviour
             healthBar.transform.localScale += new Vector3(Time.deltaTime, 0);
     }
 
-    public void HealthChange(float amount) //run on server
+    [Server]
+    public void HealthChange(float amount)
     {
         if (isImmune)
             return;
@@ -139,7 +161,6 @@ public class Player : NetworkBehaviour
         if (amount < 0)
         {
             StartCoroutine(BecomeImmune(.7f));
-            playerMovement.isStunned = true;
             playerMovement.BecomeStunned(.35f, false);
             RpcClientTakeDamage();
         }
@@ -204,98 +225,36 @@ public class Player : NetworkBehaviour
         }
     }
 
+    [Server]
     private void Eliminate()
     {
-        playerMovement.isStunned = true;
+        isEliminated = true;
+        RpcClientTakeDamage();
         playerMovement.BecomeStunned(0, true);
-        Debug.Log(name + " has been eliminated");
+        RpcRelocate(Owner);
+        CheckForGameEnd();
+    }
+    [TargetRpc]
+    private void RpcRelocate(NetworkConnection conn)
+    {
         transform.position = new Vector2(50, 0);
     }
 
+    [Server]
+    private void CheckForGameEnd()
+    {
+        alivePlayers -= 1;
 
+        if (alivePlayers == 1)
+            OnGameEnd?.Invoke();
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-    //private Vector3 _direction;
-    /////// <summary>
-    /////// Distance remaining to catch up. This is calculated from a passed time and move rate.
-    ///// </summary>
-    //private float _pasedTime = 0f;
-    ///// <summary>
-    ///// In this example the projectile moves at a flat rate of 5f.
-    ///// </summary>
-    //private const float MOVE_RATE = 5f;
-
-    ///// <summary>
-    ///// Initializes this projectile.
-    ///// </summary>
-    ///// <param name="direction">Direction to travel.</param>
-    ///// <param name="passedTime">How far in time this projectile is behind te prediction.</param>
-    //public void Initialize(Vector3 direction, float passedTime)
-    //{
-    //    _direction = direction;
-    //    _passedTime = passedTime;
-    //}
-    //private void Move()
-    //{
-    //    //Frame delta, nothing unusual here.
-    //    float delta = Time.deltaTime;
-
-    //    //See if to add on additional delta to consume passed time.
-    //    float passedTimeDelta = 0f;
-    //    if (_passedTime > 0f)
-    //    {
-    //        /* Rather than use a flat catch up rate the
-    //         * extra delta will be based on how much passed time
-    //         * remains. This means the projectile will accelerate
-    //         * faster at the beginning and slower at the end.
-    //         * If a flat rate was used then the projectile
-    //         * would accelerate at a constant rate, then abruptly
-    //         * change to normal move rate. This is similar to using
-    //         * a smooth damp. */
-
-    //        /* Apply 8% of the step per frame. You can adjust
-    //         * this number to whatever feels good. */
-    //        float step = (_passedTime * 0.08f);
-    //        _passedTime -= step;
-
-    //        /* If the remaining time is less than half a delta then
-    //         * just append it onto the step. The change won't be noticeable. */
-    //        if (_passedTime <= (delta / 2f))
-    //        {
-    //            step += _passedTime;
-    //            _passedTime = 0f;
-    //        }
-    //        passedTimeDelta = step;
-    //    }
-
-    //    //Move the projectile using moverate, delta, and passed time delta.
-    //    transform.position += _direction * (MOVE_RATE * (delta + passedTimeDelta));
-    //}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    [Server]
+    private void GameEnd()
+    {
+        if (!isEliminated)
+            Debug.Log(name + " WON!!");
+    }
 
     private const float maxPassedTime = 0.3f; //never change this!
 
@@ -342,14 +301,14 @@ public class Player : NetworkBehaviour
 
         caster.missileAmount -= 1;
 
-        missileObject = newMissile;
+        //missileObject = newMissile; //used for missile timer
 
 
 
         //new code:
 
         //float displacementMagnitude = passedTime == 0 ? 0 : passedTime / 2.778f;
-        //Vector3 displacement = fireDirection * (displacementmagnitude * (caster.range / 10));
+        //Vector3 displacement = fireDirection * (displacementMagnitude * (caster.range / 10));
         //Vector3 castPosition = firePosition + new Vector3(fireDirection.x, fireDirection.y) * .5f;
         //newMissile.transform.position = castPosition += displacement;
         //missileScript.rb.velocity = fireDirection * caster.range;
@@ -362,22 +321,25 @@ public class Player : NetworkBehaviour
     }
 
 
-    private int ticks = 0;
-    private GameObject missileObject;
-    private Vector3 cachedMissilePosition;
-    private void MissileTimer() //run in update
-    {
-        //if (missileObject != null && TimeManager.Tick > ticks)
-        //{
-        //    ticks = (int)TimeManager.Tick;
 
-        //    if (cachedMissilePosition != default)
-        //        Debug.Log((cachedMissilePosition - missileObject.transform.position).magnitude);
-        //    cachedMissilePosition = missileObject.transform.position;
-        //}
-        //else if (missileObject == null)
-        //    cachedMissilePosition = default;
-    }
+    //missile timer code used to initially test the average distance a missile travels per tick:
+
+    //private int ticks = 0;
+    //private GameObject missileObject;
+    //private Vector3 cachedMissilePosition;
+    //private void MissileTimer() //run in update
+    //{
+    //    if (missileObject != null && TimeManager.Tick > ticks)
+    //    {
+    //        ticks = (int)TimeManager.Tick;
+
+    //        if (cachedMissilePosition != default)
+    //            Debug.Log((cachedMissilePosition - missileObject.transform.position).magnitude);
+    //        cachedMissilePosition = missileObject.transform.position;
+    //    }
+    //    else if (missileObject == null)
+    //        cachedMissilePosition = default;
+    //}
 
 
 
