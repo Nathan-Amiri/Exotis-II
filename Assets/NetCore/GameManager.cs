@@ -18,7 +18,7 @@ public class GameManager : NetworkBehaviour
     private readonly int[] playerIDs = new int[10];
 
     //client variables:
-    public int playerNumber;
+    static public int playerNumber;
 
     private void OnEnable()
     {

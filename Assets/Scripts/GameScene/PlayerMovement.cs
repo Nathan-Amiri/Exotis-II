@@ -29,7 +29,12 @@ public class PlayerMovement : NetworkBehaviour
             return;
 
         if (isStunned)
+        {
+            moveInput = 0;
+            jumpInput = false;
+            jumpInputDown = false;
             return;
+        }
 
         moveInput = Input.GetAxisRaw("Horizontal");
 
@@ -85,22 +90,17 @@ public class PlayerMovement : NetworkBehaviour
     }
 
     [Server]
-    public void BecomeStunned(float duration, bool permanent)
+    public void TemporaryStun(float duration)
     {
         isStunned = true;
-        RpcClientBecomeStunned(duration, permanent);
+        RpcClientBecomeStunned(duration);
     }
 
     [ObserversRpc]
-    private void RpcClientBecomeStunned(float duration, bool permanent)
+    private void RpcClientBecomeStunned(float duration)
     {
         if (IsOwner)
-        {
-            if (permanent)
-                rb.constraints = RigidbodyConstraints2D.FreezeAll;
-            else
-                StartCoroutine(Stun(duration));
-        }
+            StartCoroutine(Stun(duration));
     }
     public IEnumerator Stun(float duration) //called by player
     {

@@ -4,6 +4,8 @@ using UnityEngine;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using FishNet.Connection;
+using TMPro;
+using System.Reflection;
 
 public class Player : NetworkBehaviour
 {
@@ -13,6 +15,11 @@ public class Player : NetworkBehaviour
     public SpriteRenderer coreSpriteRenderer; //^
     public Animator animator; //^
     public PlayerMovement playerMovement; //^, read by Setup
+
+    [HideInInspector] public GameManager gameManager; //set by Setup
+    [HideInInspector] public Animator countdownAnim; //set by setup
+    [HideInInspector] public TMP_Text countdownText; //^
+    [HideInInspector] public TMP_Text winnerText; //^
 
     //colors from lightest to darkest:
     [HideInInspector] public Color32 frost = new(140, 228, 232, 255); //read by index
@@ -57,7 +64,6 @@ public class Player : NetworkBehaviour
     private GameObject healthBar; //is actually the health bar's pivot point
     private GameObject missileBar; //is actually the missile bar's pivot point
 
-    [HideInInspector] public GameManager gameManager; //set by Setup
     public static int alivePlayers = 0; //number of players not eliminated. used by server only
     private bool isEliminated; //server only
     public delegate void OnGameEndAction();
@@ -73,8 +79,6 @@ public class Player : NetworkBehaviour
 
     public void OnSpawn(Index index)
     {
-        playerMovement.isStunned = true;
-
         name = charSelectInfo[0];
         index.LoadAttributes(this, charSelectInfo); //add stats and spells
 
@@ -88,20 +92,72 @@ public class Player : NetworkBehaviour
         healthBar = playerHud.transform.GetChild(2).gameObject;
         missileBar = playerHud.transform.GetChild(3).GetChild(1).gameObject;
         
-        health = maxHealth;
         maxHealthBarWidth = healthBar.transform.localScale.x;
 
         missileFillSpeed = 1;
-        missileAmount = 3;
         maxMissileBarWidth = missileBar.transform.localScale.x;
-        
-        if (IsServer && IsOwner)
-            for (int i = 0; i < gameManager.playerNumbers.Length; i++)
-                if (gameManager.playerNumbers[i] != 0)
-                    alivePlayers++;
+
+        NewGame();
 
         startUpdate = true;
     }
+
+    private void NewGame()
+    {
+        missileAmount = 3;
+
+        if (IsOwner)
+        {
+            winnerText.text = "";
+
+            if (GameManager.playerNumber == 1)
+                transform.position = new Vector2(-5.5f, -2.5f);
+            else if (GameManager.playerNumber == 2)
+                transform.position = new Vector2(5.5f, -2.5f);
+            else if (GameManager.playerNumber == 3)
+                transform.position = new Vector2(-7.5f, 3);
+            else if (GameManager.playerNumber == 4)
+                transform.position = new Vector2(7.5f, 3f);
+        }
+
+        if (IsServer)
+        {
+            isEliminated = false;
+
+            playerMovement.isStunned = true;
+            isImmune = true;
+            health = maxHealth;
+        }
+
+        if (IsOwner && IsServer)
+        {
+            alivePlayers = 0;
+            for (int i = 0; i < gameManager.playerNumbers.Length; i++)
+                if (gameManager.playerNumbers[i] != 0)
+                    alivePlayers++;
+        }
+
+        StartCoroutine(Countdown());
+    }
+
+    private IEnumerator Countdown()
+    {
+        yield return new WaitForSeconds(.3f);
+        countdownText.text = "3";
+        countdownAnim.SetTrigger("TrCountdown");
+        yield return new WaitForSeconds(.9f);
+        countdownText.text = "2";
+        countdownAnim.SetTrigger("TrCountdown");
+        yield return new WaitForSeconds(.9f);
+        countdownText.text = "1";
+        countdownAnim.SetTrigger("TrCountdown");
+        yield return new WaitForSeconds(.9f);
+        countdownText.text = "Go!";
+        countdownAnim.SetTrigger("TrCountdown");
+        isImmune = false;
+        playerMovement.isStunned = false;
+    }
+
     private void Update()
     {
         if (!startUpdate)
@@ -161,7 +217,7 @@ public class Player : NetworkBehaviour
         if (amount < 0)
         {
             StartCoroutine(BecomeImmune(.7f));
-            playerMovement.BecomeStunned(.35f, false);
+            playerMovement.TemporaryStun(.35f);
             RpcClientTakeDamage();
         }
     }
@@ -230,7 +286,7 @@ public class Player : NetworkBehaviour
     {
         isEliminated = true;
         RpcClientTakeDamage();
-        playerMovement.BecomeStunned(0, true);
+        playerMovement.isStunned = true;
         RpcRelocate(Owner);
         CheckForGameEnd();
     }
@@ -241,7 +297,7 @@ public class Player : NetworkBehaviour
     }
 
     [Server]
-    private void CheckForGameEnd()
+    private void CheckForGameEnd() //called on server for newly eliminated player classes
     {
         alivePlayers -= 1;
 
@@ -250,10 +306,20 @@ public class Player : NetworkBehaviour
     }
 
     [Server]
-    private void GameEnd()
+    private void GameEnd() //called on server for all player classes
     {
         if (!isEliminated)
-            Debug.Log(name + " WON!!");
+            isImmune = true;
+
+        RpcBeginReset(!isEliminated);
+    }
+
+    [ObserversRpc]
+    private void RpcBeginReset(bool isWinner) //called on all player classes on all clients
+    {
+        if (isWinner)
+            winnerText.text = name + " Wins!";
+        Invoke(nameof(NewGame), 2); //temporary
     }
 
     private const float maxPassedTime = 0.3f; //never change this!
@@ -305,26 +371,18 @@ public class Player : NetworkBehaviour
 
 
 
-        //new code:
-        if (name == "Nymph")
-        {
-            float displacementMagnitude = passedTime == 0 ? 0 : passedTime / 2.778f;
-            Vector3 displacement = fireDirection * (displacementMagnitude * (caster.range / 10));
-            Vector3 castPosition = firePosition + new Vector3(fireDirection.x, fireDirection.y) * .5f;
-            newMissile.transform.position = castPosition += displacement;
-            missileScript.rb.velocity = fireDirection * caster.range;
-        }
-        else        //old code:
-        {
-            newMissile.transform.position = transform.position + new Vector3(fireDirection.x, fireDirection.y) * .5f;
-            missileScript.rb.velocity = fireDirection * caster.range;
-        }
+        float displacementMagnitude = passedTime / 2.778f; //(number of ticks fired missile has traveled) / 2.778 = the distance the missile has traveled
+        Vector3 displacement = (caster.range / 10) * displacementMagnitude * fireDirection;
+        Vector3 castPosition = firePosition + new Vector3(fireDirection.x, fireDirection.y) * .5f;
+        newMissile.transform.position = castPosition += displacement;
 
+        missileScript.rb.velocity = fireDirection * caster.range;
 
+        //old code:
 
+        //newMissile.transform.position = transform.position + new Vector3(fireDirection.x, fireDirection.y) * .5f;
 
-
-
+        //missileScript.rb.velocity = fireDirection * caster.range;
     }
 
 

@@ -71,7 +71,7 @@ public class CharSelect : NetworkBehaviour
     {
         gameManager = gm;
 
-        RpcGetCurrentAvatars(InstanceFinder.ClientManager.Connection, gameManager.playerNumber);
+        RpcGetCurrentAvatars(InstanceFinder.ClientManager.Connection, GameManager.playerNumber);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -108,8 +108,8 @@ public class CharSelect : NetworkBehaviour
         currentColors[0] = (Color32)GetType().GetField(type1).GetValue(this);
         currentColors[1] = (Color32)GetType().GetField(type2).GetValue(this);
 
-        RpcServerChangeAvatar(gameManager.playerNumber, emptyColors);
-        RpcChangeReadyStatus(gameManager.playerNumber, false, selectedElemental);
+        RpcServerChangeAvatar(GameManager.playerNumber, emptyColors);
+        RpcChangeReadyStatus(GameManager.playerNumber, false, selectedElemental);
 
         selectedElemental = newElemental;
         charName.text = newElemental;
@@ -165,8 +165,8 @@ public class CharSelect : NetworkBehaviour
 
         gameManager.charSelectInfo = charSelectInfo;
 
-        RpcServerChangeAvatar(gameManager.playerNumber, currentColors);
-        RpcChangeReadyStatus(gameManager.playerNumber, true, null);
+        RpcServerChangeAvatar(GameManager.playerNumber, currentColors);
+        RpcChangeReadyStatus(GameManager.playerNumber, true, null);
     }
 
 
