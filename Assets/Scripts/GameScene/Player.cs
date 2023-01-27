@@ -306,18 +306,25 @@ public class Player : NetworkBehaviour
 
 
         //new code:
+        if (name == "Nymph")
+        {
+            float displacementMagnitude = passedTime == 0 ? 0 : passedTime / 2.778f;
+            Vector3 displacement = fireDirection * (displacementMagnitude * (caster.range / 10));
+            Vector3 castPosition = firePosition + new Vector3(fireDirection.x, fireDirection.y) * .5f;
+            newMissile.transform.position = castPosition += displacement;
+            missileScript.rb.velocity = fireDirection * caster.range;
+        }
+        else        //old code:
+        {
+            newMissile.transform.position = transform.position + new Vector3(fireDirection.x, fireDirection.y) * .5f;
+            missileScript.rb.velocity = fireDirection * caster.range;
+        }
 
-        //float displacementMagnitude = passedTime == 0 ? 0 : passedTime / 2.778f;
-        //Vector3 displacement = fireDirection * (displacementMagnitude * (caster.range / 10));
-        //Vector3 castPosition = firePosition + new Vector3(fireDirection.x, fireDirection.y) * .5f;
-        //newMissile.transform.position = castPosition += displacement;
-        //missileScript.rb.velocity = fireDirection * caster.range;
 
 
-        //old code:
 
-        newMissile.transform.position = transform.position + new Vector3(fireDirection.x, fireDirection.y) * .5f;
-        missileScript.rb.velocity = fireDirection * caster.range;
+
+
     }
 
 
