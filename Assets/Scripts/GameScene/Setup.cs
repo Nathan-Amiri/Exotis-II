@@ -9,21 +9,22 @@ using TMPro;
 public class Setup : NetworkBehaviour
 {
     public GameObject playerPref; //assigned in inspector
+    public GameObject editorGrid; //^
+    public GameObject hud; //^
     public Animator countdownAnim; //^
     public TMP_Text countdownText; //^
     public TMP_Text winnerText; //^
+    public PlayAgain playAgain; //^
 
-    public GameObject editorGrid; //^
-    public GameObject hud; //^
     public Index index; //^
 
     private GameManager gameManager;
-    private Player player;
 
     private Vector3 playerPosition;
 
     private void OnEnable()
     {
+        editorGrid.SetActive(false);
         GameManager.OnClientConnectOrLoad += OnSpawn;
     }
     private void OnDisable()
@@ -32,8 +33,6 @@ public class Setup : NetworkBehaviour
     }
     public void OnSpawn(GameManager gm)
     {
-        editorGrid.SetActive(false);
-
         gameManager = gm;
 
         if (GameManager.playerNumber == 1)
@@ -56,12 +55,10 @@ public class Setup : NetworkBehaviour
         RpcStartPlayer(newPlayerObject, newPlayerNumber, newInfo);
     }
 
-    [ObserversRpc]
+    [ObserversRpc (BufferLast = true)] //bufferlast is needed because this rpc is run on clients that may not have received the beacon signal yet
     private void RpcStartPlayer(GameObject newPlayerObject, int newPlayerNumber, string[] newInfo)
     {
         Player newPlayer = newPlayerObject.GetComponent<Player>();
-        if (newPlayer.Owner == InstanceFinder.ClientManager.Connection)
-            player = newPlayer;
 
         newPlayer.charSelectInfo = newInfo;
         newPlayer.playerHud = hud.transform.GetChild(newPlayerNumber - 1).gameObject;
@@ -69,6 +66,7 @@ public class Setup : NetworkBehaviour
         newPlayer.countdownAnim = countdownAnim;
         newPlayer.countdownText = countdownText;
         newPlayer.winnerText = winnerText;
+        newPlayer.playAgain = playAgain;
 
         newPlayer.OnSpawn(index);
     }

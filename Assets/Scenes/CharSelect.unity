@@ -958,7 +958,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 197227169964388534, guid: e2b9a6993132b434d87fd889ea055978, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 197227169964388534, guid: e2b9a6993132b434d87fd889ea055978, type: 3}
       propertyPath: m_AnchorMax.x
@@ -1034,7 +1034,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 197227169964388535, guid: e2b9a6993132b434d87fd889ea055978, type: 3}
       propertyPath: m_Name
-      value: P3AvatarShell
+      value: P4AvatarShell
       objectReference: {fileID: 0}
     - target: {fileID: 4375681395053349967, guid: e2b9a6993132b434d87fd889ea055978, type: 3}
       propertyPath: m_Name
@@ -1227,7 +1227,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 197227169964388534, guid: e2b9a6993132b434d87fd889ea055978, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 197227169964388534, guid: e2b9a6993132b434d87fd889ea055978, type: 3}
       propertyPath: m_AnchorMax.x
@@ -1303,7 +1303,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 197227169964388535, guid: e2b9a6993132b434d87fd889ea055978, type: 3}
       propertyPath: m_Name
-      value: P4AvatarShell
+      value: P3AvatarShell
       objectReference: {fileID: 0}
     - target: {fileID: 4375681395053349967, guid: e2b9a6993132b434d87fd889ea055978, type: 3}
       propertyPath: m_Name
@@ -2076,11 +2076,10 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 1303231437}
   _networkObjectCache: {fileID: 1303231437}
   gameManager: {fileID: 0}
-  avatars: []
   p1Avatar: {fileID: 1665914714}
   p2Avatar: {fileID: 2000914054}
-  p3Avatar: {fileID: 2068043384}
-  p4Avatar: {fileID: 1293160286}
+  p3Avatar: {fileID: 1293160286}
+  p4Avatar: {fileID: 2068043384}
   frost:
     serializedVersion: 2
     rgba: 4293452940
@@ -2815,8 +2814,8 @@ Transform:
   m_Children:
   - {fileID: 1665914712}
   - {fileID: 1920262255}
-  - {fileID: 533273642}
   - {fileID: 706291716}
+  - {fileID: 533273642}
   m_Father: {fileID: 1335073994}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2827,14 +2826,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2340174981652211971, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4765006346053474299, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: m_Text
-      value: localhost
-      objectReference: {fileID: 0}
     - target: {fileID: 4765006347246544569, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
       propertyPath: tugboat
       value: 
@@ -2843,32 +2834,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: SimpleManager
       objectReference: {fileID: 0}
-    - target: {fileID: 4765006347823815737, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4765006347823815739, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
       propertyPath: <SceneId>k__BackingField
       value: 10019184038367598118
       objectReference: {fileID: 0}
     - target: {fileID: 4765006347823815739, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: _sceneNetworkObjects.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 4765006347823815739, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: _sceneNetworkObjects.Array.data[1]
+      propertyPath: _sceneNetworkObjects.Array.data[0]
       value: 
       objectReference: {fileID: 1303231437}
     - target: {fileID: 4765006347823815739, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: _sceneNetworkObjects.Array.data[2]
+      propertyPath: _sceneNetworkObjects.Array.data[1]
       value: 
       objectReference: {fileID: 1335073995}
     - target: {fileID: 4765006347823815739, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: _sceneNetworkObjects.Array.data[3]
-      value: 
-      objectReference: {fileID: 1819753647}
-    - target: {fileID: 4765006347823815739, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: _sceneNetworkObjects.Array.data[4]
+      propertyPath: _sceneNetworkObjects.Array.data[2]
       value: 
       objectReference: {fileID: 1819753647}
     - target: {fileID: 6787512017726517089, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}

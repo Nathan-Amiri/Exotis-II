@@ -51,10 +51,9 @@ public class SimpleManager : MonoBehaviour
     private void Update()
     {
         if (Input.GetButtonDown("EscapeMenu"))
-        {
-            exitDisconnectText.text = gameManager == null ? "Exit Game" : "Disconnect";
             escapeMenu.SetActive(!escapeMenu.activeSelf);
-        }
+
+        exitDisconnectText.text = gameManager == null ? "Exit Game" : "Disconnect";
 
         joinLobby.interactable = !placeHolder.enabled;
     }

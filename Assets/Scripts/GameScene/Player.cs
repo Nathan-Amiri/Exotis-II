@@ -5,7 +5,6 @@ using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using FishNet.Connection;
 using TMPro;
-using System.Reflection;
 
 public class Player : NetworkBehaviour
 {
@@ -17,9 +16,10 @@ public class Player : NetworkBehaviour
     public PlayerMovement playerMovement; //^, read by Setup
 
     [HideInInspector] public GameManager gameManager; //set by Setup
-    [HideInInspector] public Animator countdownAnim; //set by setup
+    [HideInInspector] public Animator countdownAnim; //^
     [HideInInspector] public TMP_Text countdownText; //^
     [HideInInspector] public TMP_Text winnerText; //^
+    [HideInInspector] public PlayAgain playAgain; //^
 
     //colors from lightest to darkest:
     [HideInInspector] public Color32 frost = new(140, 228, 232, 255); //read by index
@@ -68,13 +68,16 @@ public class Player : NetworkBehaviour
     private bool isEliminated; //server only
     public delegate void OnGameEndAction();
     public static event OnGameEndAction OnGameEnd;
+
     private void OnEnable()
     {
         OnGameEnd += GameEnd;
+        PlayAgain.OnPlayAgain += NewGame;
     }
     private void OnDisable()
     {
         OnGameEnd -= GameEnd;
+        PlayAgain.OnPlayAgain -= NewGame;
     }
 
     public void OnSpawn(Index index)
@@ -102,9 +105,11 @@ public class Player : NetworkBehaviour
         startUpdate = true;
     }
 
-    private void NewGame()
+    public void NewGame() //run by PlayAgain
     {
         missileAmount = 3;
+
+        StartCoroutine(UnlockPlayers());
 
         if (IsOwner)
         {
@@ -118,6 +123,8 @@ public class Player : NetworkBehaviour
                 transform.position = new Vector2(-7.5f, 3);
             else if (GameManager.playerNumber == 4)
                 transform.position = new Vector2(7.5f, 3f);
+
+            StartCoroutine(Countdown());
         }
 
         if (IsServer)
@@ -136,8 +143,6 @@ public class Player : NetworkBehaviour
                 if (gameManager.playerNumbers[i] != 0)
                     alivePlayers++;
         }
-
-        StartCoroutine(Countdown());
     }
 
     private IEnumerator Countdown()
@@ -154,6 +159,11 @@ public class Player : NetworkBehaviour
         yield return new WaitForSeconds(.9f);
         countdownText.text = "Go!";
         countdownAnim.SetTrigger("TrCountdown");
+    }
+
+    private IEnumerator UnlockPlayers()
+    {
+        yield return new WaitForSeconds(3);
         isImmune = false;
         playerMovement.isStunned = false;
     }
@@ -319,7 +329,19 @@ public class Player : NetworkBehaviour
     {
         if (isWinner)
             winnerText.text = name + " Wins!";
-        Invoke(nameof(NewGame), 2); //temporary
+        if (IsOwner)
+            StartCoroutine(PlayAgainScreen());
+    }
+
+    private IEnumerator PlayAgainScreen()
+    {
+        yield return new WaitForSeconds(2);
+
+        Color32[] lightAndDark = new Color32[2];
+        lightAndDark[0] = lighterColor;
+        lightAndDark[1] = darkerColor;
+
+        playAgain.NewPlayAgain(this, lightAndDark);
     }
 
     private const float maxPassedTime = 0.3f; //never change this!

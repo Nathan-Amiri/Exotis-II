@@ -14,11 +14,20 @@ public class ElementalButton : MonoBehaviour
     public string stat1; //^
     public string stat2; //^
 
-    private void Awake()
+    private void OnEnable()
+    {
+        GameManager.OnClientConnectOrLoad += OnSpawn;
+    }
+    private void OnDisable()
+    {
+        GameManager.OnClientConnectOrLoad -= OnSpawn;
+    }
+
+    private void OnSpawn(GameManager gm)
     {
         button = GetComponent<Button>();
         button.onClick.AddListener(ButtonPress);
-        charSelect = GameObject.Find("NobScripts").GetComponent<CharSelect>();
+        charSelect = GameObject.Find("NobScripts").GetComponent<CharSelect>(); //can't be run in awake, since nobscripts haven't loaded yet (on scene change)
     }
 
     public void ButtonPress()

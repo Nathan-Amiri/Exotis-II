@@ -48,7 +48,12 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 3249571368721494047}
   _networkObjectCache: {fileID: 3249571368721494047}
-  numberOfPlayers: 0
+  playerNumbers: 00000000000000000000000000000000000000000000000000000000000000000000000000000000
+  charSelectInfo:
+  - 
+  - 
+  - 
+  - 
 --- !u!114 &3249571368721494047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71,7 +76,7 @@ MonoBehaviour:
   _isGlobal: 1
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: 7
+  <PrefabId>k__BackingField: 3
   _scenePathHash: 2332773068
   <SceneId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 9742123980755451794

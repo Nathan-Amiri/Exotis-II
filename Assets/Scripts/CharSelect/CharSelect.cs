@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using FishNet;
 using FishNet.Object;
 using FishNet.Connection;
 using TMPro;
@@ -11,8 +10,8 @@ public class CharSelect : NetworkBehaviour
 {
     [HideInInspector] public GameManager gameManager;
 
-    public CharImage[] avatars; //assigned in inspector
-    public CharImage p1Avatar; //^
+    private CharImage[] avatars;
+    public CharImage p1Avatar; //assigned in inspector
     public CharImage p2Avatar; //^
     public CharImage p3Avatar; //^
     public CharImage p4Avatar; //^
@@ -71,16 +70,17 @@ public class CharSelect : NetworkBehaviour
     {
         gameManager = gm;
 
-        RpcGetCurrentAvatars(InstanceFinder.ClientManager.Connection, GameManager.playerNumber);
+        RpcChangeAvatar(GameManager.playerNumber, emptyColors);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void RpcGetCurrentAvatars(NetworkConnection conn, int newPlayer)
+    private void RpcChangeAvatar(int newPlayer, Color32[] lightAndDark)
     {
-        ChangeAvatar(newPlayer, emptyColors);
+        CharImage avatar = avatars[newPlayer - 1];
+        avatar.charShell.color = lightAndDark[0];
+        avatar.charCore.color = lightAndDark[1];
 
         Color32[] serverColors = new Color32[8];
-
         int x = 0;
         for (int i = 0; i < 4; i ++)
         {
@@ -89,10 +89,10 @@ public class CharSelect : NetworkBehaviour
             x += 2; //i increases by 1, x increases by 2
         }
 
-        RpcClientGetCurrentAvatars(conn, serverColors);
+        RpcUpdateAvatars(serverColors);
     }
-    [TargetRpc]
-    private void RpcClientGetCurrentAvatars(NetworkConnection conn, Color32[] serverColors)
+    [ObserversRpc] //if this was a targetrpc, glitches would occur when multiple clients loaded into charselect simultaneously
+    private void RpcUpdateAvatars(Color32[] serverColors)
     {
         int x = 0;
         for (int i = 0; i < 4; i++)
@@ -108,7 +108,7 @@ public class CharSelect : NetworkBehaviour
         currentColors[0] = (Color32)GetType().GetField(type1).GetValue(this);
         currentColors[1] = (Color32)GetType().GetField(type2).GetValue(this);
 
-        RpcServerChangeAvatar(GameManager.playerNumber, emptyColors);
+        RpcChangeAvatar(GameManager.playerNumber, emptyColors);
         RpcChangeReadyStatus(GameManager.playerNumber, false, selectedElemental);
 
         selectedElemental = newElemental;
@@ -165,31 +165,8 @@ public class CharSelect : NetworkBehaviour
 
         gameManager.charSelectInfo = charSelectInfo;
 
-        RpcServerChangeAvatar(GameManager.playerNumber, currentColors);
+        RpcChangeAvatar(GameManager.playerNumber, currentColors);
         RpcChangeReadyStatus(GameManager.playerNumber, true, null);
-    }
-
-
-    [ServerRpc (RequireOwnership = false)]
-    private void RpcServerChangeAvatar(int newPlayer, Color32[] newColors)
-    {
-        ChangeAvatar(newPlayer, newColors);
-        RpcClientChangeAvatar(newPlayer, newColors);
-    }
-
-    [ObserversRpc]
-    private void RpcClientChangeAvatar(int newPlayer, Color32[] newColors)
-    {
-        if (IsClientOnly)
-            ChangeAvatar(newPlayer, newColors);
-    }
-
-    private void ChangeAvatar(int newPlayer, Color32[] newColors)
-    {
-        CharImage avatar = avatars[newPlayer - 1];
-
-        avatar.charShell.color = newColors[0];
-        avatar.charCore.color = newColors[1];
     }
 
     [ServerRpc (RequireOwnership = false)]

@@ -4,7 +4,6 @@ using UnityEngine;
 using FishNet.Object;
 using FishNet;
 using FishNet.Connection;
-using FishNet.Transporting.Tugboat;
 
 public class Beacon : NetworkBehaviour //spawns a gamemanager in a scene and, once a client has fully loaded into a scene, sends a signal to the GameManager
 {
@@ -17,7 +16,6 @@ public class Beacon : NetworkBehaviour //spawns a gamemanager in a scene and, on
     public override void OnSpawnServer(NetworkConnection conn)
     {
         base.OnSpawnServer(conn);
-
         if (spawnGameManager && IsServer) //spawn gamemanager on server
             if (GameObject.FindGameObjectWithTag("GameManager") == null)
             {

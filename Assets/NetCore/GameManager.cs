@@ -19,6 +19,7 @@ public class GameManager : NetworkBehaviour
 
     //client variables:
     static public int playerNumber;
+    private GameObject simpleManager;
 
     private void OnEnable()
     {
@@ -36,6 +37,8 @@ public class GameManager : NetworkBehaviour
             RpcFirstConnect(InstanceFinder.ClientManager.Connection);
         else
             SendConnectOrLoadEvent();
+
+        simpleManager = GameObject.FindWithTag("SimpleManager");
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -60,6 +63,7 @@ public class GameManager : NetworkBehaviour
     }
 
     //scene changing:
+
     [Server]
     public void SceneChange(string newScene)
     {
@@ -103,6 +107,9 @@ public class GameManager : NetworkBehaviour
         base.OnStopClient();
         playerNumber = 0;
         UnityEngine.SceneManagement.SceneManager.LoadScene("CharSelect");
+
+        if (simpleManager != null) //prevents errors from occuring when stopping playmode in editor. Should never be null in game
+            simpleManager.transform.GetChild(0).gameObject.SetActive(true); //turn on escapemenu
     }
 
     public delegate void OnClientConnectOrLoadAction(GameManager gm);
