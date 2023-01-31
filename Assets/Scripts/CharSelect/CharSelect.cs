@@ -60,10 +60,12 @@ public class CharSelect : NetworkBehaviour
     private void OnEnable()
     {
         GameManager.OnClientConnectOrLoad += OnSpawn;
+        GameManager.OnRemoteClientDisconnect += OnRemoteClientDisconnect;
     }
     private void OnDisable()
     {
         GameManager.OnClientConnectOrLoad -= OnSpawn;
+        GameManager.OnRemoteClientDisconnect -= OnRemoteClientDisconnect;
     }
 
     public void OnSpawn(GameManager gm)
@@ -76,13 +78,19 @@ public class CharSelect : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void RpcChangeAvatar(int newPlayer, Color32[] lightAndDark)
     {
+        ChangeAvatar(newPlayer, lightAndDark);
+    }
+
+    [Server]
+    private void ChangeAvatar(int newPlayer, Color32[] lightAndDark)
+    {
         CharImage avatar = avatars[newPlayer - 1];
         avatar.charShell.color = lightAndDark[0];
         avatar.charCore.color = lightAndDark[1];
 
         Color32[] serverColors = new Color32[8];
         int x = 0;
-        for (int i = 0; i < 4; i ++)
+        for (int i = 0; i < 4; i++)
         {
             serverColors[x] = avatars[i].charShell.color;
             serverColors[x + 1] = avatars[i].charCore.color;
@@ -91,6 +99,7 @@ public class CharSelect : NetworkBehaviour
 
         RpcUpdateAvatars(serverColors);
     }
+
     [ObserversRpc] //if this was a targetrpc, glitches would occur when multiple clients loaded into charselect simultaneously
     private void RpcUpdateAvatars(Color32[] serverColors)
     {
@@ -187,5 +196,14 @@ public class CharSelect : NetworkBehaviour
                 return;
 
         gameManager.SceneChange("GameScene");
+    }
+
+    [Server]
+    private void OnRemoteClientDisconnect(int disconnectedPlayer)
+    {
+        Color32[] lightAndDark = new Color32[2];
+        lightAndDark[0] = Color.white;
+        lightAndDark[1] = Color.white;
+        ChangeAvatar(disconnectedPlayer, lightAndDark);
     }
 }

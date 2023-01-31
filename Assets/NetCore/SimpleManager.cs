@@ -11,6 +11,7 @@ public class SimpleManager : MonoBehaviour
     //non-networked game manager
 
     public GameObject escapeMenu; //assigned in prefab
+    //^ escapemenu turned off on disconnect by GameManager
     public TMP_Text exitDisconnectText; //^
     public Button joinLobby;
     public TMP_InputField ipAddress; //^
@@ -50,7 +51,7 @@ public class SimpleManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetButtonDown("EscapeMenu"))
+        if (Input.GetButtonDown("EscapeMenu") && gameManager != null) 
             escapeMenu.SetActive(!escapeMenu.activeSelf);
 
         exitDisconnectText.text = gameManager == null ? "Exit Game" : "Disconnect";
@@ -75,8 +76,6 @@ public class SimpleManager : MonoBehaviour
 
     public void SelectExitDisconnect()
     {
-        escapeMenu.SetActive(false);
-
         if (gameManager == null)
             Application.Quit();
         else

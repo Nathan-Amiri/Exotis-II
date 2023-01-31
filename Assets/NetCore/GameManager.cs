@@ -14,12 +14,17 @@ public class GameManager : NetworkBehaviour
     //general GameManager code:
 
     //server variables:
-    [HideInInspector] public int[] playerNumbers = new int[10]; //checked by CharSelect
-    private readonly int[] playerIDs = new int[10];
+    [HideInInspector] public int[] playerNumbers { get; private set; } //checked by CharSelect
+    private readonly int[] playerIDs = new int[4];
 
     //client variables:
-    static public int playerNumber;
+    static public int playerNumber { get; private set; }
     private GameObject simpleManager;
+
+    private void Awake()
+    {
+        playerNumbers = new int[4];
+    }
 
     private void OnEnable()
     {
@@ -98,6 +103,7 @@ public class GameManager : NetworkBehaviour
                 {
                     playerIDs[i] = 0;
                     playerNumbers[i] = 0;
+                    SendRemoteClientDisconnectEvent(i + 1);
                     return;
                 }
         }
@@ -108,7 +114,7 @@ public class GameManager : NetworkBehaviour
         playerNumber = 0;
         UnityEngine.SceneManagement.SceneManager.LoadScene("CharSelect");
 
-        if (simpleManager != null) //prevents errors from occuring when stopping playmode in editor. Should never be null in game
+        if (simpleManager != null)
             simpleManager.transform.GetChild(0).gameObject.SetActive(true); //turn on escapemenu
     }
 
@@ -119,9 +125,16 @@ public class GameManager : NetworkBehaviour
         OnClientConnectOrLoad?.Invoke(this);
     }
 
+    public delegate void OnRemoteClientDisconnectAction(int disconnectedPlayer);
+    public static event OnRemoteClientDisconnectAction OnRemoteClientDisconnect;
+    private void SendRemoteClientDisconnectEvent(int disconnectedPlayer)
+    {
+        OnRemoteClientDisconnect?.Invoke(disconnectedPlayer);
+    }
 
 
-        //game-specific code:
+
+    //game-specific code:
 
     [HideInInspector] public string[] charSelectInfo = new string[4]; //filled by CharSelect, accessed by Setup
 }
