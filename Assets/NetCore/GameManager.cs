@@ -112,7 +112,7 @@ public class GameManager : NetworkBehaviour
     {
         base.OnStopClient();
         playerNumber = 0;
-        UnityEngine.SceneManagement.SceneManager.LoadScene("CharSelect");
+        UnityEngine.SceneManagement.SceneManager.LoadScene(disconnectScene);
 
         if (simpleManager != null)
             simpleManager.transform.GetChild(0).gameObject.SetActive(true); //turn on escapemenu
@@ -135,6 +135,8 @@ public class GameManager : NetworkBehaviour
 
 
     //game-specific code:
+
+    private readonly string disconnectScene = "CharSelect";
 
     [HideInInspector] public string[] charSelectInfo = new string[4]; //filled by CharSelect, accessed by Setup
 }

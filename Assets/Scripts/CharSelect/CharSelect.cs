@@ -44,7 +44,7 @@ public class CharSelect : NetworkBehaviour
     private readonly Color32[] currentColors = new Color32[2]; //currentColors[0] = lighter color, [1] = darker color
 
     private readonly List<string> claimedElementals = new(); //server only
-    private readonly bool[] readyPlayers = new bool[10]; //server only
+    private readonly bool[] readyPlayers = new bool[4]; //server only
 
     private void Awake()
     {

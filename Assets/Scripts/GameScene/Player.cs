@@ -61,8 +61,9 @@ public class Player : NetworkBehaviour
     public GameObject missile; //set in inspector
 
     [HideInInspector] public GameObject playerHud;
-    private GameObject healthBar; //is actually the health bar's pivot point
-    private GameObject missileBar; //is actually the missile bar's pivot point
+    private GameObject healthBarPivot;
+    private GameObject healthBar; //only needed for Eliminate; most implementation uses healthBarPivot
+    private GameObject missileBarPivot;
 
     public static int alivePlayers = 0; //number of players not eliminated. used by server only
     private bool isEliminated; //server only
@@ -92,13 +93,14 @@ public class Player : NetworkBehaviour
         if (IsOwner)
             GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
 
-        healthBar = playerHud.transform.GetChild(2).gameObject;
-        missileBar = playerHud.transform.GetChild(3).GetChild(1).gameObject;
+        healthBarPivot = playerHud.transform.GetChild(2).gameObject;
+        healthBar = healthBarPivot.transform.GetChild(0).gameObject;
+        missileBarPivot = playerHud.transform.GetChild(3).GetChild(1).gameObject;
         
-        maxHealthBarWidth = healthBar.transform.localScale.x;
+        maxHealthBarWidth = healthBarPivot.transform.localScale.x;
 
         missileFillSpeed = 1;
-        maxMissileBarWidth = missileBar.transform.localScale.x;
+        maxMissileBarWidth = missileBarPivot.transform.localScale.x;
 
         NewGame();
 
@@ -201,10 +203,22 @@ public class Player : NetworkBehaviour
     {
         float proportion = maxHealth / health; //maxHealth / health should equal the same proportion as maxHealthBarWidth / healthBar's scale.x
 
-        if (healthBar.transform.localScale.x > maxHealthBarWidth / proportion)
-            healthBar.transform.localScale -= new Vector3(Time.deltaTime, 0);
-        else if (healthBar.transform.localScale.x < maxHealthBarWidth / proportion)
-            healthBar.transform.localScale += new Vector3(Time.deltaTime, 0);
+        if (healthBarPivot.transform.localScale.x > maxHealthBarWidth / proportion)
+            healthBarPivot.transform.localScale -= new Vector3(Time.deltaTime, 0);
+        else if (healthBarPivot.transform.localScale.x < maxHealthBarWidth / proportion)
+            healthBarPivot.transform.localScale += new Vector3(Time.deltaTime, 0);
+
+
+
+
+
+        if (healthBarPivot.transform.localScale.x < .02f)
+        {
+            if (healthBar.activeSelf)
+                healthBar.SetActive(false);
+        }
+        else if (!healthBar.activeSelf)
+            healthBar.SetActive(true);
     }
 
     [Server]
@@ -399,12 +413,6 @@ public class Player : NetworkBehaviour
         newMissile.transform.position = castPosition += displacement;
 
         missileScript.rb.velocity = fireDirection * caster.range;
-
-        //old code:
-
-        //newMissile.transform.position = transform.position + new Vector3(fireDirection.x, fireDirection.y) * .5f;
-
-        //missileScript.rb.velocity = fireDirection * caster.range;
     }
 
 
@@ -445,7 +453,7 @@ public class Player : NetworkBehaviour
     private void MissileBar() //run in update
     {
         float proportion = 3 / missileAmount; //3 is max missile amount. 3 / missileAmount should equal the same proportion as maxMissileBarWidth / missileBar's scale.x 
-        missileBar.transform.localScale = new Vector2(maxMissileBarWidth / proportion, missileBar.transform.localScale.y);
+        missileBarPivot.transform.localScale = new Vector2(maxMissileBarWidth / proportion, missileBarPivot.transform.localScale.y);
 
         if (missileAmount < 3)
             missileAmount += missileFillSpeed * Time.deltaTime;

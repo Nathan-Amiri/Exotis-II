@@ -90,6 +90,10 @@ public class PlayAgain : NetworkBehaviour
         if (allPlayersReady)
         {
             SendPlayAgainEvent();
+
+            for (int i = 0; i < readyPlayers.Length; i++)
+                readyPlayers[i] = false;
+
             return;
         }
 
@@ -112,6 +116,12 @@ public class PlayAgain : NetworkBehaviour
     [ObserversRpc]
     private void SendPlayAgainEvent() //sent to all clients, invokes an event on all Players on that client
     {
+        for (int i = 0; i < 4; i++)
+        {
+            avatars[i].charShell.color = Color.white;
+            avatars[i].charCore.color = Color.white;
+        }
+
         playAgainBackground.SetActive(false);
         playAgainText.text = "";
         choice.SetActive(false);
