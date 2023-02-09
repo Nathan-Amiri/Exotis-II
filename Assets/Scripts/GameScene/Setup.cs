@@ -9,7 +9,6 @@ using TMPro;
 public class Setup : NetworkBehaviour
 {
     public GameObject playerPref; //assigned in inspector
-    public GameObject editorGrid; //^
     public GameObject hud; //^
     public Animator countdownAnim; //^
     public TMP_Text countdownText; //^
@@ -24,7 +23,6 @@ public class Setup : NetworkBehaviour
 
     private void OnEnable()
     {
-        editorGrid.SetActive(false);
         GameManager.OnClientConnectOrLoad += OnSpawn;
     }
     private void OnDisable()

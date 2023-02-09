@@ -407,11 +407,6 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: -4158588309664115983}
   _networkObjectCache: {fileID: -4158588309664115983}
-  speed: 3
-  jumpForce: 7
-  lowJumpMultiplier: 4
-  isGrounded: 0
-  isStunned: 0
   rb: {fileID: 4696052625515170072}
 --- !u!114 &1776539745
 MonoBehaviour:
@@ -432,39 +427,7 @@ MonoBehaviour:
   coreSpriteRenderer: {fileID: 8254350197921800754}
   animator: {fileID: 6647395311802605896}
   playerMovement: {fileID: 4696052625515170087}
-  frost:
-    serializedVersion: 2
-    rgba: 4293452940
-  wind:
-    serializedVersion: 2
-    rgba: 4294954445
-  lightning:
-    serializedVersion: 2
-    rgba: 4278250751
-  flame:
-    serializedVersion: 2
-    rgba: 4278221567
-  water:
-    serializedVersion: 2
-    rgba: 4294948387
-  venom:
-    serializedVersion: 2
-    rgba: 4278240023
-  lighterColor:
-    serializedVersion: 2
-    rgba: 0
-  darkerColor:
-    serializedVersion: 2
-    rgba: 0
-  maxHealth: 15
-  charSelectInfo:
-  - 
-  - 
-  - 
-  - 
-  isImmune: 0
   missile: {fileID: 7543987559241770783, guid: f00153e719f265640a2aeeab40c12739, type: 3}
-  playerHud: {fileID: 0}
 --- !u!114 &-4158588309664115983
 MonoBehaviour:
   m_ObjectHideFlags: 0

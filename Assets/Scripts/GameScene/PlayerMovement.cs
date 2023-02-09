@@ -3,20 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
+using System;
 
 public class PlayerMovement : NetworkBehaviour
 {
-    [HideInInspector] public float speed = 3; //changed by Player
-    [HideInInspector] public float jumpForce = 5; //^
+    [NonSerialized] public float speedIncrease = 1; //changed by Player, all velocity changes are multiplied by speed
+    private readonly float moveSpeed = 3;
+    private readonly float jumpForce = 6.8f;
 
-    [HideInInspector] public float lowJumpMultiplier = 4; //^, used for dynamic jump
+    private readonly float lowJumpMultiplier = 4; //used for dynamic jump
     private readonly float fallMultiplier = 1; //fastfall
 
-    [HideInInspector] public bool isGrounded; //read by GroundCheck
+    [NonSerialized] public bool isGrounded; //read by GroundCheck
     [SyncVar]
-    [HideInInspector] public bool isStunned; //read by player
+    [NonSerialized] public bool isStunned; //read by player
 
-    public Rigidbody2D rb; //assigned in inspector
+    public Rigidbody2D rb; //assigned in inspector, read by player
     
     private float moveInput;
     private bool jumpInputDown;
@@ -49,14 +51,19 @@ public class PlayerMovement : NetworkBehaviour
         if (!IsOwner)
             return;
 
-        rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);
+        rb.velocity = new Vector2(moveInput * moveSpeed * speedIncrease, rb.velocity.y);
 
         if (rb.velocity.y < 0)
-            rb.velocity += (fallMultiplier - 1) * Physics2D.gravity.y * Time.deltaTime * Vector2.up;
+            rb.velocity += speedIncrease * (fallMultiplier - 1) * Physics2D.gravity.y * Time.deltaTime * Vector2.up;
         else if (rb.velocity.y > 0 && !jumpInput)
-            rb.velocity += (lowJumpMultiplier - 1) * Physics2D.gravity.y * Time.deltaTime * Vector2.up;
+            rb.velocity += speedIncrease * (lowJumpMultiplier - 1) * Physics2D.gravity.y * Time.deltaTime * Vector2.up;
 
         Jump();
+    }
+
+    private void ChangeVelocity(float amount, Vector2 direction)
+    {
+        rb.velocity = speedIncrease * amount * direction;
     }
 
     private void Jump() //run in FixedUpdate
@@ -66,7 +73,7 @@ public class PlayerMovement : NetworkBehaviour
             jumpInputDown = false;
 
             if (isGrounded)
-                rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+                ChangeVelocity(jumpForce, Vector2.up);
             else
             {
                 if (jumpBuffering)

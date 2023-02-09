@@ -5,30 +5,12 @@ using UnityEngine.UI;
 
 public class ElementalButton : MonoBehaviour
 {
-    private Button button;
+    public CharSelect charSelect;
 
-    private CharSelect charSelect;
-
-    public string type1; //assigned in inspector
+    public string type1; //set in inspector
     public string type2; //^
     public string stat1; //^
     public string stat2; //^
-
-    private void OnEnable()
-    {
-        GameManager.OnClientConnectOrLoad += OnSpawn;
-    }
-    private void OnDisable()
-    {
-        GameManager.OnClientConnectOrLoad -= OnSpawn;
-    }
-
-    private void OnSpawn(GameManager gm)
-    {
-        button = GetComponent<Button>();
-        button.onClick.AddListener(ButtonPress);
-        charSelect = GameObject.Find("NobScripts").GetComponent<CharSelect>(); //can't be run in awake, since nobscripts haven't loaded yet (on scene change)
-    }
 
     public void ButtonPress()
     {

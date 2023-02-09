@@ -5,6 +5,7 @@ using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using FishNet.Connection;
 using TMPro;
+using System;
 
 public class Player : NetworkBehaviour
 {
@@ -15,38 +16,37 @@ public class Player : NetworkBehaviour
     public Animator animator; //^
     public PlayerMovement playerMovement; //^, read by Setup
 
-    [HideInInspector] public GameManager gameManager; //set by Setup
-    [HideInInspector] public Animator countdownAnim; //^
-    [HideInInspector] public TMP_Text countdownText; //^
-    [HideInInspector] public TMP_Text winnerText; //^
-    [HideInInspector] public PlayAgain playAgain; //^
+    [NonSerialized] public GameManager gameManager; //set by Setup
+    [NonSerialized] public Animator countdownAnim; //^
+    [NonSerialized] public TMP_Text countdownText; //^
+    [NonSerialized] public TMP_Text winnerText; //^
+    [NonSerialized] public PlayAgain playAgain; //^
 
     //colors from lightest to darkest:
-    [HideInInspector] public Color32 frost = new(140, 228, 232, 255); //read by index
-    [HideInInspector] public Color32 wind = new(205, 205, 255, 255); //^
-    [HideInInspector] public Color32 lightning = new(255, 236, 0, 255); //^
-    [HideInInspector] public Color32 flame = new(255, 122, 0, 255); //^
-    [HideInInspector] public Color32 water = new(35, 182, 255, 255); //^
-    [HideInInspector] public Color32 venom = new(23, 195, 0, 255); //^
+    [NonSerialized] public Color32 frost = new(140, 228, 232, 255); //read by index
+    [NonSerialized] public Color32 wind = new(205, 205, 255, 255); //^
+    [NonSerialized] public Color32 lightning = new(255, 236, 0, 255); //^
+    [NonSerialized] public Color32 flame = new(255, 122, 0, 255); //^
+    [NonSerialized] public Color32 water = new(35, 182, 255, 255); //^
+    [NonSerialized] public Color32 venom = new(23, 195, 0, 255); //^
 
-    [HideInInspector] public Color32 lighterColor; //set by index
-    [HideInInspector] public Color32 darkerColor; //^
+    [NonSerialized] public Color32 lighterColor; //set by index
+    [NonSerialized] public Color32 darkerColor; //^
 
-    [HideInInspector] public float maxHealth = 15; //can be altered by index
+    [NonSerialized] public float maxHealth = 15; //can be altered by index
 
     private float power = 3;
     private float range = 10;
-    private readonly float speedMultipler = 1.2f;
-    private readonly float jumpMultiplier = 1.1f;
-    private readonly float rangeMultiplier = 1.3f;
+    private readonly float speedMultipler = 1.15f;
+    private readonly float rangeMultiplier = 1.2f;
 
 
-    [HideInInspector] public string[] charSelectInfo = new string[4];
+    [NonSerialized] public string[] charSelectInfo = new string[4];
 
     [SyncVar]
     private float health;
     [SyncVar]
-    [HideInInspector] public bool isImmune = false;
+    [NonSerialized] public bool isImmune = false;
 
     private float maxHealthBarWidth;
 
@@ -60,7 +60,7 @@ public class Player : NetworkBehaviour
 
     public GameObject missile; //set in inspector
 
-    [HideInInspector] public GameObject playerHud;
+    [NonSerialized] public GameObject playerHud;
     private GameObject healthBarPivot;
     private GameObject healthBar; //only needed for Eliminate; most implementation uses healthBarPivot
     private GameObject missileBarPivot;
@@ -283,15 +283,13 @@ public class Player : NetworkBehaviour
                 for (int i = 0; i < amount; i++)
                     if (multiply)
                     {
-                        playerMovement.speed *= speedMultipler;
-                        playerMovement.jumpForce *= jumpMultiplier;
-                        playerMovement.lowJumpMultiplier /= jumpMultiplier;
+                        playerMovement.speedIncrease *= speedMultipler;
+                        playerMovement.rb.gravityScale *= speedMultipler;
                     }
                     else
                     {
-                        playerMovement.speed /= speedMultipler;
-                        playerMovement.jumpForce /= jumpMultiplier;
-                        playerMovement.lowJumpMultiplier *= jumpMultiplier;
+                        playerMovement.speedIncrease /= speedMultipler;
+                        playerMovement.rb.gravityScale /= speedMultipler;
                     }
             }
             else if (stat == "range")

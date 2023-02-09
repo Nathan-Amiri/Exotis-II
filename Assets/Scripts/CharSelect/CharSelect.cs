@@ -5,10 +5,11 @@ using UnityEngine.UI;
 using FishNet.Object;
 using FishNet.Connection;
 using TMPro;
+using System;
 
 public class CharSelect : NetworkBehaviour
 {
-    [HideInInspector] public GameManager gameManager;
+    [NonSerialized] public GameManager gameManager;
 
     private CharImage[] avatars;
     public CharImage p1Avatar; //assigned in inspector
@@ -17,12 +18,12 @@ public class CharSelect : NetworkBehaviour
     public CharImage p4Avatar; //^
 
     //colors from lightest to darkest: (copied from Player) (must be public so they can be found in SelectElemental using GetField)
-    [HideInInspector] public Color32 frost = new(140, 228, 232, 255); //^
-    [HideInInspector] public Color32 wind = new(205, 205, 255, 255); //^
-    [HideInInspector] public Color32 lightning = new(255, 236, 0, 255); //^
-    [HideInInspector] public Color32 flame = new(255, 122, 0, 255); //^
-    [HideInInspector] public Color32 water = new(35, 182, 255, 255); //^
-    [HideInInspector] public Color32 venom = new(23, 195, 0, 255); //^
+    [NonSerialized] public Color32 frost = new(140, 228, 232, 255); //^
+    [NonSerialized] public Color32 wind = new(205, 205, 255, 255); //^
+    [NonSerialized] public Color32 lightning = new(255, 236, 0, 255); //^
+    [NonSerialized] public Color32 flame = new(255, 122, 0, 255); //^
+    [NonSerialized] public Color32 water = new(35, 182, 255, 255); //^
+    [NonSerialized] public Color32 venom = new(23, 195, 0, 255); //^
 
     private readonly Color32[] emptyColors = new Color32[2];
 
@@ -36,11 +37,14 @@ public class CharSelect : NetworkBehaviour
     public GameObject highlight1; //^
     public GameObject highlight2; //^
 
+    public AbilitySelect abilitySelect; //^
+
     public GameObject nobCanvas; //^
 
     public Button readyButton; //^
 
     private string selectedElemental;
+    private string[] selectedAbilities = new string[3];
     private readonly Color32[] currentColors = new Color32[2]; //currentColors[0] = lighter color, [1] = darker color
 
     private readonly List<string> claimedElementals = new(); //server only
@@ -126,7 +130,6 @@ public class CharSelect : NetworkBehaviour
         charImage.charShell.color = currentColors[0];
         charImage.charCore.color = currentColors[1];
 
-
         charType1.sprite = Resources.Load<Sprite>("Elements/" + type1);
         charType2.sprite = Resources.Load<Sprite>("Elements/" + type2);
 
@@ -135,7 +138,20 @@ public class CharSelect : NetworkBehaviour
         highlight1.transform.localPosition = new Vector2(167, stat1 == "power" ? -220 : -285);
         highlight2.transform.localPosition = new Vector2(167, stat2 == "speed" ? -355 : -425);
 
+        abilitySelect.ElementalSelected(type1, type2, currentColors);
+
+        readyButton.interactable = false;
+    }
+
+    public void AbilitiesReady(string[] newSelectedAbilities) //called by AbilitySelect
+    {
+        selectedAbilities = newSelectedAbilities;
         readyButton.interactable = true;
+    }
+
+    public void Clear() //called by AbilitySelect
+    {
+        readyButton.interactable = false;
     }
 
     public void SelectReady()
@@ -171,6 +187,8 @@ public class CharSelect : NetworkBehaviour
         readyButton.interactable = false;
         string[] charSelectInfo = new string[4];
         charSelectInfo[0] = selectedElemental;
+        for (int i = 0; i < 3; i++)
+            charSelectInfo[i + 1] = selectedAbilities[i];
 
         gameManager.charSelectInfo = charSelectInfo;
 

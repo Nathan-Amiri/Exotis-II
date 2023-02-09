@@ -1,12 +1,13 @@
 using FishNet;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Missile : MonoBehaviour
 {
-    [HideInInspector] public float missilePower; //set by player when instantiated
-    [HideInInspector] public Player player; //set by player when instantiated
+    [NonSerialized] public float missilePower; //set by player when instantiated
+    [NonSerialized] public Player player; //set by player when instantiated
 
     public Rigidbody2D rb; //assigned in inspector
     public SpriteRenderer spriteRenderer; //assigned in inspector, read by Player
