@@ -203,8 +203,8 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 14904239}
   _networkObjectCache: {fileID: 14904239}
   playerPref: {fileID: 4696052625515170076, guid: 7f221cefc7665ad49ba8ec72a3d22633, type: 3}
-  editorGrid: {fileID: 0}
   hud: {fileID: 1876854632}
+  abilityParent: {fileID: 1557700451}
   countdownAnim: {fileID: 1834709115}
   countdownText: {fileID: 1834709113}
   winnerText: {fileID: 1153730730}
@@ -2653,6 +2653,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 561456024345029567, guid: fe5961c916cc92943a58fa51a5d9cf2a, type: 3}
   m_PrefabInstance: {fileID: 1532961949}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1557700451
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1557700452}
+  m_Layer: 0
+  m_Name: Abilities
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1557700452
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1557700451}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -15, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1702863138
 PrefabInstance:
   m_ObjectHideFlags: 0

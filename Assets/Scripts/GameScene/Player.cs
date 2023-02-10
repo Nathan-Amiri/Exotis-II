@@ -44,6 +44,7 @@ public class Player : NetworkBehaviour
 
     [NonSerialized] public string[] charSelectInfo = new string[4];
 
+    [NonSerialized] public GameObject abilityParent; //set by Setup
     private AbilityBase ability1;
     private AbilityBase ability2;
     private AbilityBase ability3;
@@ -63,7 +64,7 @@ public class Player : NetworkBehaviour
 
     private Vector2 mousePosition;
 
-    public GameObject missile; //set in inspector
+    public GameObject missile; //assigned in inspector
 
     [NonSerialized] public GameObject playerHud;
     private GameObject healthBarPivot;
@@ -90,11 +91,11 @@ public class Player : NetworkBehaviour
     {
         name = charSelectInfo[0];
 
-        ability1 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[1])).GetComponent<AbilityBase>();
+        ability1 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[1]), abilityParent.transform).GetComponent<AbilityBase>();
         ability1.player = this;
-        //ability2 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[2])).GetComponent<AbilityBase>();
+        //ability2 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[2]), abilityParent.transform).GetComponent<AbilityBase>();
         //ability2.player = this;
-        //ability3 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[3])).GetComponent<AbilityBase>();
+        //ability3 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[3]), abilityParent.transform).GetComponent<AbilityBase>();
         //ability3.player = this;
 
         index.LoadAttributes(this, charSelectInfo); //add stats and spells
@@ -210,6 +211,10 @@ public class Player : NetworkBehaviour
             CreateMissile(this, transform.position, fireDirection, 0f);
             RpcServerCreateMissile(this, transform.position, fireDirection, TimeManager.Tick);
         }
+
+        if (Input.GetButtonDown("Ability1") && !ability1.onCooldown) ability1.SelectAbility();
+        if (Input.GetButtonDown("Ability2") && !ability2.onCooldown) ability2.SelectAbility();
+        if (Input.GetButtonDown("Ability3") && !ability3.onCooldown) ability3.SelectAbility();
     }
 
     private void HealthBar() //run in update
