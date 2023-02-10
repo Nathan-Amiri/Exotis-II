@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using FishNet;
 using FishNet.Transporting.Tugboat;
+using FishNet.Managing.Client;
 
 public class SimpleManager : MonoBehaviour
 {
@@ -13,7 +14,8 @@ public class SimpleManager : MonoBehaviour
     public GameObject escapeMenu; //assigned in prefab
     //^ escapemenu turned off on disconnect by GameManager
     public TMP_Text exitDisconnectText; //^
-    public Button joinLobby;
+    public Button startLobby; //^
+    public Button joinLobby; //^
     public TMP_InputField ipAddress; //^
     public TextMeshProUGUI placeHolder; //^
     public Tugboat tugboat; //assigned in scene
@@ -46,6 +48,9 @@ public class SimpleManager : MonoBehaviour
 
     private void OnClientConnectOrLoad(GameManager gm)
     {
+        startLobby.interactable = false;
+        ipAddress.interactable = false;
+
         gameManager = gm;
     }
 
@@ -56,7 +61,7 @@ public class SimpleManager : MonoBehaviour
 
         exitDisconnectText.text = gameManager == null ? "Exit Game" : "Disconnect";
 
-        joinLobby.interactable = !placeHolder.enabled;
+        joinLobby.interactable = gameManager == null && !placeHolder.enabled;
     }
 
     public void SelectStartLobby()
@@ -80,5 +85,13 @@ public class SimpleManager : MonoBehaviour
             Application.Quit();
         else
             gameManager.Disconnect();
+    }
+
+    public void OnDisconnect() //called by GameManager
+    {
+        startLobby.interactable = true;
+        ipAddress.interactable = true;
+
+        escapeMenu.SetActive(true);
     }
 }

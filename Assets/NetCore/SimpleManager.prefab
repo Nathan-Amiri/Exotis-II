@@ -629,6 +629,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   escapeMenu: {fileID: 5824023840679324431}
   exitDisconnectText: {fileID: 7189635073850173576}
+  startLobby: {fileID: 3485498540960255311}
   joinLobby: {fileID: 2256972333471486714}
   ipAddress: {fileID: 4765006346053474299}
   placeHolder: {fileID: 2340174981652211971}
@@ -655,7 +656,7 @@ MonoBehaviour:
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
   <PrefabId>k__BackingField: 7
-  _scenePathHash: 2332773068
+  _scenePathHash: 0
   <SceneId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 14661605940879173834
   _sceneNetworkObjects:

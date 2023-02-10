@@ -19,7 +19,7 @@ public class GameManager : NetworkBehaviour
 
     //client variables:
     static public int playerNumber { get; private set; }
-    private GameObject simpleManager;
+    private SimpleManager simpleManager;
 
     private void Awake()
     {
@@ -43,7 +43,7 @@ public class GameManager : NetworkBehaviour
         else
             SendConnectOrLoadEvent();
 
-        simpleManager = GameObject.FindWithTag("SimpleManager");
+        simpleManager = GameObject.FindWithTag("SimpleManager").GetComponent<SimpleManager>();
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -115,7 +115,7 @@ public class GameManager : NetworkBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene(disconnectScene);
 
         if (simpleManager != null)
-            simpleManager.transform.GetChild(0).gameObject.SetActive(true); //turn on escapemenu
+            simpleManager.OnDisconnect();
     }
 
     public delegate void OnClientConnectOrLoadAction(GameManager gm);
