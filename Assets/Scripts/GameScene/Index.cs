@@ -20,6 +20,13 @@ public class Index : MonoBehaviour
         player.lighterColor = player.wind;
         player.darkerColor = player.water;
     }
+    private void Leviathan()
+    {
+        player.maxHealth += 3;
+        player.StatChange("range", 1);
+        player.lighterColor = player.frost;
+        player.darkerColor = player.water;
+    }
     private void Dragon()
     {
         player.maxHealth += 3;

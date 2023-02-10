@@ -6,6 +6,7 @@ using FishNet.Object.Synchronizing;
 using FishNet.Connection;
 using TMPro;
 using System;
+using Unity.VisualScripting;
 
 public class Player : NetworkBehaviour
 {
@@ -42,6 +43,10 @@ public class Player : NetworkBehaviour
 
 
     [NonSerialized] public string[] charSelectInfo = new string[4];
+
+    private AbilityBase ability1;
+    private AbilityBase ability2;
+    private AbilityBase ability3;
 
     [SyncVar]
     private float health;
@@ -84,6 +89,14 @@ public class Player : NetworkBehaviour
     public void OnSpawn(Index index)
     {
         name = charSelectInfo[0];
+
+        ability1 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[1])).GetComponent<AbilityBase>();
+        ability1.player = this;
+        //ability2 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[2])).GetComponent<AbilityBase>();
+        //ability2.player = this;
+        //ability3 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[3])).GetComponent<AbilityBase>();
+        //ability3.player = this;
+
         index.LoadAttributes(this, charSelectInfo); //add stats and spells
 
         playerHud.SetActive(true);
