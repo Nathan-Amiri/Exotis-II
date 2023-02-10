@@ -212,9 +212,24 @@ public class Player : NetworkBehaviour
             RpcServerCreateMissile(this, transform.position, fireDirection, TimeManager.Tick);
         }
 
-        if (Input.GetButtonDown("Ability1") && !ability1.onCooldown) ability1.SelectAbility();
-        if (Input.GetButtonDown("Ability2") && !ability2.onCooldown) ability2.SelectAbility();
-        if (Input.GetButtonDown("Ability3") && !ability3.onCooldown) ability3.SelectAbility();
+        if (Input.GetButtonDown("Ability1") && !ability1.onCooldown) RpcSelectAbility(1, transform.position, mousePosition);
+        //if (Input.GetButtonDown("Ability2") && !ability2.onCooldown) RpcSelectAbility(2, transform.position, mousePosition);
+        //if (Input.GetButtonDown("Ability3") && !ability3.onCooldown) RpcSelectAbility(3, transform.position, mousePosition);
+    }
+
+    [ServerRpc]
+    private void RpcSelectAbility(int abilityNumber, Vector2 casterPosition, Vector2 mousePosition)
+    {
+        RpcSendAbility(abilityNumber, casterPosition, mousePosition);
+    }
+    [ObserversRpc]
+    private void RpcSendAbility(int abilityNumber, Vector2 casterPosition, Vector2 mousePosition)
+    {
+        AbilityBase newAbility = ability1;
+        if (abilityNumber == 2) newAbility = ability2;
+        else if (abilityNumber == 3) newAbility = ability3;
+
+        newAbility.TriggerAbility(casterPosition, mousePosition);
     }
 
     private void HealthBar() //run in update

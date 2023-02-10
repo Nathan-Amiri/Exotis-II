@@ -9,5 +9,5 @@ public class AbilityBase : MonoBehaviour
 
     [NonSerialized] public bool onCooldown = false;
 
-    public virtual void SelectAbility() { }
+    public virtual void TriggerAbility(Vector2 casterPosition, Vector2 mousePosition) { }
 }
