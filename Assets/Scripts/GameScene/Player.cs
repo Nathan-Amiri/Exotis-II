@@ -92,11 +92,11 @@ public class Player : NetworkBehaviour
         name = charSelectInfo[0];
 
         ability1 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[1]), abilityParent.transform).GetComponent<AbilityBase>();
-        ability1.player = this;
+        ability1.OnSpawn(this, charSelectInfo[1]);
         //ability2 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[2]), abilityParent.transform).GetComponent<AbilityBase>();
-        //ability2.player = this;
+        ability2.OnSpawn(this, charSelectInfo[2]);
         //ability3 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[3]), abilityParent.transform).GetComponent<AbilityBase>();
-        //ability3.player = this;
+        ability3.OnSpawn(this, charSelectInfo[3]);
 
         index.LoadAttributes(this, charSelectInfo); //add stats and spells
 
@@ -110,7 +110,7 @@ public class Player : NetworkBehaviour
         healthBarPivot = playerHud.transform.GetChild(2).gameObject;
         healthBar = healthBarPivot.transform.GetChild(0).gameObject;
         missileBarPivot = playerHud.transform.GetChild(3).GetChild(1).gameObject;
-        
+
         maxHealthBarWidth = healthBarPivot.transform.localScale.x;
 
         missileFillSpeed = 1;
@@ -212,24 +212,7 @@ public class Player : NetworkBehaviour
             RpcServerCreateMissile(this, transform.position, fireDirection, TimeManager.Tick);
         }
 
-        if (Input.GetButtonDown("Ability1") && !ability1.onCooldown) RpcSelectAbility(1, transform.position, mousePosition);
-        //if (Input.GetButtonDown("Ability2") && !ability2.onCooldown) RpcSelectAbility(2, transform.position, mousePosition);
-        //if (Input.GetButtonDown("Ability3") && !ability3.onCooldown) RpcSelectAbility(3, transform.position, mousePosition);
-    }
-
-    [ServerRpc]
-    private void RpcSelectAbility(int abilityNumber, Vector2 casterPosition, Vector2 mousePosition)
-    {
-        RpcSendAbility(abilityNumber, casterPosition, mousePosition);
-    }
-    [ObserversRpc]
-    private void RpcSendAbility(int abilityNumber, Vector2 casterPosition, Vector2 mousePosition)
-    {
-        AbilityBase newAbility = ability1;
-        if (abilityNumber == 2) newAbility = ability2;
-        else if (abilityNumber == 3) newAbility = ability3;
-
-        newAbility.TriggerAbility(casterPosition, mousePosition);
+        Abilities();
     }
 
     private void HealthBar() //run in update
@@ -413,7 +396,7 @@ public class Player : NetworkBehaviour
         float passedTime = (float)TimeManager.TimePassed(tick, false); //false prevents negative
         passedTime = Mathf.Min(maxPassedTime / 2f, passedTime);
 
-        CreateMissile(caster, firePosition,  fireDirection, passedTime);
+        CreateMissile(caster, firePosition, fireDirection, passedTime);
     }
     private void CreateMissile(Player caster, Vector3 firePosition, Vector2 fireDirection, float passedTime)
     {
@@ -446,8 +429,6 @@ public class Player : NetworkBehaviour
         missileScript.rb.velocity = fireDirection * caster.range;
     }
 
-
-
     //missile timer code used to initially test the average distance a missile travels per tick:
 
     //private int ticks = 0;
@@ -467,14 +448,6 @@ public class Player : NetworkBehaviour
     //        cachedMissilePosition = default;
     //}
 
-
-
-
-
-
-
-
-
     private IEnumerator RevealMissile(Missile missileScript)
     {
         yield return new WaitForSeconds(.01f);
@@ -490,5 +463,78 @@ public class Player : NetworkBehaviour
             missileAmount += missileFillSpeed * Time.deltaTime;
         else
             missileAmount = 3;
+    }
+
+    private void Abilities() //run in update
+    {
+        if (Input.GetButton("Ability1")) SelectAbility(1);
+        if (Input.GetButton("Ability2")) SelectAbility(2);
+        if (Input.GetButton("Ability3")) SelectAbility(3);
+
+        if (Input.GetButtonUp("Ability1"))
+        {
+            //turn off ability 1 circle
+            if (ability1.ready) //inRange will be false 
+                RpcTriggerAbility(1, transform.position, mousePosition);
+            ability1.ready = false;
+        }
+        if (Input.GetButtonUp("Ability2"))
+        {
+            //turn off ability 2 circle
+            if (ability2.ready) //inRange will be false 
+                RpcTriggerAbility(2, transform.position, mousePosition);
+            ability2.ready = false;
+        }
+        if (Input.GetButtonUp("Ability3"))
+        {
+            //turn off ability 3 circle
+            if (ability3.ready) //inRange will be false 
+                RpcTriggerAbility(3, transform.position, mousePosition);
+            ability3.ready = false;
+        }
+    }
+
+    private void SelectAbility(int abilityNumber) //run in Update > Abilities
+    {
+        AbilityBase currentAbility = ability1;
+        if (abilityNumber == 2) currentAbility = ability2;
+        else if (abilityNumber == 3) currentAbility = ability3;
+
+        if (currentAbility.onCooldown)
+            return;
+
+        if (currentAbility.hasRange)
+        {
+            //make circle
+
+            float mouseRange = (new Vector2(transform.position.x, transform.position.y) - mousePosition).magnitude;
+            if (mouseRange > currentAbility.abilityRange)
+            {
+                //circle is red
+                currentAbility.ready = false;
+            }
+            else
+            {
+                //circle is blue
+                currentAbility.ready = true;
+            }
+        }
+        else
+            currentAbility.ready = true;
+    }
+
+    [ServerRpc]
+    private void RpcTriggerAbility(int abilityNumber, Vector2 casterPosition, Vector2 mousePosition)
+    {
+        RpcSendAbility(abilityNumber, casterPosition, mousePosition);
+    }
+    [ObserversRpc]
+    private void RpcSendAbility(int abilityNumber, Vector2 casterPosition, Vector2 mousePosition)
+    {
+        AbilityBase newAbility = ability1;
+        if (abilityNumber == 2) newAbility = ability2;
+        else if (abilityNumber == 3) newAbility = ability3;
+
+        newAbility.TriggerAbility(casterPosition, mousePosition);
     }
 }
