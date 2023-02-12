@@ -48,6 +48,7 @@ public class Player : NetworkBehaviour
     private AbilityBase ability1;
     private AbilityBase ability2;
     private AbilityBase ability3;
+    private int lockedAbility;
 
     [SyncVar]
     private float health;
@@ -59,6 +60,7 @@ public class Player : NetworkBehaviour
     private float missileFillSpeed;
     private float missileAmount;
     private float maxMissileBarWidth;
+    private bool onMissileCooldown;
 
     private bool startUpdate;
 
@@ -205,8 +207,9 @@ public class Player : NetworkBehaviour
 
         mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        if (Input.GetButtonDown("Missile") && IsClient && !playerMovement.isStunned && missileAmount >= 1)
+        if (Input.GetButtonDown("Missile") && IsClient && !playerMovement.isStunned && missileAmount >= 1 && !onMissileCooldown)
         {
+            StartCoroutine(MissileCooldown());
             Vector2 fireDirection = (mousePosition - new Vector2(transform.position.x, transform.position.y)).normalized;
             CreateMissile(this, transform.position, fireDirection, 0f);
             RpcServerCreateMissile(this, transform.position, fireDirection, TimeManager.Tick);
@@ -255,15 +258,11 @@ public class Player : NetworkBehaviour
         }
 
         if (amount < 0)
-        {
-            StartCoroutine(BecomeImmune(.7f));
-            playerMovement.TemporaryStun(.35f);
-            RpcClientTakeDamage();
-        }
+            RpcDamageAnimation();
     }
 
     [ObserversRpc]
-    private void RpcClientTakeDamage()
+    private void RpcDamageAnimation()
     {
         StartCoroutine(DamageAnimation(.7f));
     }
@@ -323,7 +322,6 @@ public class Player : NetworkBehaviour
     private void Eliminate()
     {
         isEliminated = true;
-        RpcClientTakeDamage();
         playerMovement.isStunned = true;
         RpcRelocate(Owner);
         CheckForGameEnd();
@@ -448,6 +446,13 @@ public class Player : NetworkBehaviour
     //        cachedMissilePosition = default;
     //}
 
+    private IEnumerator MissileCooldown()
+    {
+        onMissileCooldown = true;
+        yield return new WaitForSeconds(.2f);
+        onMissileCooldown = false;
+    }
+
     private IEnumerator RevealMissile(Missile missileScript)
     {
         yield return new WaitForSeconds(.01f);
@@ -467,26 +472,41 @@ public class Player : NetworkBehaviour
 
     private void Abilities() //run in update
     {
-        if (Input.GetButton("Ability1")) SelectAbility(1);
-        if (Input.GetButton("Ability2")) SelectAbility(2);
-        if (Input.GetButton("Ability3")) SelectAbility(3);
-
-        if (Input.GetButtonUp("Ability1"))
+        if (Input.GetButton("Ability1") && lockedAbility != 2 && lockedAbility != 3)
         {
+            lockedAbility = 1;
+            SelectAbility(1);
+        }
+        if (Input.GetButton("Ability2") && lockedAbility != 1 && lockedAbility != 3)
+        {
+            lockedAbility = 2;
+            SelectAbility(2);
+        }
+        if (Input.GetButton("Ability3") && lockedAbility != 1 && lockedAbility != 2)
+        {
+            lockedAbility = 3;
+            SelectAbility(3);
+        }
+
+        if (Input.GetButtonUp("Ability1") && lockedAbility == 1)
+        {
+            lockedAbility = 0;
             //turn off ability 1 circle
             if (ability1.ready) //inRange will be false 
                 RpcTriggerAbility(1, transform.position, mousePosition);
             ability1.ready = false;
         }
-        if (Input.GetButtonUp("Ability2"))
+        if (Input.GetButtonUp("Ability2") && lockedAbility == 2)
         {
+            lockedAbility = 0;
             //turn off ability 2 circle
             if (ability2.ready) //inRange will be false 
                 RpcTriggerAbility(2, transform.position, mousePosition);
             ability2.ready = false;
         }
-        if (Input.GetButtonUp("Ability3"))
+        if (Input.GetButtonUp("Ability3") && lockedAbility == 3)
         {
+            lockedAbility = 0;
             //turn off ability 3 circle
             if (ability3.ready) //inRange will be false 
                 RpcTriggerAbility(3, transform.position, mousePosition);
