@@ -13,8 +13,6 @@ public class AbilityBase : MonoBehaviour
 
     [NonSerialized] public bool onCooldown = false;
 
-    [NonSerialized] public bool ready = false; //set and read by Player'
-
     public virtual void OnSpawn(Player newPlayer, string newName) //called by player
     {
         name = newName;

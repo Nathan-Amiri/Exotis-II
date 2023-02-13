@@ -1352,7 +1352,7 @@ MonoBehaviour:
   type1: frost
   type2: water
   stat1: health
-  stat2: speed
+  stat2: range
 --- !u!1 &221872863
 GameObject:
   m_ObjectHideFlags: 0

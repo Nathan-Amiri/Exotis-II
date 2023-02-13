@@ -8,7 +8,7 @@ using System;
 public class PlayerMovement : NetworkBehaviour
 {
     [NonSerialized] public float speedIncrease = 1; //changed by Player, all velocity changes are multiplied by speed
-    private readonly float moveSpeed = 3;
+    private readonly float moveSpeed = 2.5f;
     private readonly float jumpForce = 6.8f;
 
     private readonly float lowJumpMultiplier = 4; //used for dynamic jump
@@ -27,9 +27,9 @@ public class PlayerMovement : NetworkBehaviour
 
     private void Update()
     {
-        if (!IsOwner || !IsClient)
+        if (!IsOwner)
             return;
-
+        Debug.Log("Speed: " + moveSpeed);
         if (isStunned)
         {
             moveInput = 0;

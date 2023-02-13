@@ -7,6 +7,7 @@ using FishNet.Connection;
 using TMPro;
 using System;
 using Unity.VisualScripting;
+using System.IO.Pipes;
 
 public class Player : NetworkBehaviour
 {
@@ -37,7 +38,7 @@ public class Player : NetworkBehaviour
     [NonSerialized] public float maxHealth = 15; //can be altered by index
 
     private float power = 3;
-    private float range = 10;
+    private float range = 8;
     private readonly float speedMultipler = 1.15f;
     private readonly float rangeMultiplier = 1.2f;
 
@@ -93,12 +94,13 @@ public class Player : NetworkBehaviour
     {
         name = charSelectInfo[0];
 
-        ability1 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[1]), abilityParent.transform).GetComponent<AbilityBase>();
-        ability1.OnSpawn(this, charSelectInfo[1]);
+
+        //ability1 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[1]), abilityParent.transform).GetComponent<AbilityBase>();
+        //ability1.OnSpawn(this, charSelectInfo[1]);
         //ability2 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[2]), abilityParent.transform).GetComponent<AbilityBase>();
-        ability2.OnSpawn(this, charSelectInfo[2]);
+        //ability2.OnSpawn(this, charSelectInfo[2]);
         //ability3 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[3]), abilityParent.transform).GetComponent<AbilityBase>();
-        ability3.OnSpawn(this, charSelectInfo[3]);
+        //ability3.OnSpawn(this, charSelectInfo[3]);
 
         index.LoadAttributes(this, charSelectInfo); //add stats and spells
 
@@ -205,6 +207,7 @@ public class Player : NetworkBehaviour
         if (!IsOwner)
             return;
 
+        Debug.Log("Range: " + range);
         mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
         if (Input.GetButtonDown("Missile") && IsClient && !playerMovement.isStunned && missileAmount >= 1 && !onMissileCooldown)
@@ -287,6 +290,8 @@ public class Player : NetworkBehaviour
 
     public void StatChange(string stat, int amount) //amount = number of stages (-2, -1, 1, or 2)
     {
+        if (IsOwner)
+            Debug.Log(stat);
         if (stat == "power")
             power += amount;
         else
@@ -439,7 +444,7 @@ public class Player : NetworkBehaviour
     //        ticks = (int)TimeManager.Tick;
 
     //        if (cachedMissilePosition != default)
-    //            Debug.Log((cachedMissilePosition - missileObject.transform.position).magnitude);
+    //            Debug.Log(Vector3.Distance(cachedMissilePosition, missileObject.transform.position);
     //        cachedMissilePosition = missileObject.transform.position;
     //    }
     //    else if (missileObject == null)
@@ -449,7 +454,7 @@ public class Player : NetworkBehaviour
     private IEnumerator MissileCooldown()
     {
         onMissileCooldown = true;
-        yield return new WaitForSeconds(.2f);
+        yield return new WaitForSeconds(.1f);
         onMissileCooldown = false;
     }
 
@@ -472,49 +477,14 @@ public class Player : NetworkBehaviour
 
     private void Abilities() //run in update
     {
-        if (Input.GetButton("Ability1") && lockedAbility != 2 && lockedAbility != 3)
-        {
-            lockedAbility = 1;
-            SelectAbility(1);
-        }
-        if (Input.GetButton("Ability2") && lockedAbility != 1 && lockedAbility != 3)
-        {
-            lockedAbility = 2;
-            SelectAbility(2);
-        }
-        if (Input.GetButton("Ability3") && lockedAbility != 1 && lockedAbility != 2)
-        {
-            lockedAbility = 3;
-            SelectAbility(3);
-        }
+        if (playerMovement.isStunned) return;
 
-        if (Input.GetButtonUp("Ability1") && lockedAbility == 1)
-        {
-            lockedAbility = 0;
-            //turn off ability 1 circle
-            if (ability1.ready) //inRange will be false 
-                RpcTriggerAbility(1, transform.position, mousePosition);
-            ability1.ready = false;
-        }
-        if (Input.GetButtonUp("Ability2") && lockedAbility == 2)
-        {
-            lockedAbility = 0;
-            //turn off ability 2 circle
-            if (ability2.ready) //inRange will be false 
-                RpcTriggerAbility(2, transform.position, mousePosition);
-            ability2.ready = false;
-        }
-        if (Input.GetButtonUp("Ability3") && lockedAbility == 3)
-        {
-            lockedAbility = 0;
-            //turn off ability 3 circle
-            if (ability3.ready) //inRange will be false 
-                RpcTriggerAbility(3, transform.position, mousePosition);
-            ability3.ready = false;
-        }
+        if (Input.GetButtonDown("Ability1")) SelectAbility(1);
+        if (Input.GetButtonDown("Ability2")) SelectAbility(2);
+        if (Input.GetButtonDown("Ability3")) SelectAbility(3);
     }
 
-    private void SelectAbility(int abilityNumber) //run in Update > Abilities
+    private void SelectAbility(int abilityNumber)
     {
         AbilityBase currentAbility = ability1;
         if (abilityNumber == 2) currentAbility = ability2;
@@ -523,38 +493,32 @@ public class Player : NetworkBehaviour
         if (currentAbility.onCooldown)
             return;
 
+        Vector2 aimPoint = mousePosition;
         if (currentAbility.hasRange)
         {
-            //make circle
-
-            float mouseRange = (new Vector2(transform.position.x, transform.position.y) - mousePosition).magnitude;
+            float mouseRange = Vector3.Distance(transform.position, mousePosition);
             if (mouseRange > currentAbility.abilityRange)
             {
-                //circle is red
-                currentAbility.ready = false;
-            }
-            else
-            {
-                //circle is blue
-                currentAbility.ready = true;
+                Vector2 casterPosition = new(transform.position.x, transform.position.y);
+                Vector2 aimDirection = (mousePosition - casterPosition).normalized;
+                aimPoint = casterPosition + (aimDirection * currentAbility.abilityRange);
             }
         }
-        else
-            currentAbility.ready = true;
+        RpcTriggerAbility(abilityNumber, transform.position, aimPoint);
     }
 
     [ServerRpc]
-    private void RpcTriggerAbility(int abilityNumber, Vector2 casterPosition, Vector2 mousePosition)
+    private void RpcTriggerAbility(int abilityNumber, Vector2 casterPosition, Vector2 aimPoint)
     {
-        RpcSendAbility(abilityNumber, casterPosition, mousePosition);
+        RpcSendAbility(abilityNumber, casterPosition, aimPoint);
     }
     [ObserversRpc]
-    private void RpcSendAbility(int abilityNumber, Vector2 casterPosition, Vector2 mousePosition)
+    private void RpcSendAbility(int abilityNumber, Vector2 casterPosition, Vector2 aimPoint)
     {
         AbilityBase newAbility = ability1;
         if (abilityNumber == 2) newAbility = ability2;
         else if (abilityNumber == 3) newAbility = ability3;
 
-        newAbility.TriggerAbility(casterPosition, mousePosition);
+        newAbility.TriggerAbility(casterPosition, aimPoint);
     }
 }

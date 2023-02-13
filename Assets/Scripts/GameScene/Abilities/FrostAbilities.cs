@@ -10,27 +10,27 @@ public class FrostAbilities : AbilityBase
 
         if (name == "Icy Breath")
         {
-
+            hasRange = false;
         }
         else if (name == "Hail")
         {
-
+            hasRange = true;
         }
         if (name == "Freeze")
         {
-            cooldown = 10;
+            cooldown = 1;
             hasRange = true;
-            abilityRange = 10;
+            abilityRange = 3.5f;
         }
     }
 
-    public override void TriggerAbility(Vector2 casterPosition, Vector2 mousePosition)
+    public override void TriggerAbility(Vector2 casterPosition, Vector2 aimPoint)
     {
-        base.TriggerAbility(casterPosition, mousePosition);
+        base.TriggerAbility(casterPosition, aimPoint);
 
-        if (name == "IcyBreath") IcyBreath();
+        if (name == "Icy Breath") IcyBreath();
         if (name == "Hail") Hail();
-        if (name == "Freeze") Freeze(casterPosition, mousePosition);
+        if (name == "Freeze") Freeze(casterPosition, aimPoint);
     }
 
     private void IcyBreath()
@@ -43,8 +43,8 @@ public class FrostAbilities : AbilityBase
 
     }
 
-    private void Freeze(Vector2 casterPosition, Vector2 mousePosition)
+    private void Freeze(Vector2 casterPosition, Vector2 aimPoint)
     {
-        transform.position = mousePosition;
+        transform.position = aimPoint;
     }
 }
