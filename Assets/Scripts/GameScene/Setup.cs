@@ -60,7 +60,7 @@ public class Setup : NetworkBehaviour
         Player newPlayer = newPlayerObject.GetComponent<Player>();
 
         newPlayer.charSelectInfo = newInfo;
-        newPlayer.playerHud = hud.transform.GetChild(newPlayerNumber - 1).gameObject;
+        newPlayer.playerHud = hud.transform.GetChild(newPlayerNumber).gameObject;
         newPlayer.abilityParent = abilityParent;
         newPlayer.gameManager = gameManager;
         newPlayer.countdownAnim = countdownAnim;

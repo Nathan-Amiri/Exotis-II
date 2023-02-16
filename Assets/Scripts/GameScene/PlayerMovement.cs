@@ -7,7 +7,7 @@ using System;
 
 public class PlayerMovement : NetworkBehaviour
 {
-    [NonSerialized] public float speedIncrease = 1; //changed by Player, all velocity changes are multiplied by speed
+    public float speedIncrease = 1; //changed by Player, all velocity changes are multiplied by speed
     private readonly float moveSpeed = 2.5f;
     private readonly float jumpForce = 6.8f;
 
@@ -29,7 +29,7 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (!IsOwner)
             return;
-        Debug.Log("Speed: " + moveSpeed);
+
         if (isStunned)
         {
             moveInput = 0;

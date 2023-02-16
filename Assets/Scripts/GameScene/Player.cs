@@ -39,7 +39,7 @@ public class Player : NetworkBehaviour
 
     private float power = 3;
     private float range = 8;
-    private readonly float speedMultipler = 1.15f;
+    private readonly float speedMultipler = 1.3f;
     private readonly float rangeMultiplier = 1.2f;
 
 
@@ -49,7 +49,6 @@ public class Player : NetworkBehaviour
     private AbilityBase ability1;
     private AbilityBase ability2;
     private AbilityBase ability3;
-    private int lockedAbility;
 
     [SyncVar]
     private float health;
@@ -94,9 +93,11 @@ public class Player : NetworkBehaviour
     {
         name = charSelectInfo[0];
 
-
-        //ability1 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[1]), abilityParent.transform).GetComponent<AbilityBase>();
-        //ability1.OnSpawn(this, charSelectInfo[1]);
+        if (charSelectInfo[1] == "Freeze" || charSelectInfo[1] == "Tidalwave")
+        {
+            ability1 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[1]), abilityParent.transform).GetComponent<AbilityBase>();
+            ability1.OnSpawn(this, charSelectInfo[1]);
+        }
         //ability2 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[2]), abilityParent.transform).GetComponent<AbilityBase>();
         //ability2.OnSpawn(this, charSelectInfo[2]);
         //ability3 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[3]), abilityParent.transform).GetComponent<AbilityBase>();
@@ -207,7 +208,6 @@ public class Player : NetworkBehaviour
         if (!IsOwner)
             return;
 
-        Debug.Log("Range: " + range);
         mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
         if (Input.GetButtonDown("Missile") && IsClient && !playerMovement.isStunned && missileAmount >= 1 && !onMissileCooldown)
@@ -229,10 +229,6 @@ public class Player : NetworkBehaviour
             healthBarPivot.transform.localScale -= new Vector3(Time.deltaTime, 0);
         else if (healthBarPivot.transform.localScale.x < maxHealthBarWidth / proportion)
             healthBarPivot.transform.localScale += new Vector3(Time.deltaTime, 0);
-
-
-
-
 
         if (healthBarPivot.transform.localScale.x < .02f)
         {
@@ -290,8 +286,6 @@ public class Player : NetworkBehaviour
 
     public void StatChange(string stat, int amount) //amount = number of stages (-2, -1, 1, or 2)
     {
-        if (IsOwner)
-            Debug.Log(stat);
         if (stat == "power")
             power += amount;
         else
@@ -305,11 +299,13 @@ public class Player : NetworkBehaviour
                     {
                         playerMovement.speedIncrease *= speedMultipler;
                         playerMovement.rb.gravityScale *= speedMultipler;
+                        playerMovement.rb.drag *= speedMultipler;
                     }
                     else
                     {
                         playerMovement.speedIncrease /= speedMultipler;
                         playerMovement.rb.gravityScale /= speedMultipler;
+                        playerMovement.rb.drag /= speedMultipler;
                     }
             }
             else if (stat == "range")

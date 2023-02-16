@@ -8,7 +8,7 @@ public class FrostAbilities : AbilityBase
     {
         base.OnSpawn(newPlayer, newName);
 
-        if (name == "Icy Breath")
+        if (name == "Icybreath")
         {
             hasRange = false;
         }
@@ -18,20 +18,33 @@ public class FrostAbilities : AbilityBase
         }
         if (name == "Freeze")
         {
-            cooldown = 1;
+            cooldown = 8;
             hasRange = true;
             abilityRange = 3.5f;
         }
     }
-
     public override void TriggerAbility(Vector2 casterPosition, Vector2 aimPoint)
     {
         base.TriggerAbility(casterPosition, aimPoint);
 
-        if (name == "Icy Breath") IcyBreath();
+        if (name == "Icybreath") IcyBreath();
         if (name == "Hail") Hail();
         if (name == "Freeze") Freeze(casterPosition, aimPoint);
     }
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        if (name == "Freeze") OnEnterFreeze(col);
+    }
+    private void OnTriggerExit2D(Collider2D col)
+    {
+        if (name == "Freeze") OnExitFreeze(col);
+    }
+    private IEnumerator Disappear(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        transform.position = new Vector2(-15, 0);
+    }
+
 
     private void IcyBreath()
     {
@@ -46,5 +59,26 @@ public class FrostAbilities : AbilityBase
     private void Freeze(Vector2 casterPosition, Vector2 aimPoint)
     {
         transform.position = aimPoint;
+        StartCoroutine(Disappear(4));
+    }
+    private void OnEnterFreeze(Collider2D col)
+    {
+        if (col.CompareTag("Player"))
+        {
+            if (col.gameObject == player.gameObject)
+                player.StatChange("speed", 2);
+            else
+                col.GetComponent<Player>().StatChange("speed", -1);
+        }
+    }
+    private void OnExitFreeze(Collider2D col)
+    {
+        if (col.CompareTag("Player"))
+        {
+            if (col.gameObject == player.gameObject)
+                player.StatChange("speed", -2);
+            else
+                col.GetComponent<Player>().StatChange("speed", 1);
+        }
     }
 }
