@@ -7,9 +7,12 @@ using System;
 
 public class PlayerMovement : NetworkBehaviour
 {
-    public float speedIncrease = 1; //changed by Player, all velocity changes are multiplied by speed
     private readonly float moveSpeed = 2.5f;
     private readonly float jumpForce = 6.8f;
+    private readonly float jumpHeight = 1.1f;
+    private float speedIncrease = 1;
+    private readonly float speedMultiplier = 1.3f;
+    private float startingY = -10; //-10 = null. Used when speed changes mid-jump
 
     private readonly float lowJumpMultiplier = 4; //used for dynamic jump
     private readonly float fallMultiplier = 1; //fastfall
@@ -24,6 +27,11 @@ public class PlayerMovement : NetworkBehaviour
     private bool jumpInputDown;
     private bool jumpInput;
     private bool jumpBuffering;
+
+    private void Start()
+    {
+        UpdateGravityScale();
+    }
 
     private void Update()
     {
@@ -58,22 +66,15 @@ public class PlayerMovement : NetworkBehaviour
         else if (rb.velocity.y > 0 && !jumpInput)
             rb.velocity += speedIncrease * (lowJumpMultiplier - 1) * Physics2D.gravity.y * Time.deltaTime * Vector2.up;
 
-        Jump();
-    }
-
-    private void ChangeVelocity(float amount, Vector2 direction)
-    {
-        rb.velocity = speedIncrease * amount * direction;
-    }
-
-    private void Jump() //run in FixedUpdate
-    {
         if (jumpInputDown || jumpBuffering)
         {
             jumpInputDown = false;
 
             if (isGrounded)
-                ChangeVelocity(jumpForce, Vector2.up);
+            {
+                startingY = transform.position.y;
+                rb.velocity = speedIncrease * jumpForce * Vector2.up;
+            }
             else
             {
                 if (jumpBuffering)
@@ -81,6 +82,32 @@ public class PlayerMovement : NetworkBehaviour
                 StartCoroutine(JumpBuffer());
             }
         }
+
+        if (startingY != -10 && rb.velocity.y < 0) //reset when jump is no longer going up
+            startingY = -10;
+    }
+
+    public void SpeedChange(bool multiply, int amount) //amount = number of stages (-2, -1, 1, or 2)
+    {
+        for (int i = 0; i < amount; i++) //first update speedIncrease
+            if (multiply)
+                speedIncrease *= speedMultiplier;
+            else
+                speedIncrease /= speedMultiplier;
+
+        UpdateGravityScale(); //using updated speedIncrease, update gravityScale
+
+        if (startingY != -10) //using updated speedIncrease & gravityScale, if player is mid-jump, change their velocity to achieve the jump's intended height in new gravity:
+        {
+            float newHeight = Mathf.Abs(jumpHeight - Mathf.Abs(startingY - transform.position.y)); //values shouldn't ever be negative - mathf.abs is just a precaution
+            float newVelocity = Mathf.Sqrt(2 * newHeight * -Physics2D.gravity.y * rb.gravityScale) / speedIncrease; //variation of 'Velocity = sqrt(2 * Jump Height * Gravity)'
+            rb.AddForce(newVelocity * Vector2.up);
+        }
+    }
+
+    private void UpdateGravityScale()
+    {
+        rb.gravityScale = Mathf.Pow(jumpForce * speedIncrease, 2) / (2 * -Physics2D.gravity.y * jumpHeight); //variation of 'Velocity = sqrt(2 * Jump Height * Gravity)'
     }
 
     private IEnumerator JumpBuffer()

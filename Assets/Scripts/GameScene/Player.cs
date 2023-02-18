@@ -39,8 +39,7 @@ public class Player : NetworkBehaviour
 
     private float power = 3;
     private float range = 8;
-    private readonly float speedMultipler = 1.3f;
-    private readonly float rangeMultiplier = 1.2f;
+    private readonly float rangeMultiplier = 1.2f; //speed multiplier is in PlayerMovement
 
 
     [NonSerialized] public string[] charSelectInfo = new string[4];
@@ -292,30 +291,15 @@ public class Player : NetworkBehaviour
         {
             bool multiply = amount > 0;
             amount = Mathf.Abs(amount);
+
             if (stat == "speed")
-            {
-                for (int i = 0; i < amount; i++)
-                    if (multiply)
-                    {
-                        playerMovement.speedIncrease *= speedMultipler;
-                        playerMovement.rb.gravityScale *= speedMultipler;
-                        playerMovement.rb.drag *= speedMultipler;
-                    }
-                    else
-                    {
-                        playerMovement.speedIncrease /= speedMultipler;
-                        playerMovement.rb.gravityScale /= speedMultipler;
-                        playerMovement.rb.drag /= speedMultipler;
-                    }
-            }
+                playerMovement.SpeedChange(multiply, amount);
             else if (stat == "range")
-            {
                 for (int i = 0; i < amount; i++)
                     if (multiply)
                         range *= rangeMultiplier;
                     else
                         range /= rangeMultiplier;
-            }
         }
     }
 
