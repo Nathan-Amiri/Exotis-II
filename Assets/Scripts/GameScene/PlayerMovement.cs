@@ -73,7 +73,7 @@ public class PlayerMovement : NetworkBehaviour
             if (isGrounded)
             {
                 startingY = transform.position.y;
-                rb.velocity = speedIncrease * jumpForce * Vector2.up;
+                rb.velocity = new Vector2(rb.velocity.x, speedIncrease * jumpForce);
             }
             else
             {
@@ -97,11 +97,11 @@ public class PlayerMovement : NetworkBehaviour
 
         UpdateGravityScale(); //using updated speedIncrease, update gravityScale
 
-        if (startingY != -10) //using updated speedIncrease & gravityScale, if player is mid-jump, change their velocity to achieve the jump's intended height in new gravity:
+        if (startingY != -10) //using updated gravityScale, if player is mid-jump, change their velocity to achieve the jump's intended height in new gravity:
         {
-            float newHeight = Mathf.Abs(jumpHeight - Mathf.Abs(startingY - transform.position.y)); //values shouldn't ever be negative - mathf.abs is just a precaution
-            float newVelocity = Mathf.Sqrt(2 * newHeight * -Physics2D.gravity.y * rb.gravityScale) / speedIncrease; //variation of 'Velocity = sqrt(2 * Jump Height * Gravity)'
-            rb.AddForce(newVelocity * Vector2.up);
+            float newHeight = Mathf.Abs(jumpHeight - Mathf.Abs(startingY - transform.position.y)); //these values shouldn't ever be negative. Mathf.abs is just a precaution
+            float newVelocity = Mathf.Sqrt(2 * -Physics2D.gravity.y * rb.gravityScale * newHeight); //variation of 'Velocity = sqrt(2 * Jump Height * Gravity)'
+            rb.velocity = new Vector2(rb.velocity.x, newVelocity); //because newVelocity isn't multiplied by speedIncrease here, speedIncrease isn't included in the equation above
         }
     }
 
