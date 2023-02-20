@@ -19,17 +19,14 @@ public class FrostAbilities : AbilityBase
         if (name == "Freeze")
         {
             cooldown = 8;
-            hasRange = true;
-            abilityRange = 3.5f;
+            hasRange = false;
         }
     }
-    public override void TriggerAbility(Vector2 casterPosition, Vector2 aimPoint)
+    public override void TriggerAbility(bool isOwner, Vector2 casterPosition, Vector2 aimPoint)
     {
-        base.TriggerAbility(casterPosition, aimPoint);
-
         if (name == "Icybreath") IcyBreath();
         if (name == "Hail") Hail();
-        if (name == "Freeze") Freeze(casterPosition, aimPoint);
+        if (name == "Freeze") Freeze(aimPoint);
     }
     private void OnTriggerEnter2D(Collider2D col)
     {
@@ -56,8 +53,10 @@ public class FrostAbilities : AbilityBase
 
     }
 
-    private void Freeze(Vector2 casterPosition, Vector2 aimPoint)
+    private void Freeze(Vector2 aimPoint)
     {
+        StartCoroutine(StartCooldown());
+
         transform.position = aimPoint;
         StartCoroutine(Disappear(4));
     }

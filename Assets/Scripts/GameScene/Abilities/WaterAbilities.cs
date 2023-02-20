@@ -21,14 +21,12 @@ public class WaterAbilities : AbilityBase
         }
         if (name == "Tidalwave")
         {
-            cooldown = 1;//12;
+            cooldown = 12;
             hasRange = false;
         }
     }
-    public override void TriggerAbility(Vector2 casterPosition, Vector2 aimPoint)
+    public override void TriggerAbility(bool isOwner, Vector2 casterPosition, Vector2 aimPoint)
     {
-        base.TriggerAbility(casterPosition, aimPoint);
-
         if (name == "Flow") Flow();
         if (name == "Distortion") Distortion();
         if (name == "Tidalwave") TidalWave(casterPosition, aimPoint);
@@ -48,10 +46,10 @@ public class WaterAbilities : AbilityBase
 
     }
 
-    public SpriteRenderer tidalSR;
-    public Rigidbody2D tidalRb;
-    public BoxCollider2D tidalCol;
-    public Animator tidalAnimator;
+    public SpriteRenderer tidalSR; //assigned in inspector
+    public Rigidbody2D tidalRb; //^
+    public BoxCollider2D tidalCol; //^
+    public Animator tidalAnimator; //^
     private void TidalWave(Vector2 casterPosition, Vector2 aimPoint)
     {
         float angle = Vector2.Angle(aimPoint - casterPosition, Vector2.right);

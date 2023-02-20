@@ -19,10 +19,7 @@ public class AbilityBase : MonoBehaviour
         player = newPlayer;
     }
 
-    public virtual void TriggerAbility(Vector2 casterPosition, Vector2 mousePosition)
-    {
-        StartCoroutine(StartCooldown());
-    }
+    public virtual void TriggerAbility(bool isOwner, Vector2 casterPosition, Vector2 mousePosition) { }
 
     protected IEnumerator StartCooldown()
     {

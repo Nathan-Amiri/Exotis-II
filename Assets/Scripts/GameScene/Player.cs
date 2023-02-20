@@ -7,7 +7,6 @@ using FishNet.Connection;
 using TMPro;
 using System;
 using Unity.VisualScripting;
-using System.IO.Pipes;
 
 public class Player : NetworkBehaviour
 {
@@ -92,7 +91,7 @@ public class Player : NetworkBehaviour
     {
         name = charSelectInfo[0];
 
-        if (charSelectInfo[1] == "Freeze" || charSelectInfo[1] == "Tidalwave")
+        if (charSelectInfo[1] == "Freeze" || charSelectInfo[1] == "Tidalwave" || charSelectInfo[1] == "Blink")
         {
             ability1 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[1]), abilityParent.transform).GetComponent<AbilityBase>();
             ability1.OnSpawn(this, charSelectInfo[1]);
@@ -484,21 +483,23 @@ public class Player : NetworkBehaviour
                 aimPoint = casterPosition + (aimDirection * currentAbility.abilityRange);
             }
         }
-        RpcTriggerAbility(abilityNumber, transform.position, aimPoint);
+        RpcTriggerAbility(GameManager.playerNumber, abilityNumber, transform.position, aimPoint);
     }
 
     [ServerRpc]
-    private void RpcTriggerAbility(int abilityNumber, Vector2 casterPosition, Vector2 aimPoint)
+    private void RpcTriggerAbility(int playerNumber, int abilityNumber, Vector2 casterPosition, Vector2 aimPoint)
     {
-        RpcSendAbility(abilityNumber, casterPosition, aimPoint);
+        RpcSendAbility(playerNumber, abilityNumber, casterPosition, aimPoint);
     }
     [ObserversRpc]
-    private void RpcSendAbility(int abilityNumber, Vector2 casterPosition, Vector2 aimPoint)
+    private void RpcSendAbility(int playerNumber, int abilityNumber, Vector2 casterPosition, Vector2 aimPoint)
     {
+        bool abilityOwner = playerNumber == GameManager.playerNumber;
+
         AbilityBase newAbility = ability1;
         if (abilityNumber == 2) newAbility = ability2;
         else if (abilityNumber == 3) newAbility = ability3;
 
-        newAbility.TriggerAbility(casterPosition, aimPoint);
+        newAbility.TriggerAbility(abilityOwner, casterPosition, aimPoint);
     }
 }

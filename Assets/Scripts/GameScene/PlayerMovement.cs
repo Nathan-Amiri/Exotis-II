@@ -62,7 +62,7 @@ public class PlayerMovement : NetworkBehaviour
         rb.velocity = new Vector2(moveInput * moveSpeed * speedIncrease, rb.velocity.y);
 
         if (rb.velocity.y < 0)
-            rb.velocity += speedIncrease * (fallMultiplier - 1) * Physics2D.gravity.y * Time.deltaTime * Vector2.up;
+            rb.velocity += (fallMultiplier - 1) * Physics2D.gravity.y * Time.deltaTime * Vector2.up; //fastfall not multiplied by speedIncrease to make walljumping easier when speed is high
         else if (rb.velocity.y > 0 && !jumpInput)
             rb.velocity += speedIncrease * (lowJumpMultiplier - 1) * Physics2D.gravity.y * Time.deltaTime * Vector2.up;
 
