@@ -490,32 +490,34 @@ public class Player : NetworkBehaviour
         if (currentAbility.onCooldown)
             return;
 
+        Vector2 casterPosition = new(transform.position.x, transform.position.y);
         Vector2 aimPoint = mousePosition;
         if (currentAbility.hasRange)
         {
             float mouseRange = Vector3.Distance(transform.position, mousePosition);
             if (mouseRange > currentAbility.abilityRange)
             {
-                Vector2 casterPosition = new(transform.position.x, transform.position.y);
                 Vector2 aimDirection = (mousePosition - casterPosition).normalized;
                 aimPoint = casterPosition + (aimDirection * currentAbility.abilityRange);
             }
         }
-        RpcTriggerAbility(abilityNumber, transform.position, aimPoint);
-    }
 
+        currentAbility.TriggerAbility(casterPosition, aimPoint);
+        RpcServerTriggerAbility(ClientManager.Connection, abilityNumber, casterPosition, aimPoint);
+    }
     [ServerRpc]
-    private void RpcTriggerAbility(int abilityNumber, Vector2 casterPosition, Vector2 aimPoint)
+    protected void RpcServerTriggerAbility(NetworkConnection caster, int abilityNumber, Vector2 casterPosition, Vector2 aimPoint)
     {
-        RpcSendAbility(abilityNumber, casterPosition, aimPoint);
+        RpcClientTriggerAbility(caster, abilityNumber, casterPosition, aimPoint);
     }
     [ObserversRpc]
-    private void RpcSendAbility(int abilityNumber, Vector2 casterPosition, Vector2 aimPoint)
+    protected void RpcClientTriggerAbility(NetworkConnection caster, int abilityNumber, Vector2 casterPosition, Vector2 aimPoint)
     {
-        AbilityBase newAbility = ability1;
-        if (abilityNumber == 2) newAbility = ability2;
-        else if (abilityNumber == 3) newAbility = ability3;
+        AbilityBase currentAbility = ability1;
+        if (abilityNumber == 2) currentAbility = ability2;
+        else if (abilityNumber == 3) currentAbility = ability3;
 
-        newAbility.TriggerAbility(casterPosition, aimPoint);
+        if (caster != ClientManager.Connection)
+            currentAbility.TriggerAbility(casterPosition, aimPoint);
     }
 }

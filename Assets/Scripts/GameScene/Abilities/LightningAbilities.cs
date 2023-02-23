@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using FishNet.Object;
+using FishNet.Component.Animating;
 
 public class LightningAbilities : AbilityBase
 {
@@ -27,7 +27,7 @@ public class LightningAbilities : AbilityBase
             hasRange = false;
         }
     }
-    protected override void StartAbility(Vector2 casterPosition, Vector2 aimPoint)
+    public override void TriggerAbility(Vector2 casterPosition, Vector2 aimPoint)
     {
         if (name == "Electrify") Electrify();
         if (name == "Blink") Blink(casterPosition, aimPoint);
@@ -40,7 +40,7 @@ public class LightningAbilities : AbilityBase
     }
 
     public SpriteRenderer blinkRenderer;
-    public Animator blinkAnimator; //assigned in inspector
+    public NetworkAnimator blinkAnimator; //assigned in inspector
     private void Blink(Vector2 casterPosition, Vector2 aimPoint)
     {
         transform.position = player.transform.position;

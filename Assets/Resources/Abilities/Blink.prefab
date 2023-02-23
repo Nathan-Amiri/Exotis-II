@@ -78,7 +78,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 098b52b5c44f9184d99333aa69365f5d, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -124,7 +124,7 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 4403376845336570041}
   _networkObjectCache: {fileID: 4403376845336570041}
   blinkRenderer: {fileID: 4665696633602026739}
-  blinkAnimator: {fileID: 15988871}
+  blinkAnimator: {fileID: 8118179680247294013}
 --- !u!114 &8118179680247294013
 MonoBehaviour:
   m_ObjectHideFlags: 0

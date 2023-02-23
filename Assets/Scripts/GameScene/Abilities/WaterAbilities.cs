@@ -25,7 +25,7 @@ public class WaterAbilities : AbilityBase
             hasRange = false;
         }
     }
-    protected override void StartAbility(Vector2 casterPosition, Vector2 aimPoint)
+    public override void TriggerAbility(Vector2 casterPosition, Vector2 aimPoint)
     {
         if (name == "Flow") Flow();
         if (name == "Distortion") Distortion();

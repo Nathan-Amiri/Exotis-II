@@ -21,24 +21,7 @@ public class AbilityBase : NetworkBehaviour
         player = newPlayer;
     }
 
-    public void TriggerAbility(Vector2 casterPosition, Vector2 mousePosition)
-    {
-        StartAbility(casterPosition, mousePosition);
-        RpcServerTriggerAbility(ClientManager.Connection, casterPosition, mousePosition);
-    }
-    [ServerRpc]
-    protected void RpcServerTriggerAbility(NetworkConnection caster, Vector2 casterPosition, Vector2 mousePosition)
-    {
-        RpcClientTriggerAbility(caster, casterPosition, mousePosition);
-    }
-    [ObserversRpc]
-    protected void RpcClientTriggerAbility(NetworkConnection caster, Vector2 casterPosition, Vector2 mousePosition)
-    {
-        if (caster != ClientManager.Connection)
-            StartAbility(casterPosition, mousePosition);
-    }
-
-    protected virtual void StartAbility(Vector2 casterPosition, Vector2 mousePosition) { }
+    public virtual void TriggerAbility(Vector2 casterPosition, Vector2 mousePosition) { }
 
     protected IEnumerator StartCooldown()
     {
