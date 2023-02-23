@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using FishNet.Object;
 
 public class LightningAbilities : AbilityBase
 {
@@ -26,10 +27,10 @@ public class LightningAbilities : AbilityBase
             hasRange = false;
         }
     }
-    public override void TriggerAbility(bool isOwner, Vector2 casterPosition, Vector2 aimPoint)
+    protected override void StartAbility(Vector2 casterPosition, Vector2 aimPoint)
     {
         if (name == "Electrify") Electrify();
-        if (name == "Blink") Blink(isOwner, casterPosition, aimPoint);
+        if (name == "Blink") Blink(casterPosition, aimPoint);
         if (name == "Recharge") Recharge();
     }
 
@@ -40,41 +41,40 @@ public class LightningAbilities : AbilityBase
 
     public SpriteRenderer blinkRenderer;
     public Animator blinkAnimator; //assigned in inspector
-    private Color32 blinkError = Color.red;
-    private Color32 blinkNormal = new(255, 236, 0, 255);
-    private void Blink(bool isOwner, Vector2 casterPosition, Vector2 aimPoint)
+    private void Blink(Vector2 casterPosition, Vector2 aimPoint)
     {
+        transform.position = player.transform.position;
+        //^ using current position rather than casterPosition for lag compensation (looks better and doesn't affect gameplay)
+
+        if (!IsOwner)
+            return;
+
+        blinkAnimator.SetTrigger("Blink");
+
         Vector2 blinkPosition;
+        Vector2 blinkDirection = (aimPoint - casterPosition).normalized;
+
         if ((casterPosition - aimPoint).magnitude < abilityRange)
             blinkPosition = aimPoint;
         else
-        {
-            Vector2 blinkDirection = (aimPoint - casterPosition).normalized;
-            blinkPosition = new Vector2(player.transform.position.x, player.transform.position.y) + blinkDirection * abilityRange;
-        }
+            blinkPosition = casterPosition + blinkDirection * abilityRange;
+
+        float blinkIncrement = (blinkPosition - casterPosition).magnitude / 10;
 
         int layerMask = 1 << 3; //raycast only checks layer 3 (Terrain)
-        RaycastHit2D hit = Physics2D.Raycast(blinkPosition, Vector2.zero, 0, layerMask);
-        if (hit.collider != null)
+        for (int i = 0; i < 11; i++) //loop happens 1 more times than there are blink increments
         {
-            if (!isOwner)
-                return;
-
-            blinkRenderer.color = blinkError;
-            transform.position = blinkPosition;
-            blinkAnimator.SetTrigger("Blink");
+            RaycastHit2D hit = Physics2D.Raycast(blinkPosition, Vector2.zero, 0, layerMask);
+            if (hit.collider != null)
+                blinkPosition -= blinkDirection * blinkIncrement;
+            else if (i == 11) //just a precaution
+                blinkPosition = casterPosition;
+            else
+                break;
         }
-        else
-        {
-            StartCoroutine(StartCooldown());
 
-            blinkRenderer.color = blinkNormal;
-            transform.position = player.transform.position;
-            blinkAnimator.SetTrigger("Blink");
-
-            if(isOwner)
-                player.transform.position = blinkPosition;
-        }
+        StartCoroutine(StartCooldown());
+        player.transform.position = blinkPosition;
     }
 
     private void Recharge()

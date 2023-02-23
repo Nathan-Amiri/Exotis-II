@@ -6,7 +6,7 @@ using FishNet.Object.Synchronizing;
 using FishNet.Connection;
 using TMPro;
 using System;
-using Unity.VisualScripting;
+using FishNet;
 
 public class Player : NetworkBehaviour
 {
@@ -92,14 +92,8 @@ public class Player : NetworkBehaviour
         name = charSelectInfo[0];
 
         if (charSelectInfo[1] == "Freeze" || charSelectInfo[1] == "Tidalwave" || charSelectInfo[1] == "Blink")
-        {
-            ability1 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[1]), abilityParent.transform).GetComponent<AbilityBase>();
-            ability1.OnSpawn(this, charSelectInfo[1]);
-        }
-        //ability2 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[2]), abilityParent.transform).GetComponent<AbilityBase>();
-        //ability2.OnSpawn(this, charSelectInfo[2]);
-        //ability3 = Instantiate(Resources.Load("Abilities/" + charSelectInfo[3]), abilityParent.transform).GetComponent<AbilityBase>();
-        //ability3.OnSpawn(this, charSelectInfo[3]);
+            if (IsOwner)
+                RpcSpawnAbility(ClientManager.Connection, charSelectInfo[1], 1);
 
         index.LoadAttributes(this, charSelectInfo); //add stats and spells
 
@@ -122,6 +116,30 @@ public class Player : NetworkBehaviour
         NewGame();
 
         startUpdate = true;
+    }
+
+    [ServerRpc]
+    private void RpcSpawnAbility(NetworkConnection owner, string abilityName, int abilityNumber)
+    {
+        GameObject abilityObject = Instantiate(Resources.Load("Abilities/" + abilityName), abilityParent.transform) as GameObject;
+        ServerManager.Spawn(abilityObject, owner);
+        AbilityBase newAbility = abilityObject.GetComponent<AbilityBase>();
+        RpcClientSpawnAbility(newAbility, abilityName, abilityNumber);
+    }
+
+    [ObserversRpc]
+    private void RpcClientSpawnAbility(AbilityBase newAbility, string abilityName, int abilityNumber)
+    {
+        if (abilityNumber == 1)
+            ability1 = newAbility;
+        else if (abilityNumber == 2)
+            ability2 = newAbility;
+        else
+            ability3 = newAbility;
+
+        newAbility.transform.position = new Vector2(-15, 0);
+
+        newAbility.OnSpawn(this, abilityName);
     }
 
     public void NewGame() //run by PlayAgain
@@ -238,7 +256,7 @@ public class Player : NetworkBehaviour
     }
 
     [Server]
-    public void HealthChange(float amount)
+    public void HealthChange(float amount) //damage changes occur on the server
     {
         if (isImmune)
             return;
@@ -282,12 +300,12 @@ public class Player : NetworkBehaviour
     }
 
 
-    public void StatChange(string stat, int amount) //amount = number of stages (-2, -1, 1, or 2)
+    public void StatChange(string stat, int amount) //stat changes occur on the client. amount = number of stages (-2, -1, 1, or 2)
     {
         if (stat == "power")
             power += amount;
         else
-        {
+        { 
             bool multiply = amount > 0;
             amount = Mathf.Abs(amount);
 
@@ -483,23 +501,21 @@ public class Player : NetworkBehaviour
                 aimPoint = casterPosition + (aimDirection * currentAbility.abilityRange);
             }
         }
-        RpcTriggerAbility(GameManager.playerNumber, abilityNumber, transform.position, aimPoint);
+        RpcTriggerAbility(abilityNumber, transform.position, aimPoint);
     }
 
     [ServerRpc]
-    private void RpcTriggerAbility(int playerNumber, int abilityNumber, Vector2 casterPosition, Vector2 aimPoint)
+    private void RpcTriggerAbility(int abilityNumber, Vector2 casterPosition, Vector2 aimPoint)
     {
-        RpcSendAbility(playerNumber, abilityNumber, casterPosition, aimPoint);
+        RpcSendAbility(abilityNumber, casterPosition, aimPoint);
     }
     [ObserversRpc]
-    private void RpcSendAbility(int playerNumber, int abilityNumber, Vector2 casterPosition, Vector2 aimPoint)
+    private void RpcSendAbility(int abilityNumber, Vector2 casterPosition, Vector2 aimPoint)
     {
-        bool abilityOwner = playerNumber == GameManager.playerNumber;
-
         AbilityBase newAbility = ability1;
         if (abilityNumber == 2) newAbility = ability2;
         else if (abilityNumber == 3) newAbility = ability3;
 
-        newAbility.TriggerAbility(abilityOwner, casterPosition, aimPoint);
+        newAbility.TriggerAbility(casterPosition, aimPoint);
     }
 }

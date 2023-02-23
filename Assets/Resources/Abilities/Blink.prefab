@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 4665696633602026739}
   - component: {fileID: 15988871}
   - component: {fileID: -3417525335637844645}
+  - component: {fileID: 8118179680247294013}
+  - component: {fileID: 4403376845336570041}
   m_Layer: 0
   m_Name: Blink
   m_TagString: Untagged
@@ -118,5 +120,62 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48d6e779c4870e7498efb86fdcb8bbef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 4403376845336570041}
+  _networkObjectCache: {fileID: 4403376845336570041}
   blinkRenderer: {fileID: 4665696633602026739}
   blinkAnimator: {fileID: 15988871}
+--- !u!114 &8118179680247294013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1560649329761292253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8cac635f24954048aad3a6ff9110beb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 1
+  _addedNetworkObject: {fileID: 4403376845336570041}
+  _networkObjectCache: {fileID: 4403376845336570041}
+  IgnoredParameters: []
+  _animator: {fileID: 15988871}
+  _smoothFloats: 1
+  _synchronizeInterval: 0.5
+  _clientAuthoritative: 0
+  _sendToOwner: 0
+--- !u!114 &4403376845336570041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1560649329761292253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <IsNested>k__BackingField: 0
+  <ComponentIndex>k__BackingField: 0
+  _networkBehaviours:
+  - {fileID: -3417525335637844645}
+  - {fileID: 8118179680247294013}
+  <ParentNetworkObject>k__BackingField: {fileID: 0}
+  <ChildNetworkObjects>k__BackingField: []
+  _isNetworked: 1
+  _isGlobal: 0
+  _defaultDespawnType: 0
+  NetworkObserver: {fileID: 0}
+  <PrefabId>k__BackingField: -1
+  _scenePathHash: 2332773068
+  <SceneId>k__BackingField: 0
+  <AssetPathHash>k__BackingField: 6216365649210419202
+  _sceneNetworkObjects:
+  - {fileID: 4403376845336570041}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}

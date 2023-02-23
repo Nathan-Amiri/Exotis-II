@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using FishNet.Object;
 
 public class FrostAbilities : AbilityBase
 {
@@ -22,7 +23,7 @@ public class FrostAbilities : AbilityBase
             hasRange = false;
         }
     }
-    public override void TriggerAbility(bool isOwner, Vector2 casterPosition, Vector2 aimPoint)
+    protected override void StartAbility(Vector2 casterPosition, Vector2 aimPoint)
     {
         if (name == "Icybreath") IcyBreath();
         if (name == "Hail") Hail();
@@ -36,12 +37,6 @@ public class FrostAbilities : AbilityBase
     {
         if (name == "Freeze") OnExitFreeze(col);
     }
-    private IEnumerator Disappear(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        transform.position = new Vector2(-15, 0);
-    }
-
 
     private void IcyBreath()
     {
@@ -55,13 +50,17 @@ public class FrostAbilities : AbilityBase
 
     private void Freeze(Vector2 aimPoint)
     {
-        StartCoroutine(StartCooldown());
+        if (IsOwner)
+            StartCoroutine(StartCooldown());
 
         transform.position = aimPoint;
         StartCoroutine(Disappear(4));
     }
     private void OnEnterFreeze(Collider2D col)
     {
+        if (!IsServer)
+            return;
+
         if (col.CompareTag("Player"))
         {
             if (col.gameObject == player.gameObject)

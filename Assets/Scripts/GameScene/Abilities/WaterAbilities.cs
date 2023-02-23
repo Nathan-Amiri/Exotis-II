@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+using FishNet.Object;
 
 public class WaterAbilities : AbilityBase
 {
@@ -25,7 +25,7 @@ public class WaterAbilities : AbilityBase
             hasRange = false;
         }
     }
-    public override void TriggerAbility(bool isOwner, Vector2 casterPosition, Vector2 aimPoint)
+    protected override void StartAbility(Vector2 casterPosition, Vector2 aimPoint)
     {
         if (name == "Flow") Flow();
         if (name == "Distortion") Distortion();
@@ -52,6 +52,9 @@ public class WaterAbilities : AbilityBase
     public Animator tidalAnimator; //^
     private void TidalWave(Vector2 casterPosition, Vector2 aimPoint)
     {
+        if (IsOwner)
+            StartCoroutine(StartCooldown());
+
         float angle = Vector2.Angle(aimPoint - casterPosition, Vector2.right);
         int posOrNeg = (aimPoint - casterPosition).y > 0 ? 1 : -1;
         transform.rotation = Quaternion.Euler(0, 0, angle * posOrNeg);
@@ -85,6 +88,9 @@ public class WaterAbilities : AbilityBase
     }
     private void OnEnterTidalWave(Collider2D col)
     {
+        if (!IsServer)
+            return;
+
         if (col.CompareTag("Player") && col.gameObject != player.gameObject)
             col.GetComponent<Player>().HealthChange(-3);
     }
