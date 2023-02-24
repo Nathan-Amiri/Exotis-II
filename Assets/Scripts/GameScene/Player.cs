@@ -6,7 +6,6 @@ using FishNet.Object.Synchronizing;
 using FishNet.Connection;
 using TMPro;
 using System;
-using FishNet;
 
 public class Player : NetworkBehaviour
 {
