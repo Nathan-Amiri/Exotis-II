@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using FishNet.Object;
-using FishNet.Connection;
 
 public class AbilityBase : NetworkBehaviour
 {
+    public SpriteRenderer coreRenderer; //assigned in inspector
+
     protected float cooldown; //set by derived class
-    [NonSerialized] public bool hasRange; //read by Player, set by derived class
+
     [NonSerialized] public float abilityRange; //set by derived class
+    [NonSerialized] public bool hasRange; //^, read by Player
 
     [NonSerialized] public Player player;
 

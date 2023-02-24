@@ -103,6 +103,7 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 6172485992778298264}
   _networkObjectCache: {fileID: 6172485992778298264}
+  coreRenderer: {fileID: 2361293727663528611}
 --- !u!58 &1891985023486859474
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -118,7 +119,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 2
 --- !u!114 &6172485992778298264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,10 +143,15 @@ MonoBehaviour:
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
   <PrefabId>k__BackingField: 4
-  _scenePathHash: 0
+  _scenePathHash: 2332773068
   <SceneId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 9432043973902714652
-  _sceneNetworkObjects: []
+  _sceneNetworkObjects:
+  - {fileID: 6172485992778298264}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &7225966749193959995
 GameObject:
   m_ObjectHideFlags: 0

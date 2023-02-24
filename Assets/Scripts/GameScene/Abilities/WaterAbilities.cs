@@ -9,6 +9,8 @@ public class WaterAbilities : AbilityBase
     {
         base.OnSpawn(newPlayer, newName);
 
+        bool hasCore = false;
+
         if (name == "Flow")
         {
             cooldown = 4;
@@ -23,7 +25,12 @@ public class WaterAbilities : AbilityBase
         {
             cooldown = 12;
             hasRange = false;
+            hasCore = true;
         }
+
+        if (hasCore)
+            coreRenderer.color = player.water.Equals(player.lighterColor) ? player.darkerColor : player.lighterColor;
+
     }
     public override void TriggerAbility(Vector2 casterPosition, Vector2 aimPoint)
     {

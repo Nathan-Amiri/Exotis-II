@@ -75,9 +75,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingLayerID: -1790912799
+  m_SortingLayer: -1
+  m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 9135a7ffbf8f4e94fbb9b361fe78671c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -298,8 +298,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 217947371
+  m_SortingLayer: -2
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: e7adb0a4447d1de4d960db63ffa45ba7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -452,7 +452,7 @@ MonoBehaviour:
   _isGlobal: 0
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: 2
+  <PrefabId>k__BackingField: 3
   _scenePathHash: 0
   <SceneId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 7807759643866311769

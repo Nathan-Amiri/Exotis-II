@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using FishNet.Object;
 
 public class FrostAbilities : AbilityBase
 {
@@ -9,19 +8,27 @@ public class FrostAbilities : AbilityBase
     {
         base.OnSpawn(newPlayer, newName);
 
+        bool hasCore = false;
+
         if (name == "Icybreath")
         {
             hasRange = false;
+            hasCore = true;
         }
         else if (name == "Hail")
         {
             hasRange = true;
+            hasCore = true;
         }
         if (name == "Freeze")
         {
             cooldown = 8;
             hasRange = false;
+            hasCore = true;
         }
+
+        if (hasCore)
+            coreRenderer.color = player.frost.Equals(player.lighterColor) ? player.darkerColor : player.lighterColor;
     }
     public override void TriggerAbility(Vector2 casterPosition, Vector2 aimPoint)
     {
@@ -58,13 +65,10 @@ public class FrostAbilities : AbilityBase
     }
     private void OnEnterFreeze(Collider2D col)
     {
-        if (!IsServer)
-            return;
-
         if (col.CompareTag("Player"))
         {
             if (col.gameObject == player.gameObject)
-                player.StatChange("speed", 2);
+                player.StatChange("speed", 1);
             else
                 col.GetComponent<Player>().StatChange("speed", -1);
         }
@@ -74,7 +78,7 @@ public class FrostAbilities : AbilityBase
         if (col.CompareTag("Player"))
         {
             if (col.gameObject == player.gameObject)
-                player.StatChange("speed", -2);
+                player.StatChange("speed", -1);
             else
                 col.GetComponent<Player>().StatChange("speed", 1);
         }

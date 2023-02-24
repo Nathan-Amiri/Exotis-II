@@ -31,7 +31,7 @@ public class Player : NetworkBehaviour
     [NonSerialized] public Color32 water = new(35, 182, 255, 255); //^
     [NonSerialized] public Color32 venom = new(23, 195, 0, 255); //^
 
-    [NonSerialized] public Color32 lighterColor; //set by index
+    [NonSerialized] public Color32 lighterColor; //set by index, read by abilitybase
     [NonSerialized] public Color32 darkerColor; //^
 
     [NonSerialized] public float maxHealth = 15; //can be altered by index
@@ -299,13 +299,12 @@ public class Player : NetworkBehaviour
         isImmune = false;
     }
 
-
     public void StatChange(string stat, int amount) //stat changes occur on the client. amount = number of stages (-2, -1, 1, or 2)
     {
         if (stat == "power")
             power += amount;
         else
-        { 
+        {
             bool multiply = amount > 0;
             amount = Mathf.Abs(amount);
 

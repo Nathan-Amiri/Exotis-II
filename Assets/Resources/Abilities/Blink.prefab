@@ -123,6 +123,7 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 4403376845336570041}
   _networkObjectCache: {fileID: 4403376845336570041}
+  coreRenderer: {fileID: 0}
   blinkRenderer: {fileID: 4665696633602026739}
   blinkAnimator: {fileID: 8118179680247294013}
 --- !u!114 &8118179680247294013
@@ -169,7 +170,7 @@ MonoBehaviour:
   _isGlobal: 0
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: -1
+  <PrefabId>k__BackingField: 1
   _scenePathHash: 2332773068
   <SceneId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 6216365649210419202

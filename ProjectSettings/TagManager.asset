@@ -50,6 +50,9 @@ TagManager:
   - name: Player
     uniqueID: 217947371
     locked: 0
+  - name: PlayerCore
+    uniqueID: 2504054497
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

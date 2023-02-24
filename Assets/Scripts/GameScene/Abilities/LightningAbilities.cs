@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using FishNet.Component.Animating;
 
@@ -10,10 +9,13 @@ public class LightningAbilities : AbilityBase
     {
         base.OnSpawn(newPlayer, newName);
 
+        bool hasCore = false;
+
         if (name == "Electrify")
         {
             cooldown = 8;
             hasRange = false;
+            hasCore = true;
         }
         else if (name == "Blink")
         {
@@ -26,6 +28,9 @@ public class LightningAbilities : AbilityBase
             cooldown = 8;
             hasRange = false;
         }
+
+        if (hasCore)
+            coreRenderer.color = player.lightning.Equals(player.lighterColor) ? player.darkerColor : player.lighterColor;
     }
     public override void TriggerAbility(Vector2 casterPosition, Vector2 aimPoint)
     {

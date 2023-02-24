@@ -105,6 +105,7 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 6201521521268584650}
   _networkObjectCache: {fileID: 6201521521268584650}
+  coreRenderer: {fileID: 2607602334694013414}
   tidalSR: {fileID: 209752177625789774}
   tidalRb: {fileID: -1097408598208412750}
   tidalCol: {fileID: -8768915385243597186}
@@ -154,7 +155,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 4, y: 2}
   m_EdgeRadius: 0
 --- !u!95 &1590947615
 Animator:
@@ -198,12 +199,14 @@ MonoBehaviour:
   _isGlobal: 0
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: -1
-  _scenePathHash: 0
+  <PrefabId>k__BackingField: 7
+  _scenePathHash: 2332773068
   <SceneId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 13648599675084988978
   _sceneNetworkObjects:
   - {fileID: 6201521521268584650}
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}

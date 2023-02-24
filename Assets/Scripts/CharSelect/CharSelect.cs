@@ -224,4 +224,14 @@ public class CharSelect : NetworkBehaviour
         lightAndDark[1] = Color.white;
         ChangeAvatar(disconnectedPlayer, lightAndDark);
     }
+
+    private void SaveLoadout()
+    {
+
+    }
+
+    private void ImportLoadout()
+    {
+
+    }
 }
