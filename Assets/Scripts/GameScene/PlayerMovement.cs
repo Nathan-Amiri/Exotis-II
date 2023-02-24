@@ -17,7 +17,7 @@ public class PlayerMovement : NetworkBehaviour
     private readonly float lowJumpMultiplier = 4; //used for dynamic jump
     private readonly float fallMultiplier = 1; //fastfall
 
-    [NonSerialized] public bool isGrounded; //read by GroundCheck
+    [NonSerialized] public bool isGrounded; //read by GroundCheck and VenomAbilities
     [SyncVar]
     [NonSerialized] public bool isStunned; //read by player
 

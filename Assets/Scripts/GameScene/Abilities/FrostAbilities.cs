@@ -20,7 +20,7 @@ public class FrostAbilities : AbilityBase
             hasRange = true;
             hasCore = true;
         }
-        if (name == "Freeze")
+        else if (name == "Freeze")
         {
             cooldown = 8;
             hasRange = false;

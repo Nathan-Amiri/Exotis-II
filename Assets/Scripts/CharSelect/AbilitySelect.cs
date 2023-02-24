@@ -44,10 +44,10 @@ public class AbilitySelect : MonoBehaviour
 
     private readonly string[] waterAbilities = new string[] { "Flow", "Distortion", "Tidalwave" };
     private readonly string[] flameAbilities = new string[] { "Erupt", "Singe", "Heatup" };
-    private readonly string[] windAbilities = new string[] { "Swoop", "Take Flight", "Whirlwind" };
+    private readonly string[] windAbilities = new string[] { "Swoop", "Takeflight", "Whirlwind" };
     private readonly string[] lightningAbilities = new string[] { "Electrify", "Blink", "Recharge" };
     private readonly string[] frostAbilities = new string[] { "Icybreath", "Hail", "Freeze" };
-    private readonly string[] venomAbilities = new string[] { "Fanged Bite", "Infect", "Poison Cloud" };
+    private readonly string[] venomAbilities = new string[] { "Fangedbite", "Infect", "Poisoncloud" };
 
     private List<string> selectedAbilities = new();
 

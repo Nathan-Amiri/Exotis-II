@@ -184,7 +184,6 @@ MonoBehaviour:
   <SceneId>k__BackingField: 10952722374938154479
   <AssetPathHash>k__BackingField: 0
   _sceneNetworkObjects:
-  - {fileID: 0}
   - {fileID: 14904239}
   - {fileID: 1769695057}
   - {fileID: 2587413426466378103}
@@ -695,7 +694,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -320626635
-  m_SortingLayer: -3
+  m_SortingLayer: -4
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
   m_Color: {r: 0.18867922, g: 0.18867922, b: 0.18867922, a: 1}
@@ -1971,7 +1970,7 @@ TilemapRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -158680105
-  m_SortingLayer: -2
+  m_SortingLayer: -3
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}

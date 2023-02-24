@@ -15,7 +15,7 @@ public class Player : NetworkBehaviour
     public SpriteRenderer spriteRenderer; //assigned in inspector
     public SpriteRenderer coreSpriteRenderer; //^
     public Animator animator; //^
-    public PlayerMovement playerMovement; //^, read by Setup
+    public PlayerMovement playerMovement; //^, read by Setup and VenomAbilities
 
     [NonSerialized] public GameManager gameManager; //set by Setup
     [NonSerialized] public Animator countdownAnim; //^
@@ -91,7 +91,7 @@ public class Player : NetworkBehaviour
     {
         name = charSelectInfo[0];
 
-        if (charSelectInfo[1] == "Freeze" || charSelectInfo[1] == "Tidalwave" || charSelectInfo[1] == "Blink")
+        if (charSelectInfo[1] == "Freeze" || charSelectInfo[1] == "Tidalwave" || charSelectInfo[1] == "Blink" || charSelectInfo[1] == "Poisoncloud")
             if (IsOwner)
                 RpcSpawnAbility(ClientManager.Connection, charSelectInfo[1], 1);
 
@@ -512,11 +512,13 @@ public class Player : NetworkBehaviour
     [ObserversRpc]
     protected void RpcClientTriggerAbility(NetworkConnection caster, int abilityNumber, Vector2 casterPosition, Vector2 aimPoint)
     {
+        if (caster == ClientManager.Connection)
+            return;
+
         AbilityBase currentAbility = ability1;
         if (abilityNumber == 2) currentAbility = ability2;
         else if (abilityNumber == 3) currentAbility = ability3;
 
-        if (caster != ClientManager.Connection)
-            currentAbility.TriggerAbility(casterPosition, aimPoint);
+        currentAbility.TriggerAbility(casterPosition, aimPoint);
     }
 }

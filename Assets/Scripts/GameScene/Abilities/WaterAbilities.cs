@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using FishNet.Object;
 
 public class WaterAbilities : AbilityBase
 {
@@ -21,7 +20,7 @@ public class WaterAbilities : AbilityBase
             cooldown = 8;
             hasRange = false;
         }
-        if (name == "Tidalwave")
+        else if (name == "Tidalwave")
         {
             cooldown = 12;
             hasRange = false;

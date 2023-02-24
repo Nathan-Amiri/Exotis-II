@@ -23,7 +23,7 @@ public class LightningAbilities : AbilityBase
             hasRange = true;
             abilityRange = 2.5f;
         }
-        if (name == "Recharge")
+        else if (name == "Recharge")
         {
             cooldown = 8;
             hasRange = false;
