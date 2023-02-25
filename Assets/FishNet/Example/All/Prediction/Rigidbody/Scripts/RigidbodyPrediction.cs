@@ -1,6 +1,7 @@
 ﻿using FishNet;
 using FishNet.Object;
 using FishNet.Object.Prediction;
+using FishNet.Transporting;
 using UnityEngine;
 
 /*
@@ -15,7 +16,7 @@ namespace FishNet.Example.Prediction.Rigidbodies
     public class RigidbodyPrediction : NetworkBehaviour
     {
         #region Types.
-        public struct MoveData
+        public struct MoveData : IReplicateData
         {
             public bool Jump;
             public float Horizontal;
@@ -25,9 +26,15 @@ namespace FishNet.Example.Prediction.Rigidbodies
                 Jump = jump;
                 Horizontal = horizontal;
                 Vertical = vertical;
+                _tick = 0;
             }
+
+            private uint _tick;
+            public void Dispose() { }
+            public uint GetTick() => _tick;
+            public void SetTick(uint value) => _tick = value;
         }
-        public struct ReconcileData
+        public struct ReconcileData : IReconcileData
         {
             public Vector3 Position;
             public Quaternion Rotation;
@@ -39,7 +46,13 @@ namespace FishNet.Example.Prediction.Rigidbodies
                 Rotation = rotation;
                 Velocity = velocity;
                 AngularVelocity = angularVelocity;
+                _tick = 0;
             }
+
+            private uint _tick;
+            public void Dispose() { }
+            public uint GetTick() => _tick;
+            public void SetTick(uint value) => _tick = value;
         }
         #endregion
 
@@ -65,6 +78,9 @@ namespace FishNet.Example.Prediction.Rigidbodies
         private bool _jump;
         #endregion
 
+        public NetworkObject BulletPrefab;
+        private bool _spawnBullet;
+        private NetworkObject _lastSpawnedBullet;
 
         private void Awake()
         {
@@ -92,6 +108,12 @@ namespace FishNet.Example.Prediction.Rigidbodies
                     _nextJumpTime = Time.time + 1f;
                     _jump = true;
                 }
+                else if (Input.GetKeyDown(KeyCode.LeftShift))
+                    _spawnBullet = true;
+                else if (Input.GetKeyDown(KeyCode.LeftAlt))
+                {
+                    _lastSpawnedBullet?.Despawn();
+                }
             }
         }
 
@@ -102,6 +124,25 @@ namespace FishNet.Example.Prediction.Rigidbodies
                 Reconciliation(default, false);
                 CheckInput(out MoveData md);
                 Move(md, false);
+
+                if (_spawnBullet)
+                {
+                    _spawnBullet = false;
+                    NetworkObject nob = Instantiate(BulletPrefab, transform.position + (transform.forward * 1f), transform.rotation);
+                    _lastSpawnedBullet = nob;
+                    //If not server add speed for client side.
+                    if (!base.IsServer)
+                    {
+                        BulletTest bt = nob.GetComponent<BulletTest>();
+                        bt.SyncVarScale = Vector3.one * 0.1f;
+                        bt.SyncListNumbers.Add(1);
+                        bt.SyncListNumbers.Add(2);
+
+                        bt.SendSpeed();
+                    }
+                    base.Spawn(nob);
+
+                }
             }
             if (base.IsServer)
             {
@@ -134,7 +175,7 @@ namespace FishNet.Example.Prediction.Rigidbodies
         }
 
         [Replicate]
-        private void Move(MoveData md, bool asServer, bool replaying = false)
+        private void Move(MoveData md, bool asServer, Channel channel = Channel.Unreliable, bool replaying = false)
         {
             //Add extra gravity for faster falls.
             Vector3 forces = new Vector3(md.Horizontal, Physics.gravity.y, md.Vertical) * _moveRate;
@@ -145,7 +186,7 @@ namespace FishNet.Example.Prediction.Rigidbodies
         }
 
         [Reconcile]
-        private void Reconciliation(ReconcileData rd, bool asServer)
+        private void Reconciliation(ReconcileData rd, bool asServer, Channel channel = Channel.Unreliable)
         {
             transform.position = rd.Position;
             transform.rotation = rd.Rotation;

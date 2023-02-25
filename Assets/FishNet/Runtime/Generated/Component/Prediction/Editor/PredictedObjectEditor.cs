@@ -10,31 +10,50 @@ namespace FishNet.Component.Prediction
     [CanEditMultipleObjects]
     public class PredictedObjectEditor : Editor
     {
+        private SerializedProperty _implementsPredictionMethods;
         private SerializedProperty _graphicalObject;
-        private SerializedProperty _smoothTicks;
-        private SerializedProperty _durationType;
-        private SerializedProperty _smoothingDuration;
+        private SerializedProperty _ownerSmoothPosition;
+        private SerializedProperty _ownerSmoothRotation;
+        private SerializedProperty _ownerInterpolation;
         private SerializedProperty _enableTeleport;
         private SerializedProperty _teleportThreshold;
         private SerializedProperty _predictionType;
+
         private SerializedProperty _rigidbody;
         private SerializedProperty _rigidbody2d;
+        private SerializedProperty _spectatorSmoothPosition;
+        private SerializedProperty _spectatorSmoothRotation;
+        private SerializedProperty _spectatorInterpolation;
+        private SerializedProperty _overflowMultiplier;
+        private SerializedProperty _maintainedVelocity;
+        private SerializedProperty _resendType;
+        private SerializedProperty _resendInterval;
+
         private SerializedProperty _networkTransform;
-        private SerializedProperty _predictionRatio;
 
         protected virtual void OnEnable()
         {
-            _graphicalObject = serializedObject.FindProperty("_graphicalObject");
-            _smoothTicks = serializedObject.FindProperty("_smoothTicks");
-            _durationType = serializedObject.FindProperty("_durationType");
-            _smoothingDuration = serializedObject.FindProperty("_smoothingDuration");
-            _enableTeleport = serializedObject.FindProperty("_enableTeleport");
-            _teleportThreshold = serializedObject.FindProperty("_teleportThreshold");
-            _predictionType = serializedObject.FindProperty("_predictionType");
-            _rigidbody = serializedObject.FindProperty("_rigidbody");
-            _rigidbody2d = serializedObject.FindProperty("_rigidbody2d");
-            _networkTransform = serializedObject.FindProperty("_networkTransform");
-            _predictionRatio = serializedObject.FindProperty("_predictionRatio");
+            _implementsPredictionMethods = serializedObject.FindProperty(nameof(_implementsPredictionMethods));
+            _graphicalObject = serializedObject.FindProperty(nameof(_graphicalObject));
+            _ownerSmoothPosition = serializedObject.FindProperty(nameof(_ownerSmoothPosition));
+            _ownerSmoothRotation = serializedObject.FindProperty(nameof(_ownerSmoothRotation));
+            _ownerInterpolation = serializedObject.FindProperty(nameof(_ownerInterpolation));
+            _enableTeleport = serializedObject.FindProperty(nameof(_enableTeleport));
+            _teleportThreshold = serializedObject.FindProperty(nameof(_teleportThreshold));
+            _predictionType = serializedObject.FindProperty(nameof(_predictionType));
+
+            _rigidbody = serializedObject.FindProperty(nameof(_rigidbody));
+            _rigidbody2d = serializedObject.FindProperty(nameof(_rigidbody2d));
+            _spectatorSmoothPosition = serializedObject.FindProperty(nameof(_spectatorSmoothPosition));
+            _spectatorSmoothRotation = serializedObject.FindProperty(nameof(_spectatorSmoothRotation));
+            _spectatorInterpolation = serializedObject.FindProperty(nameof(_spectatorInterpolation));
+            _overflowMultiplier = serializedObject.FindProperty(nameof(_overflowMultiplier));
+            _maintainedVelocity = serializedObject.FindProperty(nameof(_maintainedVelocity));
+            _resendType = serializedObject.FindProperty(nameof(_resendType));
+            _resendInterval = serializedObject.FindProperty(nameof(_resendInterval));
+
+            _networkTransform = serializedObject.FindProperty(nameof(_networkTransform));
+
         }
 
         public override void OnInspectorGUI()
@@ -45,15 +64,8 @@ namespace FishNet.Component.Prediction
             EditorGUILayout.ObjectField("Script:", MonoScript.FromMonoBehaviour((PredictedObject)target), typeof(PredictedObject), false);
             GUI.enabled = true;
 
+            EditorGUILayout.PropertyField(_implementsPredictionMethods);
             EditorGUILayout.PropertyField(_graphicalObject);
-            EditorGUILayout.PropertyField(_smoothTicks);
-            EditorGUILayout.PropertyField(_durationType);
-            if ((PredictedObject.SmoothingDurationType)_durationType.intValue == PredictedObject.SmoothingDurationType.Time)
-            {
-                EditorGUI.indentLevel++;
-                EditorGUILayout.PropertyField(_smoothingDuration);
-                EditorGUI.indentLevel--;
-            }
             EditorGUILayout.PropertyField(_enableTeleport);
             if (_enableTeleport.boolValue)
             {
@@ -61,6 +73,13 @@ namespace FishNet.Component.Prediction
                 EditorGUILayout.PropertyField(_teleportThreshold);
                 EditorGUI.indentLevel--;
             }
+
+            EditorGUILayout.LabelField("Owner Settings");
+            EditorGUI.indentLevel++;
+            EditorGUILayout.PropertyField(_ownerSmoothPosition, new GUIContent("Smooth Position"));
+            EditorGUILayout.PropertyField(_ownerSmoothRotation, new GUIContent("Smooth Rotation"));
+            EditorGUILayout.PropertyField(_ownerInterpolation, new GUIContent("Interpolation"));
+            EditorGUI.indentLevel--;
 
             EditorGUILayout.PropertyField(_predictionType);
             PredictedObject.PredictionType movementType = (PredictedObject.PredictionType)_predictionType.intValue;
@@ -72,7 +91,28 @@ namespace FishNet.Component.Prediction
                     EditorGUILayout.PropertyField(_rigidbody);
                 else
                     EditorGUILayout.PropertyField(_rigidbody2d, new GUIContent("Rigidbody2D", "Rigidbody2D to predict."));
-                EditorGUILayout.PropertyField(_predictionRatio);
+
+                EditorGUILayout.LabelField("Spectator Settings");
+                EditorGUI.indentLevel++;
+                EditorGUILayout.LabelField("Smoothing");
+                EditorGUI.indentLevel++;
+                EditorGUILayout.PropertyField(_spectatorSmoothPosition, new GUIContent("Smooth Position"));
+                EditorGUILayout.PropertyField(_spectatorSmoothRotation, new GUIContent("Smooth Rotation"));
+                EditorGUILayout.PropertyField(_spectatorInterpolation, new GUIContent("Interpolation"));
+                EditorGUILayout.PropertyField(_overflowMultiplier);
+                EditorGUI.indentLevel--;
+                EditorGUILayout.PropertyField(_maintainedVelocity);
+
+                EditorGUILayout.PropertyField(_resendType);
+                PredictedObject.ResendType resendType = (PredictedObject.ResendType)_resendType.intValue;
+                if (resendType == PredictedObject.ResendType.Interval)
+                {
+                    EditorGUI.indentLevel++;
+                    EditorGUILayout.PropertyField(_resendInterval, new GUIContent("Interval"));
+                    EditorGUI.indentLevel--;
+                }
+                EditorGUI.indentLevel--;
+
                 EditorGUI.indentLevel--;
             }
             else

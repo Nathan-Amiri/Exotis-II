@@ -1,8 +1,10 @@
-﻿using FishNet.Managing.Logging;
+﻿using FishNet.Documenting;
+using FishNet.Managing.Logging;
 using FishNet.Object.Synchronizing;
 using FishNet.Object.Synchronizing.Internal;
 using FishNet.Serializing;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace FishNet.Example.CustomSyncObject
@@ -117,10 +119,9 @@ namespace FishNet.Example.CustomSyncObject
             if (!base.IsRegistered)
                 return;
 
-            if (base.NetworkManager != null && base.Settings.WritePermission == WritePermission.ServerOnly && !base.NetworkBehaviour.IsServer)
+            if (base.NetworkManager != null && !base.NetworkBehaviour.IsServer)
             {
-                if (NetworkManager.CanLog(LoggingType.Warning))
-                    Debug.LogWarning($"Cannot complete operation as server when server is not active.");
+                NetworkManager.LogWarning($"Cannot complete operation as server when server is not active.");
                 return;
             }
 
@@ -148,7 +149,7 @@ namespace FishNet.Example.CustomSyncObject
         public override void WriteDelta(PooledWriter writer, bool resetSyncTick = true)
         {
             base.WriteDelta(writer, resetSyncTick);
-            writer.WriteUInt32((uint)_changed.Count);
+            writer.WriteInt32(_changed.Count);
 
             for (int i = 0; i < _changed.Count; i++)
             {
@@ -188,20 +189,19 @@ namespace FishNet.Example.CustomSyncObject
         }
 
         /// <summary>
-        /// Sets current values.
+        /// Reads and sets the current values for server or client.
         /// </summary>
-        /// <param name="reader"></param>
-        public override void Read(PooledReader reader)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [APIExclude]
+        public override void Read(PooledReader reader, bool asServer)
         {
-            //Read is always on client side.
-            bool asServer = false;
             /* When !asServer don't make changes if server is running.
             * This is because changes would have already been made on
             * the server side and doing so again would result in duplicates
             * and potentially overwrite data not yet sent. */
             bool asClientAndHost = (!asServer && base.NetworkManager.IsServer);
 
-            int changes = (int)reader.ReadUInt32();
+            int changes = reader.ReadInt32();
             for (int i = 0; i < changes; i++)
             {
                 CustomOperation operation = (CustomOperation)reader.ReadByte();

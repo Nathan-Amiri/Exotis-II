@@ -1,5 +1,4 @@
 ﻿using FishNet.Connection;
-using FishNet.Managing.Logging;
 using FishNet.Observing;
 using System;
 using System.Collections.Generic;
@@ -16,7 +15,7 @@ namespace FishNet.Object
         /// </summary>
         public event Action<NetworkObject> OnObserversActive;
         /// <summary>
-        /// NetworkObserver on this object. May be null if not using observers.
+        /// NetworkObserver on this object.
         /// </summary>
         [HideInInspector]
         public NetworkObserver NetworkObserver = null;
@@ -53,7 +52,7 @@ namespace FishNet.Object
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void UpdateRenderers(bool updateVisibility = true)
         {
-            UpdateRenderersInternal(updateVisibility);
+            UpdateRenderers_Internal(updateVisibility);
         }
 
         /// <summary>
@@ -72,22 +71,30 @@ namespace FishNet.Object
 
             if (!_renderersPopulated)
             {
-                UpdateRenderersInternal(true);
+                UpdateRenderers_Internal(false);
                 _renderersPopulated = true;
             }
-            else
-            {
-                UpdateRenderVisibility(visible);
-            }
+
+            UpdateRenderVisibility(visible);
         }
 
         /// <summary>
         /// Clears and updates renderers.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void UpdateRenderersInternal(bool updateVisibility)
+        private void UpdateRenderers_Internal(bool updateVisibility)
         {
             _renderers = GetComponentsInChildren<Renderer>(true);
+            List<Renderer> enabledRenderers = new List<Renderer>();
+            foreach (Renderer r in _renderers)
+            {
+                if (r.enabled)
+                    enabledRenderers.Add(r);
+            }
+            //If there are any disabled renderers then change _renderers to cached values.
+            if (enabledRenderers.Count != _renderers.Length)
+                _renderers = enabledRenderers.ToArray();
+
             if (updateVisibility)
                 UpdateRenderVisibility(_lastClientHostVisibility);
         }
@@ -98,12 +105,26 @@ namespace FishNet.Object
         /// <param name="visible"></param>
         private void UpdateRenderVisibility(bool visible)
         {
+            bool rebuildRenderers = false;
+
             Renderer[] rs = _renderers;
             int count = rs.Length;
             for (int i = 0; i < count; i++)
-                rs[i].enabled = visible;
+            {
+                Renderer r = rs[i];
+                if (r == null)
+                {
+                    rebuildRenderers = true;
+                    break;
+                }
+
+                r.enabled = visible;
+            }
 
             _lastClientHostVisibility = visible;
+            //If to rebuild then do so, while updating visibility.
+            if (rebuildRenderers)
+                UpdateRenderers(true);
         }
 
         /// <summary>
@@ -142,8 +163,7 @@ namespace FishNet.Object
             //If not a valid connection.
             if (!connection.IsValid)
             {
-                if (NetworkManager.CanLog(LoggingType.Warning))
-                    Debug.LogWarning($"An invalid connection was used when rebuilding observers.");
+                NetworkManager.LogWarning($"An invalid connection was used when rebuilding observers.");
                 return ObserverStateChange.Unchanged;
             }
             //Valid not not active.

@@ -144,7 +144,7 @@ MonoBehaviour:
   IgnoredParameters: []
   _animator: {fileID: 15988871}
   _smoothFloats: 1
-  _synchronizeInterval: 0.5
+  _interpolation: 2
   _clientAuthoritative: 0
   _sendToOwner: 0
 --- !u!114 &4403376845336570041
@@ -161,6 +161,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <IsNested>k__BackingField: 0
   <ComponentIndex>k__BackingField: 0
+  <PredictedSpawn>k__BackingField: {fileID: 0}
   _networkBehaviours:
   - {fileID: -3417525335637844645}
   - {fileID: 8118179680247294013}
@@ -168,9 +169,11 @@ MonoBehaviour:
   <ChildNetworkObjects>k__BackingField: []
   _isNetworked: 1
   _isGlobal: 0
+  _initializeOrder: 0
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
   <PrefabId>k__BackingField: 1
+  <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 2332773068
   <SceneId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 6216365649210419202

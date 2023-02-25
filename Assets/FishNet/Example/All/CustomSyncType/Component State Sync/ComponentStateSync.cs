@@ -1,8 +1,10 @@
-﻿using FishNet.Managing.Logging;
+﻿using FishNet.Documenting;
+using FishNet.Managing.Logging;
 using FishNet.Object.Synchronizing;
 using FishNet.Object.Synchronizing.Internal;
 using FishNet.Serializing;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace FishNet.Example.ComponentStateSync
@@ -23,7 +25,7 @@ namespace FishNet.Example.ComponentStateSync
         {
             get => (Component == null) ? false : GetState();
             set => SetState(value);
-        } 
+        }
         /// <summary>
         /// Component to state sync.
         /// </summary>
@@ -57,10 +59,7 @@ namespace FishNet.Example.ComponentStateSync
                 return;
 
             if (Component == null)
-            {
-                if (base.NetworkManager.CanLog(LoggingType.Error))
-                    Debug.LogError($"State cannot be changed as Initialize has not been called with a valid component.");
-            }
+                NetworkManager.LogError($"State cannot be changed as Initialize has not been called with a valid component.");
 
             //If hasn't changed then ignore.
             bool prev = GetState();
@@ -89,10 +88,9 @@ namespace FishNet.Example.ComponentStateSync
             if (!base.IsRegistered)
                 return;
 
-            if (base.NetworkManager != null && base.Settings.WritePermission == WritePermission.ServerOnly && !base.NetworkBehaviour.IsServer)
+            if (base.NetworkManager != null && !base.NetworkBehaviour.IsServer)
             {
-                if (NetworkManager.CanLog(LoggingType.Warning))
-                    Debug.LogWarning($"Cannot complete operation as server when server is not active.");
+                NetworkManager.LogWarning($"Cannot complete operation as server when server is not active.");
                 return;
             }
 
@@ -125,12 +123,12 @@ namespace FishNet.Example.ComponentStateSync
         }
 
         /// <summary>
-        /// Reads and sets the current values.
+        /// Reads and sets the current values for server or client.
         /// </summary>
-        public override void Read(PooledReader reader)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [APIExclude]
+        public override void Read(PooledReader reader, bool asServer)
         {
-            //Read is always on client side.
-            bool asServer = false;
             bool nextValue = reader.ReadBoolean();
             if (base.NetworkManager == null)
                 return;
