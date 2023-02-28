@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using FishNet.Connection;
@@ -97,8 +98,9 @@ public class Player : NetworkBehaviour
         index.LoadAttributes(this, charSelectInfo); //add stats and spells
 
         playerHud.SetActive(true);
-        playerHud.transform.GetChild(0).GetComponent<SpriteRenderer>().color = lighterColor; //shell
-        playerHud.transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>().color = darkerColor; //core
+        CharImage charImage = playerHud.transform.GetChild(0).GetComponent<CharImage>();
+        charImage.charShell.color = lighterColor;
+        charImage.charCore.color = darkerColor;
 
         if (IsOwner)
             GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
@@ -240,12 +242,14 @@ public class Player : NetworkBehaviour
     {
         float proportion = maxHealth / health; //maxHealth / health should equal the same proportion as maxHealthBarWidth / healthBar's scale.x
 
-        if (healthBarPivot.transform.localScale.x > maxHealthBarWidth / proportion)
+        if (healthBarPivot.transform.localScale.x > maxHealthBarWidth / proportion + .05f)
             healthBarPivot.transform.localScale -= new Vector3(Time.deltaTime, 0);
-        else if (healthBarPivot.transform.localScale.x < maxHealthBarWidth / proportion)
-            healthBarPivot.transform.localScale += new Vector3(Time.deltaTime, 0);
+        else if (healthBarPivot.transform.localScale.x < maxHealthBarWidth / proportion - .05f)
+            healthBarPivot.transform.localScale += new Vector3(Time.deltaTime * 2, 0);
+        else
+            healthBarPivot.transform.localScale = new Vector2(maxHealthBarWidth / proportion, healthBarPivot.transform.localScale.y);
 
-        if (healthBarPivot.transform.localScale.x < .02f)
+        if (healthBarPivot.transform.localScale.x < .05f)
         {
             if (healthBar.activeSelf)
                 healthBar.SetActive(false);

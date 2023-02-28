@@ -66,7 +66,7 @@ public class LightningAbilities : AbilityBase
 
         float blinkIncrement = (blinkPosition - casterPosition).magnitude / 10;
 
-        int layerMask = 1 << 3; //raycast only checks layer 3 (Terrain)
+        int layerMask = 1 << 7; //raycast only checks layer 7 (Terrain)
         for (int i = 0; i < 11; i++) //loop happens 1 more times than there are blink increments
         {
             RaycastHit2D hit = Physics2D.Raycast(blinkPosition, Vector2.zero, 0, layerMask);

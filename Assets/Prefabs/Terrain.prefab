@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 561456024345029564}
   - component: {fileID: 561456024345029561}
   - component: {fileID: 561456024345029566}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Terrain
   m_TagString: Terrain
   m_Icon: {fileID: 0}
@@ -73,7 +73,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -158680105
-  m_SortingLayer: -2
+  m_SortingLayer: -3
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0, g: 0.9803941, b: 1, a: 1}
