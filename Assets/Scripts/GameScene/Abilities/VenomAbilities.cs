@@ -28,9 +28,9 @@ public class VenomAbilities : AbilityBase
             hasCore = true;
         }
 
+        spellColor = player.venom;
         if (hasCore)
-            coreRenderer.color = player.venom.Equals(player.lighterColor) ? player.darkerColor : player.lighterColor;
-
+            coreRenderer.color = spellColor.Equals(player.lighterColor) ? player.darkerColor : player.lighterColor;
     }
     public override void TriggerAbility(Vector2 casterPosition, Vector2 aimPoint)
     {

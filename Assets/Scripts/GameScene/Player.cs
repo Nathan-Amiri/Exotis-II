@@ -22,6 +22,7 @@ public class Player : NetworkBehaviour
     [NonSerialized] public TMP_Text countdownText; //^
     [NonSerialized] public TMP_Text winnerText; //^
     [NonSerialized] public PlayAgain playAgain; //^
+    [NonSerialized] public PlayerHUD playerHUD; //^
 
     //colors from lightest to darkest:
     [NonSerialized] public Color32 frost = new(140, 228, 232, 255); //read by index
@@ -66,11 +67,6 @@ public class Player : NetworkBehaviour
 
     public GameObject missile; //assigned in inspector
 
-    [NonSerialized] public GameObject playerHud;
-    private GameObject healthBarPivot;
-    private GameObject healthBar; //only needed for Eliminate; most implementation uses healthBarPivot
-    private GameObject missileBarPivot;
-
     public static int alivePlayers = 0; //number of players not eliminated. used by server only
     private bool isEliminated; //server only
     public delegate void OnGameEndAction();
@@ -97,22 +93,17 @@ public class Player : NetworkBehaviour
 
         index.LoadAttributes(this, charSelectInfo); //add stats and spells
 
-        playerHud.SetActive(true);
-        CharImage charImage = playerHud.transform.GetChild(0).GetComponent<CharImage>();
-        charImage.charShell.color = lighterColor;
-        charImage.charCore.color = darkerColor;
+        playerHUD.gameObject.SetActive(true);
+        playerHUD.charImage.charShell.color = lighterColor;
+        playerHUD.charImage.charCore.color = darkerColor;
 
         if (IsOwner)
             GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
 
-        healthBarPivot = playerHud.transform.GetChild(2).gameObject;
-        healthBar = healthBarPivot.transform.GetChild(0).gameObject;
-        missileBarPivot = playerHud.transform.GetChild(3).GetChild(1).gameObject;
-
-        maxHealthBarWidth = healthBarPivot.transform.localScale.x;
+        maxHealthBarWidth = playerHUD.healthBarPivot.transform.localScale.x;
 
         missileFillSpeed = 1;
-        maxMissileBarWidth = missileBarPivot.transform.localScale.x;
+        maxMissileBarWidth = playerHUD.missileBarPivot.transform.localScale.x;
 
         NewGame();
 
@@ -141,6 +132,23 @@ public class Player : NetworkBehaviour
         newAbility.transform.position = new Vector2(-15, 0);
 
         newAbility.OnSpawn(this, abilityName);
+        Color32 spellColor = newAbility.spellColor; //set in newAbility.OnSpawn
+
+        if (abilityNumber == 1)
+        {
+            playerHUD.spell1Image.color = spellColor;
+            newAbility.cooldownText = playerHUD.spell1CD;
+        }
+        else if (abilityNumber == 2)
+        {
+            playerHUD.spell2Image.color = spellColor;
+            newAbility.cooldownText = playerHUD.spell2CD;
+        }
+        else //abilityNumber == 3
+        {
+            playerHUD.spell3Image.color = spellColor;
+            newAbility.cooldownText = playerHUD.spell3CD;
+        }
     }
 
     public void NewGame() //run by PlayAgain
@@ -242,20 +250,22 @@ public class Player : NetworkBehaviour
     {
         float proportion = maxHealth / health; //maxHealth / health should equal the same proportion as maxHealthBarWidth / healthBar's scale.x
 
+        GameObject healthBarPivot = playerHUD.healthBarPivot;
+
         if (healthBarPivot.transform.localScale.x > maxHealthBarWidth / proportion + .05f)
             healthBarPivot.transform.localScale -= new Vector3(Time.deltaTime, 0);
         else if (healthBarPivot.transform.localScale.x < maxHealthBarWidth / proportion - .05f)
             healthBarPivot.transform.localScale += new Vector3(Time.deltaTime * 2, 0);
         else
-            healthBarPivot.transform.localScale = new Vector2(maxHealthBarWidth / proportion, healthBarPivot.transform.localScale.y);
+            healthBarPivot.transform.localScale = new Vector2(maxHealthBarWidth / proportion, 1);
 
         if (healthBarPivot.transform.localScale.x < .05f)
         {
-            if (healthBar.activeSelf)
-                healthBar.SetActive(false);
+            if (playerHUD.healthBar.activeSelf)
+                playerHUD.healthBar.SetActive(false);
         }
-        else if (!healthBar.activeSelf)
-            healthBar.SetActive(true);
+        else if (!playerHUD.healthBar.activeSelf)
+            playerHUD.healthBar.SetActive(true);
     }
 
     [Server]
@@ -466,7 +476,7 @@ public class Player : NetworkBehaviour
     private void MissileBar() //run in update
     {
         float proportion = 3 / missileAmount; //3 is max missile amount. 3 / missileAmount should equal the same proportion as maxMissileBarWidth / missileBar's scale.x 
-        missileBarPivot.transform.localScale = new Vector2(maxMissileBarWidth / proportion, missileBarPivot.transform.localScale.y);
+        playerHUD.missileBarPivot.transform.localScale = new Vector2(maxMissileBarWidth / proportion, playerHUD.missileBarPivot.transform.localScale.y);
 
         if (missileAmount < 3)
             missileAmount += missileFillSpeed * Time.deltaTime;
@@ -497,10 +507,10 @@ public class Player : NetworkBehaviour
         if (currentAbility.hasRange)
         {
             float mouseRange = Vector3.Distance(transform.position, mousePosition);
-            if (mouseRange > currentAbility.abilityRange)
+            if (mouseRange > currentAbility.spellRange)
             {
                 Vector2 aimDirection = (mousePosition - casterPosition).normalized;
-                aimPoint = casterPosition + (aimDirection * currentAbility.abilityRange);
+                aimPoint = casterPosition + (aimDirection * currentAbility.spellRange);
             }
         }
 

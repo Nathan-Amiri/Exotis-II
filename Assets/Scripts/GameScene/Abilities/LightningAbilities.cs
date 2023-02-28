@@ -21,7 +21,7 @@ public class LightningAbilities : AbilityBase
         {
             cooldown = 4;
             hasRange = true;
-            abilityRange = 2.5f;
+            spellRange = 2.5f;
         }
         else if (name == "Recharge")
         {
@@ -29,8 +29,9 @@ public class LightningAbilities : AbilityBase
             hasRange = false;
         }
 
+        spellColor = player.lightning;
         if (hasCore)
-            coreRenderer.color = player.lightning.Equals(player.lighterColor) ? player.darkerColor : player.lighterColor;
+            coreRenderer.color = spellColor.Equals(player.lighterColor) ? player.darkerColor : player.lighterColor;
     }
     public override void TriggerAbility(Vector2 casterPosition, Vector2 aimPoint)
     {
@@ -59,10 +60,10 @@ public class LightningAbilities : AbilityBase
         Vector2 blinkPosition;
         Vector2 blinkDirection = (aimPoint - casterPosition).normalized;
 
-        if ((casterPosition - aimPoint).magnitude < abilityRange)
+        if ((casterPosition - aimPoint).magnitude < spellRange)
             blinkPosition = aimPoint;
         else
-            blinkPosition = casterPosition + blinkDirection * abilityRange;
+            blinkPosition = casterPosition + blinkDirection * spellRange;
 
         float blinkIncrement = (blinkPosition - casterPosition).magnitude / 10;
 

@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using FishNet.Object;
+using TMPro;
 
 public class AbilityBase : NetworkBehaviour
 {
-    public SpriteRenderer coreRenderer; //assigned in inspector
+    public SpriteRenderer coreRenderer; //assigned in inspector, read by Player
 
     protected float cooldown; //set by derived class
 
-    [NonSerialized] public float abilityRange; //set by derived class
+    [NonSerialized] public TMP_Text cooldownText; //set by Player
+
+    [NonSerialized] public float spellRange; //set by derived class
+    [NonSerialized] public Color32 spellColor; //^
     [NonSerialized] public bool hasRange; //^, read by Player
 
     [NonSerialized] public Player player;
@@ -31,6 +35,7 @@ public class AbilityBase : NetworkBehaviour
         yield return new WaitForSeconds(cooldown);
         onCooldown = false;
     }
+
     protected IEnumerator Disappear(float delay)
     {
         yield return new WaitForSeconds(delay);
