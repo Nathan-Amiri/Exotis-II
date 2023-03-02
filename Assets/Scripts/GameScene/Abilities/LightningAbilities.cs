@@ -25,8 +25,9 @@ public class LightningAbilities : AbilityBase
         }
         else if (name == "Recharge")
         {
-            cooldown = 8;
+            cooldown = 12;
             hasRange = false;
+            RechargeSetup();
         }
 
         spellColor = player.lightning;
@@ -51,6 +52,8 @@ public class LightningAbilities : AbilityBase
     {
         transform.position = player.transform.position;
         //^ using current position rather than casterPosition for lag compensation (looks better and doesn't affect gameplay)
+
+        StartCoroutine(StartCooldown());
 
         if (!IsOwner)
             return;
@@ -79,12 +82,40 @@ public class LightningAbilities : AbilityBase
                 break;
         }
 
-        StartCoroutine(StartCooldown());
         player.transform.position = blinkPosition;
     }
 
+    public Animator rechargeAnimator;
+    public GameObject rechargeAura;
+    private void RechargeSetup()
+    {
+        transform.SetParent(player.transform);
+    }
     private void Recharge()
     {
+        transform.position = player.transform.position + new Vector3(0, .45f); //uses player's current position, not castPosition
+        rechargeAnimator.SetTrigger("RechargeFade");
+        StartCoroutine(RechargeChannel());
+    }
+    private IEnumerator RechargeChannel()
+    {
+        player.playerMovement.isStunned = true;
+        yield return new WaitForSeconds(2);
+        player.playerMovement.isStunned = false;
+        StartCoroutine(RechargeBuff());
+    }
+    private IEnumerator RechargeBuff()
+    {
+        rechargeAura.SetActive(true);
+        if (IsServer)
+            player.HealthChange(3);
+        player.StatChange("speed", 1);
 
+        yield return new WaitForSeconds(5);
+
+        rechargeAura.SetActive(false);
+        player.StatChange("speed", -1);
+
+        StartCoroutine(StartCooldown());
     }
 }

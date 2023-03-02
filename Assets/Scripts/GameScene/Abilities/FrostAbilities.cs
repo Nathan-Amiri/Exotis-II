@@ -58,8 +58,7 @@ public class FrostAbilities : AbilityBase
 
     private void Freeze(Vector2 aimPoint)
     {
-        if (IsOwner)
-            StartCoroutine(StartCooldown());
+        StartCoroutine(StartCooldown());
 
         transform.position = aimPoint;
         StartCoroutine(Disappear(4));

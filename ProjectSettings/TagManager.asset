@@ -47,6 +47,9 @@ TagManager:
   - name: Tile
     uniqueID: 4136287191
     locked: 0
+  - name: Aura
+    uniqueID: 2619653365
+    locked: 0
   - name: Player
     uniqueID: 217947371
     locked: 0

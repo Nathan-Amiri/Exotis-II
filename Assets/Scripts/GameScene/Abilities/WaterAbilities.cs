@@ -58,8 +58,7 @@ public class WaterAbilities : AbilityBase
     public Animator tidalAnimator; //^
     private void TidalWave(Vector2 casterPosition, Vector2 aimPoint)
     {
-        if (IsOwner)
-            StartCoroutine(StartCooldown());
+        StartCoroutine(StartCooldown());
 
         float angle = Vector2.Angle(aimPoint - casterPosition, Vector2.right);
         int posOrNeg = (aimPoint - casterPosition).y > 0 ? 1 : -1;

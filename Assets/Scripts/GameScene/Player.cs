@@ -87,18 +87,20 @@ public class Player : NetworkBehaviour
     {
         name = charSelectInfo[0];
 
-        if (charSelectInfo[1] == "Freeze" || charSelectInfo[1] == "Tidalwave" || charSelectInfo[1] == "Blink" || charSelectInfo[1] == "Poisoncloud")
-            if (IsOwner)
-                RpcSpawnAbility(ClientManager.Connection, charSelectInfo[1], 1);
+        if (IsOwner)
+        {
+            GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+
+            RpcSpawnAbility(ClientManager.Connection, charSelectInfo[1], 1);
+            //RpcSpawnAbility(ClientManager.Connection, charSelectInfo[2], 2);
+            //RpcSpawnAbility(ClientManager.Connection, charSelectInfo[3], 3);
+        }
 
         index.LoadAttributes(this, charSelectInfo); //add stats and spells
 
         playerHUD.gameObject.SetActive(true);
         playerHUD.charImage.charShell.color = lighterColor;
         playerHUD.charImage.charCore.color = darkerColor;
-
-        if (IsOwner)
-            GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
 
         maxHealthBarWidth = playerHUD.healthBarPivot.transform.localScale.x;
 

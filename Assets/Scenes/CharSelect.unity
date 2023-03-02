@@ -205,7 +205,7 @@ PrefabInstance:
     - target: {fileID: 7443408887813606050, guid: 0b650fca685f2eb41a86538aa883e4c1, type: 3}
       propertyPath: _spawnablePrefabs
       value: 
-      objectReference: {fileID: 11400000, guid: dad8cff7180547244b0f8a743621b2b5, type: 2}
+      objectReference: {fileID: 11400000, guid: 9903ee2c3e7314b45b7a8fe1f2a7b025, type: 2}
     - target: {fileID: 7443408887813606051, guid: 0b650fca685f2eb41a86538aa883e4c1, type: 3}
       propertyPath: m_Name
       value: NetworkManager

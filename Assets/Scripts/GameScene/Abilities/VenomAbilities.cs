@@ -56,8 +56,7 @@ public class VenomAbilities : AbilityBase
     public Animator poisonCloudAnimator; //assigned in inspector
     private void PoisonCloud(Vector2 casterPosition)
     {
-        if (IsOwner)
-            StartCoroutine(StartCooldown());
+        StartCoroutine(StartCooldown());
 
         transform.position = casterPosition + (.17f * Vector2.down);
         poisonCloudAnimator.SetTrigger("Grow");
