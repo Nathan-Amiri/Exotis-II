@@ -8,11 +8,11 @@ public class PlayerHUD : MonoBehaviour
 {
     public CharImage charImage;
     public Image spell1Image;
-    public TMP_Text spell1CD;
+    public Image spell1Gray;
     public Image spell2Image;
-    public TMP_Text spell2CD;
+    public Image spell2Gray;
     public Image spell3Image;
-    public TMP_Text spell3CD;
+    public Image spell3Gray;
     public GameObject healthBarPivot;
     public GameObject healthBar;
     public GameObject missileBarPivot;

@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using FishNet.Object;
-using TMPro;
+using UnityEngine.UI;
 
 public class AbilityBase : NetworkBehaviour
 {
     public SpriteRenderer coreRenderer; //assigned in inspector, read by Player
 
     protected float cooldown; //set by derived class
-
-    [NonSerialized] public TMP_Text cooldownText; //set by Player
 
     [NonSerialized] public float spellRange; //set by derived class
     [NonSerialized] public Color32 spellColor; //^
@@ -29,11 +27,22 @@ public class AbilityBase : NetworkBehaviour
 
     public virtual void TriggerAbility(Vector2 casterPosition, Vector2 mousePosition) { }
 
+    [NonSerialized] public Image spellGray; //set by Player, not used by derived class
+    private float remainingCooldown;
     protected IEnumerator StartCooldown()
     {
         onCooldown = true;
+        remainingCooldown = cooldown;
         yield return new WaitForSeconds(cooldown);
         onCooldown = false;
+    }
+    private void Update()
+    {
+        if (remainingCooldown > 0)
+        {
+            remainingCooldown -= Time.deltaTime;
+            spellGray.fillAmount = remainingCooldown / cooldown;
+        }
     }
 
     protected IEnumerator Disappear(float delay)

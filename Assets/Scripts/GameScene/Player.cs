@@ -137,17 +137,17 @@ public class Player : NetworkBehaviour
         if (abilityNumber == 1)
         {
             playerHUD.spell1Image.color = spellColor;
-            newAbility.cooldownText = playerHUD.spell1CD;
+            newAbility.spellGray = playerHUD.spell1Gray;
         }
         else if (abilityNumber == 2)
         {
             playerHUD.spell2Image.color = spellColor;
-            newAbility.cooldownText = playerHUD.spell2CD;
+            newAbility.spellGray = playerHUD.spell2Gray;
         }
         else //abilityNumber == 3
         {
             playerHUD.spell3Image.color = spellColor;
-            newAbility.cooldownText = playerHUD.spell3CD;
+            newAbility.spellGray = playerHUD.spell3Gray;
         }
     }
 
