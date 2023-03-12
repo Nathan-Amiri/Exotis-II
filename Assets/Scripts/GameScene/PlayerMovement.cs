@@ -8,7 +8,7 @@ using System;
 public class PlayerMovement : NetworkBehaviour
 {
     private readonly float moveSpeed = 2.5f;
-    private readonly float jumpForce = 6.8f;
+    private readonly float jumpForce = 7.2f;
     private readonly float jumpHeight = 1.1f;
     private float speedIncrease = 1;
     private readonly float speedMultiplier = 1.3f;
