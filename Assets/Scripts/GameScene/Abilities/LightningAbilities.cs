@@ -99,9 +99,9 @@ public class LightningAbilities : AbilityBase
     }
     private IEnumerator RechargeChannel()
     {
-        player.playerMovement.isStunned = true;
+        player.playerMovement.ToggleStun(true);
         yield return new WaitForSeconds(2);
-        player.playerMovement.isStunned = false;
+        player.playerMovement.ToggleStun(false);
         StartCoroutine(RechargeBuff());
     }
     private IEnumerator RechargeBuff()

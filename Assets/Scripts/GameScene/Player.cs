@@ -64,7 +64,7 @@ public class Player : NetworkBehaviour
 
     private bool startUpdate;
 
-    private Vector2 mousePosition;
+    [NonSerialized] public Vector2 mousePosition; //read by swoop
 
     public GameObject missile; //assigned in inspector
 
@@ -192,7 +192,7 @@ public class Player : NetworkBehaviour
         {
             isEliminated = false;
 
-            playerMovement.isStunned = true;
+            playerMovement.ToggleStun(true);
             isImmune = true;
             health = maxHealth;
         }
@@ -226,7 +226,7 @@ public class Player : NetworkBehaviour
     {
         yield return new WaitForSeconds(3);
         isImmune = false;
-        playerMovement.isStunned = false;
+        playerMovement.ToggleStun(false);
     }
 
     private void Update()
@@ -320,7 +320,8 @@ public class Player : NetworkBehaviour
         animator.enabled = false;
     }
 
-    private IEnumerator BecomeImmune(float duration) //run on server
+    [Server]
+    public IEnumerator BecomeImmune(float duration)
     {
         isImmune = true;
         yield return new WaitForSeconds(duration);
@@ -329,6 +330,9 @@ public class Player : NetworkBehaviour
 
     public void StatChange(string stat, int amount) //stat changes occur on the client. amount = number of stages (-2, -1, 1, or 2)
     {
+        if (isImmune)
+            return;
+
         if (stat == "power")
             power += amount;
         else
@@ -351,7 +355,7 @@ public class Player : NetworkBehaviour
     private void Eliminate()
     {
         isEliminated = true;
-        playerMovement.isStunned = true;
+        playerMovement.ToggleStun(true);
         RpcRelocate(Owner);
         CheckForGameEnd();
     }

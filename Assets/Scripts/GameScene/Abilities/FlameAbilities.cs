@@ -66,9 +66,9 @@ public class FlameAbilities : AbilityBase
     }
     private IEnumerator HeatChannel()
     {
-        player.playerMovement.isStunned = true;
+        player.playerMovement.ToggleStun(true);
         yield return new WaitForSeconds(2);
-        player.playerMovement.isStunned = false;
+        player.playerMovement.ToggleStun(false);
         StartCoroutine(HeatBuff());
     }
     private IEnumerator HeatBuff()

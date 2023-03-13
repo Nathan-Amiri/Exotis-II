@@ -21,7 +21,7 @@ public class PlayerMovement : NetworkBehaviour
     [SyncVar]
     [NonSerialized] public bool isStunned; //read by player
 
-    public Rigidbody2D rb; //assigned in inspector, read by player
+    public Rigidbody2D rb; //assigned in inspector, read by player, used by swoop
     
     private float moveInput;
     private bool jumpInputDown;
@@ -59,7 +59,8 @@ public class PlayerMovement : NetworkBehaviour
         if (!IsOwner)
             return;
 
-        rb.velocity = new(moveInput * moveSpeed * speedIncrease, rb.velocity.y);
+        if (!isStunned)
+            rb.velocity = new(moveInput * moveSpeed * speedIncrease, rb.velocity.y);
 
         if (rb.velocity.y < 0)
             rb.velocity += (fallMultiplier - 1) * Physics2D.gravity.y * Time.deltaTime * Vector2.up; //fastfall not multiplied by speedIncrease to make walljumping easier when speed is high
@@ -105,6 +106,14 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
+    public void ToggleGravity(bool toggleOn)
+    {
+        if (!toggleOn)
+            rb.gravityScale = 0;
+        else
+            UpdateGravityScale();
+    }
+
     private void UpdateGravityScale()
     {
         rb.gravityScale = Mathf.Pow(jumpForce * speedIncrease, 2) / (2 * -Physics2D.gravity.y * jumpHeight); //variation of 'Velocity = sqrt(2 * Jump Height * Gravity)'
@@ -123,31 +132,14 @@ public class PlayerMovement : NetworkBehaviour
         isGrounded = false;
     }
 
-    [Server]
-    public void TemporaryStun(float duration)
+    public void ToggleStun(bool toggleOn)
     {
-        isStunned = true;
-        RpcClientBecomeStunned(duration);
-    }
-
-    [ObserversRpc]
-    private void RpcClientBecomeStunned(float duration)
-    {
-        if (IsOwner)
-            StartCoroutine(Stun(duration));
-    }
-    public IEnumerator Stun(float duration) //called by player
-    {
-        Vector2 cachedVelocity = rb.velocity;
-        rb.constraints = RigidbodyConstraints2D.FreezeAll;
-        yield return new WaitForSeconds(duration);
-        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-        rb.velocity = cachedVelocity;
-        EndStun();
-    }
-    [ServerRpc]
-    private void EndStun()
-    {
-        isStunned = false;
+        if (toggleOn)
+        {
+            rb.velocity = new Vector2(0, rb.velocity.y);
+            isStunned = true;
+        }
+        else
+            isStunned = false;
     }
 }
