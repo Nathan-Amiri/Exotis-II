@@ -12,8 +12,12 @@ public class FrostAbilities : AbilityBase
 
         if (name == "Icybreath")
         {
+            cooldown = 12;
             hasRange = false;
             hasCore = true;
+
+            icyPivot.SetParent(player.abilityParent.transform, true);
+            transform.SetParent(icyPivot, true);
         }
         else if (name == "Hail")
         {
@@ -33,7 +37,7 @@ public class FrostAbilities : AbilityBase
     }
     public override void TriggerAbility(Vector2 casterPosition, Vector2 aimPoint)
     {
-        if (name == "Icybreath") IcyBreath();
+        if (name == "Icybreath") IcyBreath(casterPosition, aimPoint);
         if (name == "Hail") Hail();
         if (name == "Freeze") Freeze(aimPoint);
     }
@@ -46,9 +50,40 @@ public class FrostAbilities : AbilityBase
         if (name == "Freeze") OnExitFreeze(col);
     }
 
-    private void IcyBreath()
+    public Transform icyPivot; //assigned in inspector
+    private bool icyGrow;
+    private void IcyBreath(Vector2 casterPosition, Vector2 aimPoint)
     {
+        float angle = Vector2.Angle(aimPoint - casterPosition, Vector2.right);
+        int posOrNeg = (aimPoint - casterPosition).y > 0 ? 1 : -1;
+        icyPivot.rotation = Quaternion.Euler(0, 0, angle * posOrNeg);
 
+        StartCoroutine(StartCooldown());
+
+        icyPivot.position = casterPosition + .7f * new Vector2(transform.right.x, transform.right.y);
+
+        icyGrow = true;
+        StartCoroutine(EndIcyGrow());
+    }
+    protected override void Update()
+    {
+        base.Update();
+
+        if (icyGrow)
+            icyPivot.localScale += new Vector3(3 * Time.deltaTime, 0);
+    }
+    private IEnumerator EndIcyGrow()
+    {
+        yield return new WaitForSeconds(1.5f);
+        icyGrow = false;
+        StartCoroutine(IcyReset());
+    }
+    private IEnumerator IcyReset()
+    {
+        yield return new WaitForSeconds(3.5f);
+        icyPivot.rotation = Quaternion.identity;
+        icyPivot.localScale = new Vector2(.4f, .4f);
+        icyPivot.position = new Vector2(-15, 0);
     }
 
     private void Hail()

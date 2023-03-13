@@ -7,15 +7,15 @@ using System;
 
 public class PlayerMovement : NetworkBehaviour
 {
-    private readonly float moveSpeed = 2.5f;
+    [NonSerialized] public readonly float moveSpeed = 2.5f; //read by distortion
     private readonly float jumpForce = 7.2f;
     private readonly float jumpHeight = 1.1f;
-    private float speedIncrease = 1;
+    [NonSerialized] public float speedIncrease = 1; //read by distortion
     private readonly float speedMultiplier = 1.3f;
     private float startingY = -10; //-10 = null. Used when speed changes mid-jump
 
     private readonly float lowJumpMultiplier = 4; //used for dynamic jump
-    private readonly float fallMultiplier = 1; //fastfall
+    [NonSerialized] public readonly float fallMultiplier = 1; //fastfall, read by distortion
 
     [NonSerialized] public bool isGrounded; //read by GroundCheck and VenomAbilities
     [SyncVar]
@@ -59,7 +59,7 @@ public class PlayerMovement : NetworkBehaviour
         if (!IsOwner)
             return;
 
-        rb.velocity = new Vector2(moveInput * moveSpeed * speedIncrease, rb.velocity.y);
+        rb.velocity = new(moveInput * moveSpeed * speedIncrease, rb.velocity.y);
 
         if (rb.velocity.y < 0)
             rb.velocity += (fallMultiplier - 1) * Physics2D.gravity.y * Time.deltaTime * Vector2.up; //fastfall not multiplied by speedIncrease to make walljumping easier when speed is high
@@ -73,7 +73,7 @@ public class PlayerMovement : NetworkBehaviour
             if (isGrounded)
             {
                 startingY = transform.position.y;
-                rb.velocity = new Vector2(rb.velocity.x, speedIncrease * jumpForce);
+                rb.velocity = new(rb.velocity.x, speedIncrease * jumpForce);
             }
             else
             {
@@ -101,7 +101,7 @@ public class PlayerMovement : NetworkBehaviour
         {
             float newHeight = Mathf.Abs(jumpHeight - Mathf.Abs(startingY - transform.position.y)); //these values shouldn't ever be negative. Mathf.abs is just a precaution
             float newVelocity = Mathf.Sqrt(2 * -Physics2D.gravity.y * rb.gravityScale * newHeight); //variation of 'Velocity = sqrt(2 * Jump Height * Gravity)'
-            rb.velocity = new Vector2(rb.velocity.x, newVelocity); //because newVelocity isn't multiplied by speedIncrease here, speedIncrease isn't included in the equation above
+            rb.velocity = new(rb.velocity.x, newVelocity); //because newVelocity isn't multiplied by speedIncrease here, speedIncrease isn't included in the equation above
         }
     }
 

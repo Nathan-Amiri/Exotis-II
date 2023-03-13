@@ -36,7 +36,7 @@ public class AbilityBase : NetworkBehaviour
         yield return new WaitForSeconds(cooldown);
         onCooldown = false;
     }
-    private void Update()
+    protected virtual void Update()
     {
         if (remainingCooldown > 0)
         {

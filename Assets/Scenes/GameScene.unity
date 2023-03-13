@@ -188,6 +188,7 @@ MonoBehaviour:
   <AssetPathHash>k__BackingField: 0
   _sceneNetworkObjects:
   - {fileID: 14904239}
+  - {fileID: 1557700453}
   - {fileID: 1769695057}
   - {fileID: 2587413426466378103}
 --- !u!114 &14904240
@@ -5458,6 +5459,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1557700452}
+  - component: {fileID: 1557700453}
   m_Layer: 0
   m_Name: Abilities
   m_TagString: Untagged
@@ -5480,6 +5482,39 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1557700453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1557700451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <IsNested>k__BackingField: 0
+  <ComponentIndex>k__BackingField: 0
+  <PredictedSpawn>k__BackingField: {fileID: 0}
+  _networkBehaviours: []
+  <ParentNetworkObject>k__BackingField: {fileID: 0}
+  <ChildNetworkObjects>k__BackingField: []
+  _isNetworked: 1
+  _isGlobal: 0
+  _initializeOrder: 0
+  _defaultDespawnType: 0
+  NetworkObserver: {fileID: 0}
+  <PrefabId>k__BackingField: 0
+  <SpawnableCollectionId>k__BackingField: 0
+  _scenePathHash: 2550129400
+  <SceneId>k__BackingField: 10952722377576336156
+  <AssetPathHash>k__BackingField: 0
+  _sceneNetworkObjects:
+  - {fileID: 14904239}
+  - {fileID: 1557700453}
+  - {fileID: 1769695057}
+  - {fileID: 2587413426466378103}
 --- !u!1001 &1672066308
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6779,13 +6814,25 @@ PrefabInstance:
       value: 10952722374292042181
       objectReference: {fileID: 0}
     - target: {fileID: 2163872205009131959, guid: 5e97f446920ae624a859c529f2b3a958, type: 3}
+      propertyPath: _sceneNetworkObjects.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2163872205009131959, guid: 5e97f446920ae624a859c529f2b3a958, type: 3}
       propertyPath: _sceneNetworkObjects.Array.data[0]
       value: 
       objectReference: {fileID: 14904239}
     - target: {fileID: 2163872205009131959, guid: 5e97f446920ae624a859c529f2b3a958, type: 3}
       propertyPath: _sceneNetworkObjects.Array.data[1]
       value: 
+      objectReference: {fileID: 1557700453}
+    - target: {fileID: 2163872205009131959, guid: 5e97f446920ae624a859c529f2b3a958, type: 3}
+      propertyPath: _sceneNetworkObjects.Array.data[2]
+      value: 
       objectReference: {fileID: 1769695057}
+    - target: {fileID: 2163872205009131959, guid: 5e97f446920ae624a859c529f2b3a958, type: 3}
+      propertyPath: _sceneNetworkObjects.Array.data[3]
+      value: 
+      objectReference: {fileID: 2587413426466378103}
     - target: {fileID: 2587413425442714675, guid: 5e97f446920ae624a859c529f2b3a958, type: 3}
       propertyPath: m_Name
       value: PlayAgain
@@ -6910,10 +6957,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1045142198}
     m_Modifications:
-    - target: {fileID: 4098705224812508821, guid: d90a29e3d49795b428d8c8eefbae3fbd, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4098705224914472108, guid: d90a29e3d49795b428d8c8eefbae3fbd, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -6961,18 +7004,6 @@ PrefabInstance:
     - target: {fileID: 4098705224914472115, guid: d90a29e3d49795b428d8c8eefbae3fbd, type: 3}
       propertyPath: m_Name
       value: Border
-      objectReference: {fileID: 0}
-    - target: {fileID: 4551793318551533227, guid: d90a29e3d49795b428d8c8eefbae3fbd, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4551793319592179572, guid: d90a29e3d49795b428d8c8eefbae3fbd, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4551793319627404633, guid: d90a29e3d49795b428d8c8eefbae3fbd, type: 3}
-      propertyPath: m_Enabled
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d90a29e3d49795b428d8c8eefbae3fbd, type: 3}

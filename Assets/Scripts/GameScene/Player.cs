@@ -12,7 +12,7 @@ public class Player : NetworkBehaviour
 {
     //layers: -2 = background, -1 = editorgrid, 0 = terrain, 1 = players/some HUD, 2 = missiles/spells/more HUD
 
-    public SpriteRenderer spriteRenderer; //assigned in inspector
+    public SpriteRenderer spriteRenderer; //assigned in inspector, used by distortion
     public SpriteRenderer coreSpriteRenderer; //^
     public Animator animator; //^
     public PlayerMovement playerMovement; //^, read by Setup and VenomAbilities
@@ -34,6 +34,7 @@ public class Player : NetworkBehaviour
 
     [NonSerialized] public Color32 lighterColor; //set by index, read by abilitybase
     [NonSerialized] public Color32 darkerColor; //^
+    [NonSerialized] public bool distorting; //overrides lighter/darker colors temporarily
 
     [NonSerialized] public float maxHealth = 15; //can be altered by index
 
@@ -226,7 +227,7 @@ public class Player : NetworkBehaviour
 
         //MissileTimer();
 
-        if (!animator.enabled)
+        if (!animator.enabled && !distorting)
         {
             spriteRenderer.color = lighterColor;
             coreSpriteRenderer.color = darkerColor;
