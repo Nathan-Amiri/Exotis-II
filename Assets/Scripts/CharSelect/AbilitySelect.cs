@@ -50,6 +50,7 @@ public class AbilitySelect : MonoBehaviour
     private readonly string[] venomAbilities = new string[] { "Fangedbite", "Infect", "Poisoncloud" };
 
     private List<string> selectedAbilities = new();
+    private List<int> abilityNumbers = new(); //used in charselect for importing loadout
 
     private void Awake()
     {
@@ -121,9 +122,10 @@ public class AbilitySelect : MonoBehaviour
         return null;
     }
 
-    public void SelectAbility(int abilityNumber)
+    public void SelectAbility(int abilityNumber) //called by AbilityButton and CharSelect
     {
         selectedAbilities.Add(texts[abilityNumber].text);
+        abilityNumbers.Add(abilityNumber);
 
         boxes[abilityNumber].SetActive(true);
 
@@ -131,7 +133,7 @@ public class AbilitySelect : MonoBehaviour
 
         if (selectedAbilities.Count == 3)
         {
-            charSelect.AbilitiesReady(selectedAbilities.ToArray());
+            charSelect.AbilitiesReady(selectedAbilities.ToArray(), abilityNumbers.ToArray());
 
             foreach (Button button in buttons)
                 button.interactable = false;
@@ -151,6 +153,7 @@ public class AbilitySelect : MonoBehaviour
             box.SetActive(false);
 
         selectedAbilities = new();
+        abilityNumbers = new();
 
         clearButton.interactable = false;
 

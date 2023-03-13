@@ -211,7 +211,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caaef098f585d74448949fbc3602f894, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type1: Water
-  type2: Wind
-  stat1: Health
-  stat2: Speed
+  charSelect: {fileID: 0}
+  type1: water
+  type2: wind
+  stat1: health
+  stat2: speed

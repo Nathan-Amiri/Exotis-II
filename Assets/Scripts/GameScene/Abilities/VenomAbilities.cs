@@ -30,7 +30,7 @@ public class VenomAbilities : AbilityBase
 
         spellColor = player.venom;
         if (hasCore)
-            coreRenderer.color = spellColor.Equals(player.lighterColor) ? player.darkerColor : player.lighterColor;
+            coreRenderer.color = spellColor.Equals(player.shellColor) ? player.coreColor : player.shellColor;
     }
     public override void TriggerAbility(Vector2 casterPosition, Vector2 aimPoint)
     {
@@ -60,7 +60,7 @@ public class VenomAbilities : AbilityBase
 
         transform.position = casterPosition + (.17f * Vector2.down);
         poisonCloudAnimator.SetTrigger("Grow");
-        StartCoroutine(Disappear(3));
+        StartCoroutine(Disappear(4));
     }
     private void OnEnterPoisonCloud(Collider2D col)
     {

@@ -32,7 +32,7 @@ public class LightningAbilities : AbilityBase
 
         spellColor = player.lightning;
         if (hasCore)
-            coreRenderer.color = spellColor.Equals(player.lighterColor) ? player.darkerColor : player.lighterColor;
+            coreRenderer.color = spellColor.Equals(player.shellColor) ? player.coreColor : player.shellColor;
     }
     public override void TriggerAbility(Vector2 casterPosition, Vector2 aimPoint)
     {

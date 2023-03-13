@@ -6,6 +6,8 @@ using FishNet.Object;
 using FishNet.Connection;
 using TMPro;
 using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 public class CharSelect : NetworkBehaviour
 {
@@ -43,12 +45,21 @@ public class CharSelect : NetworkBehaviour
 
     public Button readyButton; //^
 
+    //charselectinfo:
     private string selectedElemental;
+    private string shellElement;
+    private string coreElement;
+    private string stat1;
+    private string stat2;
     private string[] selectedAbilities = new string[3];
+
+    private int[] loadoutAbilityNumbers; //used for importing loadout
+
     private readonly Color32[] currentColors = new Color32[2]; //currentColors[0] = lighter color, [1] = darker color
 
     private readonly List<string> claimedElementals = new(); //server only
     private readonly bool[] readyPlayers = new bool[4]; //server only
+
 
     private void Awake()
     {
@@ -75,6 +86,8 @@ public class CharSelect : NetworkBehaviour
     public void OnSpawn(GameManager gm)
     {
         gameManager = gm;
+
+        ImportLoadout();
 
         RpcChangeAvatar(GameManager.playerNumber, emptyColors);
     }
@@ -116,36 +129,42 @@ public class CharSelect : NetworkBehaviour
         }
     }
 
-    public void SelectElemental(string newElemental, string type1, string type2, string stat1, string stat2)
+    public void SelectElemental(string newElemental, string newShellElement, string newCoreElement, string newStat1, string newStat2)
     {
-        currentColors[0] = (Color32)GetType().GetField(type1).GetValue(this);
-        currentColors[1] = (Color32)GetType().GetField(type2).GetValue(this);
+        shellElement = newShellElement;
+        coreElement = newCoreElement;
+        stat1 = newStat1;
+        stat2 = newStat2;
+
+        currentColors[0] = (Color32)GetType().GetField(shellElement).GetValue(this);
+        currentColors[1] = (Color32)GetType().GetField(coreElement).GetValue(this);
 
         RpcChangeAvatar(GameManager.playerNumber, emptyColors);
         RpcChangeReadyStatus(GameManager.playerNumber, false, selectedElemental);
 
         selectedElemental = newElemental;
-        charName.text = newElemental;
+        charName.text = selectedElemental;
 
         charImage.charShell.color = currentColors[0];
         charImage.charCore.color = currentColors[1];
 
-        charType1.sprite = Resources.Load<Sprite>("Elements/" + type1);
-        charType2.sprite = Resources.Load<Sprite>("Elements/" + type2);
+        charType1.sprite = Resources.Load<Sprite>("Elements/" + shellElement);
+        charType2.sprite = Resources.Load<Sprite>("Elements/" + coreElement);
 
         highlight1.SetActive(true);
         highlight2.SetActive(true);
         highlight1.transform.localPosition = new Vector2(167, stat1 == "power" ? -220 : -285);
         highlight2.transform.localPosition = new Vector2(167, stat2 == "speed" ? -355 : -425);
 
-        abilitySelect.ElementalSelected(type1, type2, currentColors);
+        abilitySelect.ElementalSelected(shellElement, coreElement, currentColors);
 
         readyButton.interactable = false;
     }
 
-    public void AbilitiesReady(string[] newSelectedAbilities) //called by AbilitySelect
+    public void AbilitiesReady(string[] newSelectedAbilities, int[] newAbilityNumbers) //called by AbilitySelect
     {
         selectedAbilities = newSelectedAbilities;
+        loadoutAbilityNumbers = newAbilityNumbers;
         readyButton.interactable = true;
     }
 
@@ -185,10 +204,16 @@ public class CharSelect : NetworkBehaviour
         error.text = "";
 
         readyButton.interactable = false;
-        string[] charSelectInfo = new string[4];
+        string[] charSelectInfo = new string[8];
         charSelectInfo[0] = selectedElemental;
+        charSelectInfo[1] = shellElement;
+        charSelectInfo[2] = coreElement;
+        charSelectInfo[3] = stat1;
+        charSelectInfo[4] = stat2;
         for (int i = 0; i < 3; i++)
-            charSelectInfo[i + 1] = selectedAbilities[i];
+            charSelectInfo[i + 5] = selectedAbilities[i];
+
+        SaveLoadout(charSelectInfo);
 
         gameManager.charSelectInfo = charSelectInfo;
 
@@ -225,13 +250,53 @@ public class CharSelect : NetworkBehaviour
         ChangeAvatar(disconnectedPlayer, lightAndDark);
     }
 
-    private void SaveLoadout()
+    private void SaveLoadout(string[] charSelectInfo)
     {
+        BinaryFormatter formatter = new();
+        string path = Application.persistentDataPath + "/player.loadoutData";
+        FileStream stream = new(path, FileMode.Create);
 
+        SaveData data = new()
+        {
+            elementalData = charSelectInfo,
+            abilityNumbers = loadoutAbilityNumbers
+        };
+
+        formatter.Serialize(stream, data);
+        stream.Close();
     }
 
     private void ImportLoadout()
     {
+        //SaveData newLoadoutData;
 
+        //string path = Application.persistentDataPath + "/player.loadoutData";
+        //if (File.Exists(path))
+        //{
+        //    BinaryFormatter formatter = new();
+        //    FileStream stream = new(path, FileMode.Open);
+
+        //    SaveData data = formatter.Deserialize(stream) as SaveData;
+        //    stream.Close();
+
+        //    newLoadoutData = data;
+        //}
+        //else
+        //{
+        //    Debug.Log("no loadout found");
+        //    return;
+        //}
+
+        //string[] elementalData = newLoadoutData.elementalData;
+        //int[] abilityNumbers = newLoadoutData.abilityNumbers;
+        //SelectElemental(elementalData[0], elementalData[1], elementalData[2], elementalData[3], elementalData[4]);
+        //for (int i = 0; i < 3; i++)
+        //    abilitySelect.SelectAbility(abilityNumbers[i]);
     }
+}
+[System.Serializable]
+public class SaveData
+{
+    public string[] elementalData;
+    public int[] abilityNumbers;
 }

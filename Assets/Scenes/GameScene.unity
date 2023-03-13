@@ -134,7 +134,6 @@ GameObject:
   - component: {fileID: 14904238}
   - component: {fileID: 14904240}
   - component: {fileID: 14904239}
-  - component: {fileID: 14904241}
   m_Layer: 0
   m_Name: NobScripts
   m_TagString: Untagged
@@ -213,19 +212,6 @@ MonoBehaviour:
   countdownText: {fileID: 1834709113}
   winnerText: {fileID: 1153730730}
   playAgain: {fileID: 2587413426466378102}
-  index: {fileID: 14904241}
---- !u!114 &14904241
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 14904237}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47694f4829b81d0439a87b6a14dbf666, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &191275705
 PrefabInstance:
   m_ObjectHideFlags: 0

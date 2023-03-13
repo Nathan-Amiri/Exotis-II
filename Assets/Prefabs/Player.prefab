@@ -398,7 +398,7 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: -4158588309664115983}
   _networkObjectCache: {fileID: -4158588309664115983}
   spriteRenderer: {fileID: 4696052625515170075}
-  coreSpriteRenderer: {fileID: 8254350197921800754}
+  coreRenderer: {fileID: 8254350197921800754}
   animator: {fileID: 6647395311802605896}
   playerMovement: {fileID: 4696052625515170087}
   health: 0

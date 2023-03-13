@@ -138,5 +138,5 @@ public class GameManager : NetworkBehaviour
 
     private readonly string disconnectScene = "CharSelect";
 
-    [HideInInspector] public string[] charSelectInfo = new string[4]; //filled by CharSelect, accessed by Setup
+    [HideInInspector] public string[] charSelectInfo = new string[8]; //filled by CharSelect, accessed by Setup
 }

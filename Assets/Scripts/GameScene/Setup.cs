@@ -16,8 +16,6 @@ public class Setup : NetworkBehaviour
     public TMP_Text winnerText; //^
     public PlayAgain playAgain; //^
 
-    public Index index; //^
-
     private GameManager gameManager;
 
     private Vector3 playerPosition;
@@ -68,6 +66,6 @@ public class Setup : NetworkBehaviour
         newPlayer.winnerText = winnerText;
         newPlayer.playAgain = playAgain;
 
-        newPlayer.OnSpawn(index);
+        newPlayer.OnSpawn();
     }
 }

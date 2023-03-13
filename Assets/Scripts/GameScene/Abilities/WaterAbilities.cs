@@ -23,8 +23,8 @@ public class WaterAbilities : AbilityBase
             {
                 distRB.bodyType = RigidbodyType2D.Dynamic;
 
-                distSR.color = new Color32(player.lighterColor.r, player.lighterColor.g, player.lighterColor.b, 153);
-                coreRenderer.color = new Color32(player.darkerColor.r, player.darkerColor.g, player.darkerColor.b, 153);
+                distSR.color = new Color32(player.shellColor.r, player.shellColor.g, player.shellColor.b, 153);
+                coreRenderer.color = new Color32(player.coreColor.r, player.coreColor.g, player.coreColor.b, 153);
             }
         }
         else if (name == "Tidalwave")
@@ -36,7 +36,7 @@ public class WaterAbilities : AbilityBase
 
         spellColor = player.water;
         if (hasCore)
-            coreRenderer.color = spellColor.Equals(player.lighterColor) ? player.darkerColor : player.lighterColor;
+            coreRenderer.color = spellColor.Equals(player.shellColor) ? player.coreColor : player.shellColor;
     }
     public override void TriggerAbility(Vector2 casterPosition, Vector2 aimPoint)
     {
@@ -72,7 +72,7 @@ public class WaterAbilities : AbilityBase
         else
         {
             player.spriteRenderer.enabled = false;
-            player.coreSpriteRenderer.enabled = false;
+            player.coreRenderer.enabled = false;
         }
 
         StartCoroutine(EndDistortion());
@@ -103,7 +103,7 @@ public class WaterAbilities : AbilityBase
 
         player.distorting = false;
         player.spriteRenderer.enabled = true;
-        player.coreSpriteRenderer.enabled = true;
+        player.coreRenderer.enabled = true;
     }
 
     public SpriteRenderer tidalSR; //assigned in inspector

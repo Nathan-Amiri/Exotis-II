@@ -13,7 +13,7 @@ public class Player : NetworkBehaviour
     //layers: -2 = background, -1 = editorgrid, 0 = terrain, 1 = players/some HUD, 2 = missiles/spells/more HUD
 
     public SpriteRenderer spriteRenderer; //assigned in inspector, used by distortion
-    public SpriteRenderer coreSpriteRenderer; //^
+    public SpriteRenderer coreRenderer; //^
     public Animator animator; //^
     public PlayerMovement playerMovement; //^, read by Setup and VenomAbilities
 
@@ -32,8 +32,8 @@ public class Player : NetworkBehaviour
     [NonSerialized] public Color32 water = new(35, 182, 255, 255); //^
     [NonSerialized] public Color32 venom = new(23, 195, 0, 255); //^
 
-    [NonSerialized] public Color32 lighterColor; //set by index, read by abilitybase
-    [NonSerialized] public Color32 darkerColor; //^
+    [NonSerialized] public Color32 shellColor; //set by index, read by abilitybase
+    [NonSerialized] public Color32 coreColor; //^
     [NonSerialized] public bool distorting; //overrides lighter/darker colors temporarily
 
     [NonSerialized] public float maxHealth = 15; //can be altered by index
@@ -84,7 +84,7 @@ public class Player : NetworkBehaviour
         PlayAgain.OnPlayAgain -= NewGame;
     }
 
-    public void OnSpawn(Index index)
+    public void OnSpawn()
     {
         name = charSelectInfo[0];
 
@@ -92,16 +92,27 @@ public class Player : NetworkBehaviour
         {
             GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
 
-            RpcSpawnAbility(ClientManager.Connection, charSelectInfo[1], 1);
-            //RpcSpawnAbility(ClientManager.Connection, charSelectInfo[2], 2);
-            //RpcSpawnAbility(ClientManager.Connection, charSelectInfo[3], 3);
+            RpcSpawnAbility(ClientManager.Connection, charSelectInfo[5], 1);
+            RpcSpawnAbility(ClientManager.Connection, charSelectInfo[6], 2);
+            //RpcSpawnAbility(ClientManager.Connection, charSelectInfo[7], 3);
         }
 
-        index.LoadAttributes(this, charSelectInfo); //add stats and spells
+        shellColor = (Color32)GetType().GetField(charSelectInfo[1]).GetValue(this);
+        coreColor = (Color32)GetType().GetField(charSelectInfo[2]).GetValue(this);
+
+        if (charSelectInfo[3] == "health")
+            maxHealth += 3;
+        else if (charSelectInfo[3] == "power")
+            StatChange("power", 1);
+
+        if (charSelectInfo[4] == "speed")
+            StatChange("speed", 1);
+        else if (charSelectInfo[4] == "range")
+            StatChange("range", 1);
 
         playerHUD.gameObject.SetActive(true);
-        playerHUD.charImage.charShell.color = lighterColor;
-        playerHUD.charImage.charCore.color = darkerColor;
+        playerHUD.charImage.charShell.color = shellColor;
+        playerHUD.charImage.charCore.color = coreColor;
 
         maxHealthBarWidth = playerHUD.healthBarPivot.transform.localScale.x;
 
@@ -112,6 +123,7 @@ public class Player : NetworkBehaviour
 
         startUpdate = true;
     }
+
 
     [ServerRpc]
     private void RpcSpawnAbility(NetworkConnection owner, string abilityName, int abilityNumber)
@@ -229,8 +241,8 @@ public class Player : NetworkBehaviour
 
         if (!animator.enabled && !distorting)
         {
-            spriteRenderer.color = lighterColor;
-            coreSpriteRenderer.color = darkerColor;
+            spriteRenderer.color = shellColor;
+            coreRenderer.color = coreColor;
         }
 
         if (!IsOwner)
@@ -381,8 +393,8 @@ public class Player : NetworkBehaviour
         yield return new WaitForSeconds(2);
 
         Color32[] lightAndDark = new Color32[2];
-        lightAndDark[0] = lighterColor;
-        lightAndDark[1] = darkerColor;
+        lightAndDark[0] = shellColor;
+        lightAndDark[1] = coreColor;
 
         playAgain.NewPlayAgain(this, lightAndDark);
     }
@@ -423,8 +435,8 @@ public class Player : NetworkBehaviour
         Missile missileScript = missileInfo.missile;
         StartCoroutine(RevealMissile(missileScript));
 
-        missileScript.spriteRenderer.color = caster.darkerColor;
-        missileScript.coreSprireRenderer.color = caster.lighterColor;
+        missileScript.spriteRenderer.color = caster.coreColor;
+        missileScript.coreSprireRenderer.color = caster.shellColor;
 
 
         missileScript.missilePower = caster.power;
@@ -493,7 +505,7 @@ public class Player : NetworkBehaviour
 
         if (Input.GetButtonDown("Ability1")) SelectAbility(1);
         if (Input.GetButtonDown("Ability2")) SelectAbility(2);
-        if (Input.GetButtonDown("Ability3")) SelectAbility(3);
+        //if (Input.GetButtonDown("Ability3")) SelectAbility(3);
     }
 
     private void SelectAbility(int abilityNumber)

@@ -33,7 +33,7 @@ public class FrostAbilities : AbilityBase
 
         spellColor = player.frost;
         if (hasCore)
-            coreRenderer.color = spellColor.Equals(player.lighterColor) ? player.darkerColor : player.lighterColor;
+            coreRenderer.color = spellColor.Equals(player.shellColor) ? player.coreColor : player.shellColor;
     }
     public override void TriggerAbility(Vector2 casterPosition, Vector2 aimPoint)
     {
@@ -60,7 +60,7 @@ public class FrostAbilities : AbilityBase
 
         StartCoroutine(StartCooldown());
 
-        icyPivot.position = casterPosition + .7f * new Vector2(transform.right.x, transform.right.y);
+        icyPivot.position = casterPosition + .5f * new Vector2(transform.right.x, transform.right.y);
 
         icyGrow = true;
         StartCoroutine(EndIcyGrow());
