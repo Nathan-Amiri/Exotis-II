@@ -60,7 +60,7 @@ public class FlameAbilities : AbilityBase
     }
     private void Heatup()
     {
-        transform.position = player.transform.position + new Vector3(0, .45f); //uses player's current position, not castPosition
+        transform.position = player.transform.position + new Vector3(0, .45f);
         heatAnimator.SetTrigger("HeatFade");
         StartCoroutine(HeatChannel());
     }

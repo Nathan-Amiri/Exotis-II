@@ -19,13 +19,8 @@ public class WaterAbilities : AbilityBase
         {
             cooldown = 8;
             hasRange = false;
-            if (IsOwner)
-            {
-                distRB.bodyType = RigidbodyType2D.Dynamic;
 
-                distSR.color = new Color32(player.shellColor.r, player.shellColor.g, player.shellColor.b, 153);
-                coreRenderer.color = new Color32(player.coreColor.r, player.coreColor.g, player.coreColor.b, 153);
-            }
+            DistSetup();
         }
         else if (name == "Tidalwave")
         {
@@ -57,6 +52,16 @@ public class WaterAbilities : AbilityBase
     public SpriteRenderer distSR; //assigned in inspector
     public Rigidbody2D distRB; //^
     private int distDirection;
+    private bool distorting;
+    private void DistSetup()
+    {
+        if (IsOwner)
+            distRB.bodyType = RigidbodyType2D.Dynamic;
+
+        byte transparency = (byte)(IsOwner ? 153 : 255);
+        distSR.color = new Color32(player.shellColor.r, player.shellColor.g, player.shellColor.b, transparency);
+        coreRenderer.color = new Color32(player.coreColor.r, player.coreColor.g, player.coreColor.b, transparency);
+    }
     private void Distortion()
     {
         StartCoroutine(StartCooldown());
@@ -67,7 +72,7 @@ public class WaterAbilities : AbilityBase
             distDirection = player.playerMovement.rb.velocity.x < 0 ? -1 : 1;
             distRB.velocity = player.playerMovement.rb.velocity;
 
-            player.distorting = true;
+            distorting = true;
         }
         else
         {
@@ -81,7 +86,7 @@ public class WaterAbilities : AbilityBase
     {
         base.Update();
 
-        if (IsOwner && player.distorting)
+        if (IsOwner && distorting)
         {
             if (distRB.velocity.y < 0)
                 distRB.velocity += (player.playerMovement.fallMultiplier - 1) * Physics2D.gravity.y * Time.deltaTime * Vector2.up; //identical code to playerMovement
@@ -101,7 +106,7 @@ public class WaterAbilities : AbilityBase
             distRB.velocity = Vector2.zero;
         }
 
-        player.distorting = false;
+        distorting = false;
         player.spriteRenderer.enabled = true;
         player.coreRenderer.enabled = true;
     }

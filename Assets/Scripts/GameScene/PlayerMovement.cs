@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using FishNet.Object;
-using FishNet.Object.Synchronizing;
 using System;
 
 public class PlayerMovement : NetworkBehaviour
@@ -18,8 +17,11 @@ public class PlayerMovement : NetworkBehaviour
     [NonSerialized] public readonly float fallMultiplier = 1; //fastfall, read by distortion
 
     [NonSerialized] public bool isGrounded; //read by GroundCheck and VenomAbilities
-    [SyncVar]
+
     [NonSerialized] public bool isStunned; //read by player
+    private int stunStrength;
+
+    private int weightlessStrength;
 
     public Rigidbody2D rb; //assigned in inspector, read by player, used by swoop
     
@@ -62,10 +64,13 @@ public class PlayerMovement : NetworkBehaviour
         if (!isStunned)
             rb.velocity = new(moveInput * moveSpeed * speedIncrease, rb.velocity.y);
 
-        if (rb.velocity.y < 0)
-            rb.velocity += (fallMultiplier - 1) * Physics2D.gravity.y * Time.deltaTime * Vector2.up; //fastfall not multiplied by speedIncrease to make walljumping easier when speed is high
-        else if (rb.velocity.y > 0 && !jumpInput)
-            rb.velocity += speedIncrease * (lowJumpMultiplier - 1) * Physics2D.gravity.y * Time.deltaTime * Vector2.up;
+        if (rb.gravityScale != 0) //turn off fastfall and dymanic jump when gravityless
+        {
+            if (rb.velocity.y < 0)
+                rb.velocity += (fallMultiplier - 1) * Physics2D.gravity.y * Time.deltaTime * Vector2.up; //fastfall not multiplied by speedIncrease to make walljumping easier when speed is high
+            else if (rb.velocity.y > 0 && !jumpInput)
+                rb.velocity += speedIncrease * (lowJumpMultiplier - 1) * Physics2D.gravity.y * Time.deltaTime * Vector2.up;
+        }
 
         if (jumpInputDown || jumpBuffering)
         {
@@ -106,14 +111,6 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
-    public void ToggleGravity(bool toggleOn)
-    {
-        if (!toggleOn)
-            rb.gravityScale = 0;
-        else
-            UpdateGravityScale();
-    }
-
     private void UpdateGravityScale()
     {
         rb.gravityScale = Mathf.Pow(jumpForce * speedIncrease, 2) / (2 * -Physics2D.gravity.y * jumpHeight); //variation of 'Velocity = sqrt(2 * Jump Height * Gravity)'
@@ -137,9 +134,24 @@ public class PlayerMovement : NetworkBehaviour
         if (toggleOn)
         {
             rb.velocity = new Vector2(0, rb.velocity.y);
-            isStunned = true;
+            stunStrength += 1;
         }
         else
-            isStunned = false;
+            stunStrength -= 1;
+
+        isStunned = stunStrength > 0;
+    }
+
+    public void ToggleGravity(bool toggleOn)
+    {
+        if (!toggleOn)
+            weightlessStrength += 1;
+        else
+            weightlessStrength -= 1;
+
+        if (weightlessStrength > 0)
+            rb.gravityScale = 0;
+        else
+            UpdateGravityScale();
     }
 }

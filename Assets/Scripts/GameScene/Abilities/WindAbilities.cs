@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,11 +15,13 @@ public class WindAbilities : AbilityBase
         {
             cooldown = 8;
             hasRange = false;
+            SwoopSetup();
         }
-        else if (name == "TakeFlight")
+        else if (name == "Takeflight")
         {
             cooldown = 12;
             hasRange = false;
+            FlightSetup();
         }
         else if (name == "Whirlwind")
         {
@@ -36,12 +39,23 @@ public class WindAbilities : AbilityBase
         if (name == "Takeflight") Takeflight();
         if (name == "Whirlwind" ) Whirlwind();
     }
+    protected override void Update()
+    {
+        base.Update();
 
+        SwoopUpdate();
+        FlightUpdate();
+    }
+
+    public SpriteRenderer swoopSR; //assigned in inspector
     private bool swooping;
+    private void SwoopSetup()
+    {
+        transform.SetParent(player.transform);
+        transform.position = player.transform.position;
+    }
     private void Swoop()
     {
-        StartCoroutine(StartCooldown());
-
         if (IsServer)
             StartCoroutine(player.BecomeImmune(1));
         if (IsOwner)
@@ -51,24 +65,21 @@ public class WindAbilities : AbilityBase
 
             float angle = Vector2.Angle(player.mousePosition - (Vector2)player.transform.position, Vector2.right);
             int posOrNeg = (player.mousePosition - (Vector2)player.transform.position).y > 0 ? 1 : -1;
-            transform.rotation = Quaternion.Euler(0, 0, angle * posOrNeg);
+            transform.rotation = Quaternion.Euler(0, 0, angle * posOrNeg); //set the correct rotation before beginning to swoop
 
             swooping = true;
         }
 
+        swoopSR.enabled = true;
         player.spriteRenderer.enabled = false;
         player.coreRenderer.enabled = false;
 
         StartCoroutine(EndSwoop());
     }
-    protected override void Update()
+    private void SwoopUpdate() //run in update
     {
-        base.Update();
-
         if (swooping)
         {
-            transform.position = player.transform.position;
-
             float angle = Vector2.Angle(player.mousePosition - (Vector2)transform.position, Vector2.right);
             int posOrNeg = (player.mousePosition - (Vector2)transform.position).y > 0 ? 1 : -1;
             Quaternion direction = Quaternion.Euler(0, 0, angle * posOrNeg);
@@ -86,15 +97,52 @@ public class WindAbilities : AbilityBase
             player.playerMovement.ToggleGravity(true);
             swooping = false;
         }
+        swoopSR.enabled = false;
         player.spriteRenderer.enabled = true;
         player.coreRenderer.enabled = true;
 
-        transform.SetPositionAndRotation(new Vector2(-15, 0), Quaternion.identity);
+        StartCoroutine(StartCooldown());
     }
 
+    public SpriteRenderer flightRenderer; //assigned in inspector
+    private bool flying;
+    private void FlightSetup()
+    {
+        transform.SetParent(player.transform);
+        transform.position = player.transform.position;
+    }
     private void Takeflight()
     {
+        if (IsOwner)
+        {
+            player.playerMovement.ToggleGravity(false);
+            flying = true;
+        }
 
+        flightRenderer.enabled = true;
+
+        StartCoroutine(EndFlight());
+    }
+    private void FlightUpdate() //run in update
+    {
+        if (flying)
+        {
+            int up = Input.GetButton("Jump") ? 1 : -1;
+            player.playerMovement.rb.velocity = new Vector2(player.playerMovement.rb.velocity.x, 3 * up);
+        }
+    }
+    private IEnumerator EndFlight()
+    {
+        yield return new WaitForSeconds(4.5f);
+        if (IsOwner)
+        {
+            player.playerMovement.ToggleGravity(true);
+            flying = false;
+        }
+
+        flightRenderer.enabled = false;
+
+        StartCoroutine(StartCooldown());
     }
 
     private void Whirlwind()

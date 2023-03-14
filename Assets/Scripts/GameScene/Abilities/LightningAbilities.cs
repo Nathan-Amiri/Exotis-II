@@ -90,10 +90,10 @@ public class LightningAbilities : AbilityBase
     private void RechargeSetup()
     {
         transform.SetParent(player.transform);
+        transform.position = player.transform.position + new Vector3(0, .45f);
     }
     private void Recharge()
     {
-        transform.position = player.transform.position + new Vector3(0, .45f); //uses player's current position, not castPosition
         rechargeAnimator.SetTrigger("RechargeFade");
         StartCoroutine(RechargeChannel());
     }

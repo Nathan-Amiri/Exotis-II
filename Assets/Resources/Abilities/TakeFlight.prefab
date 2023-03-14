@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3232143094829514330
+--- !u!1 &1753547204851477196
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,40 +8,40 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1840742055552228818}
-  - component: {fileID: 7203812257266785951}
-  - component: {fileID: -7434346979763678624}
-  - component: {fileID: -7072806570831810692}
-  - component: {fileID: -5865080474941184125}
+  - component: {fileID: 1753547204851477197}
+  - component: {fileID: 1753547204851477198}
+  - component: {fileID: 1753547204851477169}
+  - component: {fileID: 1753547204851477168}
+  - component: {fileID: 1753547204851477199}
   m_Layer: 0
-  m_Name: Swoop
+  m_Name: TakeFlight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1840742055552228818
+--- !u!4 &1753547204851477197
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3232143094829514330}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_GameObject: {fileID: 1753547204851477196}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &7203812257266785951
+--- !u!212 &1753547204851477198
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3232143094829514330}
+  m_GameObject: {fileID: 1753547204851477196}
   m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -73,11 +73,11 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1675313931
+  m_SortingLayer: -3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: b5f1f1be349224141ae2ded452de06e6, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 9093a36dafcad3f49848a676816526b1, type: 3}
+  m_Color: {r: 0.8039216, g: 0.8039216, b: 1, a: 0.6}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -87,31 +87,30 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &-7434346979763678624
+--- !u!114 &1753547204851477169
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3232143094829514330}
+  m_GameObject: {fileID: 1753547204851477196}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0eb189ed33756934e90330b18f52f51c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _componentIndexCache: 0
-  _addedNetworkObject: {fileID: -7072806570831810692}
-  _networkObjectCache: {fileID: -7072806570831810692}
+  _addedNetworkObject: {fileID: 1753547204851477168}
+  _networkObjectCache: {fileID: 1753547204851477168}
   coreRenderer: {fileID: 0}
-  swoopSR: {fileID: 7203812257266785951}
-  flightRenderer: {fileID: 0}
---- !u!114 &-7072806570831810692
+  flightRenderer: {fileID: 1753547204851477198}
+--- !u!114 &1753547204851477168
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3232143094829514330}
+  m_GameObject: {fileID: 1753547204851477196}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
@@ -121,8 +120,8 @@ MonoBehaviour:
   <ComponentIndex>k__BackingField: 0
   <PredictedSpawn>k__BackingField: {fileID: 0}
   _networkBehaviours:
-  - {fileID: -7434346979763678624}
-  - {fileID: -5865080474941184125}
+  - {fileID: 1753547204851477169}
+  - {fileID: 1753547204851477199}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField: []
   _isNetworked: 1
@@ -130,27 +129,32 @@ MonoBehaviour:
   _initializeOrder: 0
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: 19
+  <PrefabId>k__BackingField: 20
   <SpawnableCollectionId>k__BackingField: 0
-  _scenePathHash: 0
+  _scenePathHash: 2332773068
   <SceneId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 16277289093121403914
-  _sceneNetworkObjects: []
---- !u!114 &-5865080474941184125
+  <AssetPathHash>k__BackingField: 17526036077895498764
+  _sceneNetworkObjects:
+  - {fileID: 1753547204851477168}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+--- !u!114 &1753547204851477199
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3232143094829514330}
+  m_GameObject: {fileID: 1753547204851477196}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _componentIndexCache: 1
-  _addedNetworkObject: {fileID: -7072806570831810692}
-  _networkObjectCache: {fileID: -7072806570831810692}
+  _addedNetworkObject: {fileID: 1753547204851477168}
+  _networkObjectCache: {fileID: 1753547204851477168}
   _synchronizeParent: 0
   _packing:
     Position: 1
@@ -167,7 +171,7 @@ MonoBehaviour:
     X: 0
     Y: 0
     Z: 0
-  _synchronizeRotation: 1
+  _synchronizeRotation: 0
   _rotationSnapping:
     X: 0
     Y: 0

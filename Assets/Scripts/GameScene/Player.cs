@@ -34,7 +34,6 @@ public class Player : NetworkBehaviour
 
     [NonSerialized] public Color32 shellColor; //set by index, read by abilitybase
     [NonSerialized] public Color32 coreColor; //^
-    [NonSerialized] public bool distorting; //overrides lighter/darker colors temporarily
 
     [NonSerialized] public float maxHealth = 15; //can be altered by index
 
@@ -169,7 +168,6 @@ public class Player : NetworkBehaviour
     public void NewGame() //run by PlayAgain
     {
         missileAmount = 3;
-
         StartCoroutine(UnlockPlayers());
 
         if (IsOwner)
@@ -186,18 +184,19 @@ public class Player : NetworkBehaviour
                 transform.position = new Vector2(7.5f, 3f);
 
             StartCoroutine(Countdown());
+
+            playerMovement.ToggleStun(true);
         }
 
         if (IsServer)
         {
             isEliminated = false;
 
-            playerMovement.ToggleStun(true);
             isImmune = true;
             health = maxHealth;
         }
 
-        if (IsOwner && IsServer)
+        if (IsServer && IsOwner)
         {
             alivePlayers = 0;
             for (int i = 0; i < gameManager.playerNumbers.Length; i++)
@@ -225,8 +224,10 @@ public class Player : NetworkBehaviour
     private IEnumerator UnlockPlayers()
     {
         yield return new WaitForSeconds(3);
-        isImmune = false;
-        playerMovement.ToggleStun(false);
+        if (IsServer)
+            isImmune = false;
+        if (IsOwner)
+            playerMovement.ToggleStun(false);
     }
 
     private void Update()
@@ -239,7 +240,7 @@ public class Player : NetworkBehaviour
 
         //MissileTimer();
 
-        if (!animator.enabled && !distorting)
+        if (!animator.enabled)
         {
             spriteRenderer.color = shellColor;
             coreRenderer.color = coreColor;
@@ -355,14 +356,14 @@ public class Player : NetworkBehaviour
     private void Eliminate()
     {
         isEliminated = true;
-        playerMovement.ToggleStun(true);
-        RpcRelocate(Owner);
+        RpcClientEliminate(Owner);
         CheckForGameEnd();
     }
     [TargetRpc]
-    private void RpcRelocate(NetworkConnection conn)
+    private void RpcClientEliminate(NetworkConnection conn)
     {
         transform.position = new Vector2(50, 0);
+        playerMovement.ToggleStun(true);
     }
 
     [Server]
