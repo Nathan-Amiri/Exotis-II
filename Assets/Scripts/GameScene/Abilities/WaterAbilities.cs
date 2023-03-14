@@ -1,3 +1,4 @@
+using FishNet.Object;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -55,26 +56,31 @@ public class WaterAbilities : AbilityBase
     private bool distorting;
     private void DistSetup()
     {
-        if (IsOwner)
-            distRB.bodyType = RigidbodyType2D.Dynamic;
-
         byte transparency = (byte)(IsOwner ? 153 : 255);
         distSR.color = new Color32(player.shellColor.r, player.shellColor.g, player.shellColor.b, transparency);
         coreRenderer.color = new Color32(player.coreColor.r, player.coreColor.g, player.coreColor.b, transparency);
     }
     private void Distortion()
     {
+        if (IsOwner)
+            RpcSendDistortion(player.playerMovement.rb.velocity);
+    }
+    [ServerRpc]
+    private void RpcSendDistortion(Vector2 startingVelocity)
+    {
+        RpcReceiveDistortion(startingVelocity);
+    }
+    [ObserversRpc]
+    private void RpcReceiveDistortion(Vector2 startingVelocity)
+    {
         StartCoroutine(StartCooldown());
 
-        if (IsOwner)
-        {
-            transform.position = player.transform.position;
-            distDirection = player.playerMovement.rb.velocity.x < 0 ? -1 : 1;
-            distRB.velocity = player.playerMovement.rb.velocity;
+        transform.position = player.transform.position;
+        distRB.velocity = startingVelocity;
+        distDirection = startingVelocity.x < 0 ? -1 : 1;
+        distorting = true;
 
-            distorting = true;
-        }
-        else
+        if (!IsOwner)
         {
             player.spriteRenderer.enabled = false;
             player.coreRenderer.enabled = false;
@@ -86,7 +92,7 @@ public class WaterAbilities : AbilityBase
     {
         base.Update();
 
-        if (IsOwner && distorting)
+        if (distorting)
         {
             if (distRB.velocity.y < 0)
                 distRB.velocity += (player.playerMovement.fallMultiplier - 1) * Physics2D.gravity.y * Time.deltaTime * Vector2.up; //identical code to playerMovement
@@ -95,20 +101,19 @@ public class WaterAbilities : AbilityBase
     }
     private IEnumerator EndDistortion()
     {
-        if (IsOwner)
-            StartCoroutine(Disappear(1.5f));
+        StartCoroutine(Disappear(1.5f));
 
         yield return new WaitForSeconds(1.5f);
 
-        if (IsOwner)
-        {
-            distDirection = 0;
-            distRB.velocity = Vector2.zero;
-        }
-
         distorting = false;
-        player.spriteRenderer.enabled = true;
-        player.coreRenderer.enabled = true;
+        distDirection = 0;
+        distRB.velocity = Vector2.zero;
+
+        if (!IsOwner)
+        {
+            player.spriteRenderer.enabled = true;
+            player.coreRenderer.enabled = true;
+        }
     }
 
     public SpriteRenderer tidalSR; //assigned in inspector
