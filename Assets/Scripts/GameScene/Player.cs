@@ -61,6 +61,8 @@ public class Player : NetworkBehaviour
     private float maxMissileBarWidth;
     private bool onMissileCooldown;
 
+    [NonSerialized] public VenomAbilities infectSpell; //read by missile, null unless missiles are infected
+
     private bool startUpdate;
 
     [NonSerialized] public Vector2 mousePosition; //read by swoop

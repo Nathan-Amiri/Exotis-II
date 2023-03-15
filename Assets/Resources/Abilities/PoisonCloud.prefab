@@ -240,15 +240,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <IsNested>k__BackingField: 0
   <ComponentIndex>k__BackingField: 0
+  <PredictedSpawn>k__BackingField: {fileID: 0}
   _networkBehaviours:
   - {fileID: 8696868975770873348}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField: []
   _isNetworked: 1
   _isGlobal: 0
+  _initializeOrder: 0
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: 8
+  <PrefabId>k__BackingField: 9
+  <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 0
   <SceneId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 11745620240641734926
@@ -304,7 +307,20 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 4701145019149059897}
   _networkObjectCache: {fileID: 4701145019149059897}
   coreRenderer: {fileID: 3636180636970649778}
-  poisonCloudAnimator: {fileID: 5262995367392294412}
+  infectAura: {fileID: 0}
+  infectTraps:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  trapCores:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  infectAnims:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  poisonCloudAnim: {fileID: 5262995367392294412}
 --- !u!50 &-6435456684729865210
 Rigidbody2D:
   serializedVersion: 4

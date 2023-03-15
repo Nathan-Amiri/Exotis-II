@@ -42,12 +42,12 @@ public class AbilitySelect : MonoBehaviour
     public TMP_Text text4; //^
     public TMP_Text text5; //^
 
-    private readonly string[] waterAbilities = new string[] { "Flow", "Distortion", "Tidalwave" };
-    private readonly string[] flameAbilities = new string[] { "Erupt", "Singe", "Heatup" };
-    private readonly string[] windAbilities = new string[] { "Swoop", "Takeflight", "Whirlwind" };
-    private readonly string[] lightningAbilities = new string[] { "Electrify", "Blink", "Recharge" };
-    private readonly string[] frostAbilities = new string[] { "Icybreath", "Hail", "Freeze" };
-    private readonly string[] venomAbilities = new string[] { "Fangedbite", "Infect", "Poisoncloud" };
+    private readonly string[] waterAbilities = new string[] { "(Empty)", "Distortion", "Tidalwave" };
+    private readonly string[] flameAbilities = new string[] { "Erupt", "(Empty)", "Heatup" };
+    private readonly string[] windAbilities = new string[] { "Swoop", "Takeflight", "(Empty)" };
+    private readonly string[] lightningAbilities = new string[] { "(Empty)", "Blink", "Recharge" };
+    private readonly string[] frostAbilities = new string[] { "Icybreath", "(Empty)", "Freeze" };
+    private readonly string[] venomAbilities = new string[] { "(Empty)", "Infect", "Poisoncloud" };
 
     private List<string> selectedAbilities = new();
     private List<int> abilityNumbers = new(); //used in charselect for importing loadout

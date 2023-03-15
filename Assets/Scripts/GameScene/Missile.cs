@@ -24,6 +24,8 @@ public class Missile : MonoBehaviour
         {
             spriteRenderer.enabled = false;
             gameObject.SetActive(false);
+            if (InstanceFinder.IsServer && player.infectSpell != null)
+                player.infectSpell.RpcTriggerInfect(transform.position);
         }
         else if (col.CompareTag("Player") && col.gameObject != player.gameObject)
         {

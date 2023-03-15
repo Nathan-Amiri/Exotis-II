@@ -77,12 +77,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 4346a0b46cec15e4caf3c8a24f0ca616, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 9de30bf6e656fc045b40ef3a3ecf6a25, type: 3}
   m_Color: {r: 0.54901963, g: 0.89411765, b: 0.9098039, a: 0.6}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.32, y: 0.32}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -104,6 +104,7 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 6172485992778298264}
   _networkObjectCache: {fileID: 6172485992778298264}
   coreRenderer: {fileID: 2361293727663528611}
+  icyPivot: {fileID: 0}
 --- !u!58 &1891985023486859474
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -134,16 +135,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <IsNested>k__BackingField: 0
   <ComponentIndex>k__BackingField: 0
+  <PredictedSpawn>k__BackingField: {fileID: 0}
   _networkBehaviours:
   - {fileID: 3651496510914881993}
   <ParentNetworkObject>k__BackingField: {fileID: 0}
   <ChildNetworkObjects>k__BackingField: []
   _isNetworked: 1
   _isGlobal: 0
+  _initializeOrder: 0
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
   <PrefabId>k__BackingField: 4
-  _scenePathHash: 2332773068
+  <SpawnableCollectionId>k__BackingField: 0
+  _scenePathHash: 0
   <SceneId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 9432043973902714652
   _sceneNetworkObjects:
@@ -225,12 +229,12 @@ SpriteRenderer:
   m_SortingLayerID: -850672429
   m_SortingLayer: 1
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: efc1ee1a5c6ca6b4d811a42c4eb13139, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a016fe41037355e49b516c361ca8b9e9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0.6}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.32, y: 0.32}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

@@ -1,3 +1,4 @@
+using FishNet.Object;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,8 +19,9 @@ public class VenomAbilities : AbilityBase
         }
         else if (name == "Infect")
         {
-            cooldown = 12;
+            cooldown = 8;
             hasRange = false;
+            InfectSetup();
         }
         else if (name == "Poisoncloud")
         {
@@ -48,18 +50,56 @@ public class VenomAbilities : AbilityBase
 
     }
 
+    public GameObject infectAura; //assigned in inspector
+    public OnEnterDamage[] infectTraps = new OnEnterDamage[3]; //^
+    public SpriteRenderer[] trapCores = new SpriteRenderer[3]; //^
+    public Animator[] infectAnims = new Animator[3]; //^
+    private int infectCounter;
+    private void InfectSetup()
+    {
+        infectAura.transform.SetParent(player.transform);
+        infectAura.transform.position = player.transform.position;
+
+        foreach (OnEnterDamage infectTrap in infectTraps)
+            infectTrap.owner = player.gameObject;
+
+        foreach (SpriteRenderer trapCore in trapCores)
+            trapCore.color = spellColor.Equals(player.shellColor) ? player.coreColor : player.shellColor;
+    }
     private void Infect()
     {
+        infectAura.SetActive(true);
 
+        player.infectSpell = this;
+
+        foreach (OnEnterDamage infectTrap in infectTraps)
+            infectTrap.transform.position = new Vector2(-15, 0);
+    }
+    [ObserversRpc]
+    public void RpcTriggerInfect(Vector2 missilePosition) //called by Missile
+    {
+        infectTraps[infectCounter].transform.position = missilePosition;
+        infectAnims[infectCounter].SetTrigger("Grow");
+
+        infectCounter += 1;
+        if (infectCounter == 3)
+        {
+            infectAura.SetActive(false);
+
+            infectCounter = 0;
+            player.infectSpell = null;
+
+            StartCoroutine(StartCooldown());
+        }
     }
 
-    public Animator poisonCloudAnimator; //assigned in inspector
+    public Animator poisonCloudAnim; //assigned in inspector
     private void PoisonCloud(Vector2 casterPosition)
     {
         StartCoroutine(StartCooldown());
 
         transform.position = casterPosition + (.17f * Vector2.down);
-        poisonCloudAnimator.SetTrigger("Grow");
+        poisonCloudAnim.SetTrigger("Grow");
         StartCoroutine(Disappear(4));
     }
     private void OnEnterPoisonCloud(Collider2D col)
@@ -68,6 +108,6 @@ public class VenomAbilities : AbilityBase
             return;
 
         if (col.CompareTag("Player") && col.gameObject != player.gameObject)
-            col.GetComponent<Player>().HealthChange(-1.5f);
+            col.GetComponent<Player>().HealthChange(-3f);
     }
 }

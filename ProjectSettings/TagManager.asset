@@ -44,6 +44,12 @@ TagManager:
   - name: Background
     uniqueID: 3974340661
     locked: 0
+  - name: Infect
+    uniqueID: 425647485
+    locked: 0
+  - name: InfectCore
+    uniqueID: 1842117685
+    locked: 0
   - name: Tile
     uniqueID: 4136287191
     locked: 0
