@@ -36,6 +36,8 @@ public class VenomAbilities : AbilityBase
     }
     public override void TriggerAbility(Vector2 casterPosition, Vector2 aimPoint)
     {
+        base.TriggerAbility(casterPosition, aimPoint);
+
         if (name == "Fangedbite") FangedBite();
         if (name == "Infect") Infect();
         if (name == "Poisoncloud" && player.playerMovement.isGrounded) PoisonCloud(casterPosition);

@@ -95,7 +95,7 @@ public class Player : NetworkBehaviour
 
             RpcSpawnAbility(ClientManager.Connection, charSelectInfo[5], 1);
             RpcSpawnAbility(ClientManager.Connection, charSelectInfo[6], 2);
-            //RpcSpawnAbility(ClientManager.Connection, charSelectInfo[7], 3);
+            RpcSpawnAbility(ClientManager.Connection, charSelectInfo[7], 3);
         }
 
         shellColor = (Color32)GetType().GetField(charSelectInfo[1]).GetValue(this);
@@ -512,7 +512,7 @@ public class Player : NetworkBehaviour
 
         if (Input.GetButtonDown("Ability1")) SelectAbility(1);
         if (Input.GetButtonDown("Ability2")) SelectAbility(2);
-        //if (Input.GetButtonDown("Ability3")) SelectAbility(3);
+        if (Input.GetButtonDown("Ability3")) SelectAbility(3);
     }
 
     private void SelectAbility(int abilityNumber)
@@ -521,7 +521,7 @@ public class Player : NetworkBehaviour
         if (abilityNumber == 2) currentAbility = ability2;
         else if (abilityNumber == 3) currentAbility = ability3;
 
-        if (currentAbility.onCooldown)
+        if (currentAbility.spellLock)
             return;
 
         Vector2 casterPosition = new(transform.position.x, transform.position.y);

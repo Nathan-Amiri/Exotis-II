@@ -268,30 +268,30 @@ public class CharSelect : NetworkBehaviour
 
     private void ImportLoadout()
     {
-        //SaveData newLoadoutData;
+        SaveData newLoadoutData;
 
-        //string path = Application.persistentDataPath + "/player.loadoutData";
-        //if (File.Exists(path))
-        //{
-        //    BinaryFormatter formatter = new();
-        //    FileStream stream = new(path, FileMode.Open);
+        string path = Application.persistentDataPath + "/player.loadoutData";
+        if (File.Exists(path))
+        {
+            BinaryFormatter formatter = new();
+            FileStream stream = new(path, FileMode.Open);
 
-        //    SaveData data = formatter.Deserialize(stream) as SaveData;
-        //    stream.Close();
+            SaveData data = formatter.Deserialize(stream) as SaveData;
+            stream.Close();
 
-        //    newLoadoutData = data;
-        //}
-        //else
-        //{
-        //    Debug.Log("no loadout found");
-        //    return;
-        //}
+            newLoadoutData = data;
+        }
+        else
+        {
+            Debug.Log("no loadout found");
+            return;
+        }
 
-        //string[] elementalData = newLoadoutData.elementalData;
-        //int[] abilityNumbers = newLoadoutData.abilityNumbers;
-        //SelectElemental(elementalData[0], elementalData[1], elementalData[2], elementalData[3], elementalData[4]);
-        //for (int i = 0; i < 3; i++)
-        //    abilitySelect.SelectAbility(abilityNumbers[i]);
+        string[] elementalData = newLoadoutData.elementalData;
+        int[] abilityNumbers = newLoadoutData.abilityNumbers;
+        SelectElemental(elementalData[0], elementalData[1], elementalData[2], elementalData[3], elementalData[4]);
+        for (int i = 0; i < 3; i++)
+            abilitySelect.SelectAbility(abilityNumbers[i]);
     }
 }
 [System.Serializable]

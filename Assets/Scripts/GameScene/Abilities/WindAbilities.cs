@@ -35,6 +35,8 @@ public class WindAbilities : AbilityBase
     }
     public override void TriggerAbility(Vector2 casterPosition, Vector2 aimPoint)
     {
+        base.TriggerAbility(casterPosition, aimPoint);
+
         if (name == "Swoop") Swoop();
         if (name == "Takeflight") Takeflight();
         if (name == "Whirlwind" ) Whirlwind();
@@ -104,12 +106,12 @@ public class WindAbilities : AbilityBase
         StartCoroutine(StartCooldown());
     }
 
-    public SpriteRenderer flightRenderer; //assigned in inspector
+    public GameObject flightAura; //assigned in inspector
     private bool flying;
     private void FlightSetup()
     {
-        transform.SetParent(player.transform);
-        transform.position = player.transform.position;
+        flightAura.transform.SetParent(player.transform);
+        flightAura.transform.position = player.transform.position;
     }
     private void Takeflight()
     {
@@ -119,7 +121,7 @@ public class WindAbilities : AbilityBase
             flying = true;
         }
 
-        flightRenderer.enabled = true;
+        flightAura.SetActive(true);
 
         StartCoroutine(EndFlight());
     }
@@ -128,7 +130,7 @@ public class WindAbilities : AbilityBase
         if (flying)
         {
             int up = Input.GetButton("Jump") ? 1 : -1;
-            player.playerMovement.rb.velocity = new Vector2(player.playerMovement.rb.velocity.x, 3 * up);
+            player.playerMovement.rb.velocity = new Vector2(player.playerMovement.rb.velocity.x, 3 * up * player.playerMovement.speedIncrease);
         }
     }
     private IEnumerator EndFlight()
@@ -140,7 +142,7 @@ public class WindAbilities : AbilityBase
             flying = false;
         }
 
-        flightRenderer.enabled = false;
+        flightAura.SetActive(false);
 
         StartCoroutine(StartCooldown());
     }

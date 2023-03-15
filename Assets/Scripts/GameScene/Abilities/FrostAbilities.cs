@@ -37,6 +37,8 @@ public class FrostAbilities : AbilityBase
     }
     public override void TriggerAbility(Vector2 casterPosition, Vector2 aimPoint)
     {
+        base.TriggerAbility(casterPosition, aimPoint);
+
         if (name == "Icybreath") IcyBreath(casterPosition, aimPoint);
         if (name == "Hail") Hail();
         if (name == "Freeze") Freeze(aimPoint);

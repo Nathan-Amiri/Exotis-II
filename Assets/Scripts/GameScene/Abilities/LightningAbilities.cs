@@ -36,6 +36,8 @@ public class LightningAbilities : AbilityBase
     }
     public override void TriggerAbility(Vector2 casterPosition, Vector2 aimPoint)
     {
+        base.TriggerAbility(casterPosition, aimPoint);
+
         if (name == "Electrify") Electrify();
         if (name == "Blink") Blink(casterPosition, aimPoint);
         if (name == "Recharge") Recharge();

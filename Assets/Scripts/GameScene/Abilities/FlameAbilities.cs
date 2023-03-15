@@ -37,6 +37,8 @@ public class FlameAbilities : AbilityBase
     }
     public override void TriggerAbility(Vector2 casterPosition, Vector2 aimPoint)
     {
+        base.TriggerAbility(casterPosition, aimPoint);
+
         if (name == "Erupt") Erupt();
         if (name == "Singe") Singe();
         if (name == "Heatup") Heatup();

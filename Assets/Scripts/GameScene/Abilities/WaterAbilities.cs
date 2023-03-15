@@ -36,6 +36,8 @@ public class WaterAbilities : AbilityBase
     }
     public override void TriggerAbility(Vector2 casterPosition, Vector2 aimPoint)
     {
+        base.TriggerAbility(casterPosition, aimPoint);
+
         if (name == "Flow") Flow();
         if (name == "Distortion") Distortion();
         if (name == "Tidalwave") TidalWave(casterPosition, aimPoint);
@@ -84,6 +86,13 @@ public class WaterAbilities : AbilityBase
         {
             player.spriteRenderer.enabled = false;
             player.coreRenderer.enabled = false;
+
+            Transform aura = player.transform.Find("Aura");
+            if (aura != null && aura.gameObject.activeSelf)
+            {
+                aura.SetParent(transform);
+                aura.position = transform.position;
+            }
         }
 
         StartCoroutine(EndDistortion());
@@ -113,6 +122,13 @@ public class WaterAbilities : AbilityBase
         {
             player.spriteRenderer.enabled = true;
             player.coreRenderer.enabled = true;
+
+            Transform aura = transform.Find("Aura");
+            if (aura != null)
+            {
+                aura.SetParent(player.transform);
+                aura.position = player.transform.position;
+            }
         }
     }
 
