@@ -70,7 +70,7 @@ public class Player : NetworkBehaviour
     public GameObject missile; //assigned in inspector
 
     public static int alivePlayers = 0; //number of players not eliminated. used by server only
-    private bool isEliminated; //server only
+    [NonSerialized] public bool isEliminated; //server only, read by Recharge
     public delegate void OnGameEndAction();
     public static event OnGameEndAction OnGameEnd;
 
@@ -257,8 +257,8 @@ public class Player : NetworkBehaviour
         {
             StartCoroutine(MissileCooldown());
             Vector2 fireDirection = (mousePosition - new Vector2(transform.position.x, transform.position.y)).normalized;
-            CreateMissile(this, transform.position, fireDirection, 0f);
-            RpcServerCreateMissile(this, transform.position, fireDirection, TimeManager.Tick);
+            CreateMissile(transform.position, fireDirection, 0f);
+            RpcServerCreateMissile(transform.position, fireDirection, TimeManager.Tick);
         }
 
         Abilities();
@@ -409,20 +409,20 @@ public class Player : NetworkBehaviour
     private const float maxPassedTime = 0.3f; //never change this!
 
     [ServerRpc]
-    private void RpcServerCreateMissile(Player caster, Vector3 firePosition, Vector2 fireDirection, uint tick)
+    private void RpcServerCreateMissile(Vector3 firePosition, Vector2 fireDirection, uint tick)
     {
         if (!IsOwner)
         {
             float passedTime = (float)TimeManager.TimePassed(tick, false); //false prevents negative
             passedTime = Mathf.Min(maxPassedTime / 2f, passedTime);
 
-            CreateMissile(caster, firePosition, fireDirection, passedTime);
+            CreateMissile(firePosition, fireDirection, passedTime);
         }
 
-        RpcClientCreateMissile(caster, firePosition, fireDirection, tick);
+        RpcClientCreateMissile(firePosition, fireDirection, tick);
     }
     [ObserversRpc]
-    private void RpcClientCreateMissile(Player caster, Vector3 firePosition, Vector2 fireDirection, uint tick)
+    private void RpcClientCreateMissile(Vector3 firePosition, Vector2 fireDirection, uint tick)
     {
         if (IsServer || IsOwner)
             return;
@@ -430,9 +430,9 @@ public class Player : NetworkBehaviour
         float passedTime = (float)TimeManager.TimePassed(tick, false); //false prevents negative
         passedTime = Mathf.Min(maxPassedTime / 2f, passedTime);
 
-        CreateMissile(caster, firePosition, fireDirection, passedTime);
+        CreateMissile(firePosition, fireDirection, passedTime);
     }
-    private void CreateMissile(Player caster, Vector3 firePosition, Vector2 fireDirection, float passedTime)
+    private void CreateMissile(Vector3 firePosition, Vector2 fireDirection, float passedTime)
     {
         MissileInfo missileInfo = ObjectPool.sharedInstance.GetPooledInfo();
 
@@ -442,25 +442,25 @@ public class Player : NetworkBehaviour
         Missile missileScript = missileInfo.missile;
         StartCoroutine(RevealMissile(missileScript));
 
-        missileScript.spriteRenderer.color = caster.coreColor;
-        missileScript.coreSprireRenderer.color = caster.shellColor;
+        missileScript.spriteRenderer.color = coreColor;
+        missileScript.coreSpriteRenderer.color = shellColor;
 
 
-        missileScript.missilePower = caster.power;
-        missileScript.player = caster;
+        missileScript.missilePower = power;
+        missileScript.player = this;
 
-        caster.missileAmount -= 1;
+        missileAmount -= 1;
 
         //missileObject = newMissile; //used for missile timer
 
 
 
         float displacementMagnitude = passedTime / 2.778f; //(number of ticks fired missile has traveled) / 2.778 = the distance the missile has traveled
-        Vector3 displacement = (caster.range / 10) * displacementMagnitude * fireDirection;
+        Vector3 displacement = (range / 10) * displacementMagnitude * fireDirection;
         Vector3 castPosition = firePosition + new Vector3(fireDirection.x, fireDirection.y) * .5f;
         newMissile.transform.position = castPosition += displacement;
 
-        missileScript.rb.velocity = fireDirection * caster.range;
+        missileScript.rb.velocity = fireDirection * range;
     }
 
     //missile timer code used to initially test the average distance a missile travels per tick:

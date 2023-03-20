@@ -26,7 +26,7 @@ public class FrostAbilities : AbilityBase
         }
         else if (name == "Freeze")
         {
-            cooldown = 8;
+            cooldown = 12;
             hasRange = false;
             hasCore = true;
         }
@@ -98,7 +98,7 @@ public class FrostAbilities : AbilityBase
         StartCoroutine(StartCooldown());
 
         transform.position = aimPoint;
-        StartCoroutine(Disappear(4));
+        StartCoroutine(Disappear(5));
     }
     private void OnEnterFreeze(Collider2D col)
     {

@@ -10,8 +10,8 @@ public class Missile : MonoBehaviour
     [NonSerialized] public Player player; //set by player when instantiated
 
     public Rigidbody2D rb; //assigned in inspector
-    public SpriteRenderer spriteRenderer; //assigned in inspector, read by Player
-    public SpriteRenderer coreSprireRenderer; //^
+    public SpriteRenderer spriteRenderer; //assigned in inspector, used by Player
+    public SpriteRenderer coreSpriteRenderer; //^
 
     void Update()
     {

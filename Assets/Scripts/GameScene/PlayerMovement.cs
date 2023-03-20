@@ -8,13 +8,13 @@ public class PlayerMovement : NetworkBehaviour
 {
     [NonSerialized] public readonly float moveSpeed = 2.5f; //read by distortion
     private readonly float jumpForce = 7.2f;
-    private readonly float jumpHeight = 1.1f;
+    private readonly float jumpHeight = 1.2f;
     [NonSerialized] public float speedIncrease = 1; //read by distortion and takeflight
     private readonly float speedMultiplier = 1.3f;
     private float startingY = -10; //-10 = null. Used when speed changes mid-jump
 
     private readonly float lowJumpMultiplier = 4; //used for dynamic jump
-    [NonSerialized] public readonly float fallMultiplier = 1; //fastfall, read by distortion
+    [NonSerialized] public readonly float fallMultiplier = .7f; //fastfall, read by distortion
 
     [NonSerialized] public bool isGrounded; //read by GroundCheck and VenomAbilities
 

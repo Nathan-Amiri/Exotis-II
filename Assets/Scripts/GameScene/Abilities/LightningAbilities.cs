@@ -109,7 +109,7 @@ public class LightningAbilities : AbilityBase
     private IEnumerator RechargeBuff()
     {
         rechargeAura.SetActive(true);
-        if (IsServer)
+        if (IsServer && !player.isEliminated)
             player.HealthChange(3);
         player.StatChange("speed", 1);
 

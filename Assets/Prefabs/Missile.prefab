@@ -250,8 +250,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 168e5f2c7661786488d8eb3368ec5f2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  missilePower: 0
-  player: {fileID: 0}
   rb: {fileID: 7543987559241770787}
   spriteRenderer: {fileID: 7543987559241770782}
-  coreSprireRenderer: {fileID: 1955379391175555714}
+  coreSpriteRenderer: {fileID: 1955379391175555714}

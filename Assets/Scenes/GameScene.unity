@@ -1590,7 +1590,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!224 &799511613
 RectTransform:
@@ -5648,8 +5648,8 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
-  m_SortingLayerID: 0
-  m_SortingOrder: 2
+  m_SortingLayerID: -752874705
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!224 &1713130779
 RectTransform:
@@ -6774,6 +6774,14 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 519420031}
+    - target: {fileID: 2075967989129617741, guid: b2559472f1659754ea99361fa20ac3d7, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2075967989129617741, guid: b2559472f1659754ea99361fa20ac3d7, type: 3}
+      propertyPath: m_SortingLayerID
+      value: -752874705
+      objectReference: {fileID: 0}
     - target: {fileID: 2075967989129617742, guid: b2559472f1659754ea99361fa20ac3d7, type: 3}
       propertyPath: m_Name
       value: HUD
@@ -6822,6 +6830,14 @@ PrefabInstance:
     - target: {fileID: 2587413425442714675, guid: 5e97f446920ae624a859c529f2b3a958, type: 3}
       propertyPath: m_Name
       value: PlayAgain
+      objectReference: {fileID: 0}
+    - target: {fileID: 3788907576692367443, guid: 5e97f446920ae624a859c529f2b3a958, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3788907576692367443, guid: 5e97f446920ae624a859c529f2b3a958, type: 3}
+      propertyPath: m_SortingLayerID
+      value: -752874705
       objectReference: {fileID: 0}
     - target: {fileID: 6800746541107094522, guid: 5e97f446920ae624a859c529f2b3a958, type: 3}
       propertyPath: m_Pivot.x
