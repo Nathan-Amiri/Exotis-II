@@ -104,9 +104,10 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: -1378910616298671058}
   _networkObjectCache: {fileID: -1378910616298671058}
   coreRenderer: {fileID: 0}
+  electrifyCol: {fileID: 0}
   blinkRenderer: {fileID: 0}
   blinkAnimator: {fileID: 0}
-  rechargeAnimator: {fileID: 2575291264933073632}
+  rechargeAnim: {fileID: 2575291264933073632}
   rechargeAura: {fileID: 4799430110136708985}
 --- !u!114 &-1378910616298671058
 MonoBehaviour:

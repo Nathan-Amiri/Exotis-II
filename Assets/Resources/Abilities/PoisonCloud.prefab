@@ -182,7 +182,6 @@ GameObject:
   - component: {fileID: 4701145019149059897}
   - component: {fileID: 3445389270498861928}
   - component: {fileID: 8696868975770873348}
-  - component: {fileID: -6435456684729865210}
   m_Layer: 0
   m_Name: PoisonCloud
   m_TagString: Untagged
@@ -321,24 +320,3 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   poisonCloudAnim: {fileID: 5262995367392294412}
---- !u!50 &-6435456684729865210
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8867500905757508941}
-  m_BodyType: 1
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0

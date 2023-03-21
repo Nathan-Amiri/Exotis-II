@@ -15,7 +15,6 @@ public class LightningAbilities : AbilityBase
         {
             cooldown = 8;
             hasRange = false;
-            hasCore = true;
         }
         else if (name == "Blink")
         {
@@ -38,14 +37,56 @@ public class LightningAbilities : AbilityBase
     {
         base.TriggerAbility(casterPosition, aimPoint);
 
-        if (name == "Electrify") Electrify();
+        if (name == "Electrify") Electrify(casterPosition, aimPoint);
         if (name == "Blink") Blink(casterPosition, aimPoint);
         if (name == "Recharge") Recharge();
     }
 
-    private void Electrify()
+    public PolygonCollider2D electrifyCol;
+    private void Electrify(Vector2 casterPosition, Vector2 aimPoint)
     {
+        StartCoroutine(StartCooldown());
 
+        electrifyCol.enabled = true;
+        player.playerMovement.ToggleStun(true);
+        player.playerMovement.ToggleGravity(false);
+        player.playerMovement.rb.velocity = Vector2.zero; //toggleStun doesn't alter y velocity
+
+        float angle = Vector2.Angle(aimPoint - casterPosition, Vector2.right);
+        int posOrNeg = (aimPoint - casterPosition).y > 0 ? 1 : -1;
+        transform.rotation = Quaternion.Euler(0, 0, (angle * posOrNeg) - 90);
+        transform.position = player.transform.position + (.7f * transform.up); //uses new rotation, so can't use SetPositionAndRotation
+
+        StartCoroutine(ElectrifyToggle());
+        StartCoroutine(ElectrifyDashStart(transform.up));
+    }
+    private IEnumerator ElectrifyToggle()
+    {
+        yield return new WaitForSeconds(.1f);
+        electrifyCol.enabled = false;
+    }
+    private IEnumerator ElectrifyDashStart(Vector2 direction)
+    {
+        yield return new WaitForSeconds(.4f);
+        //player.playerMovement.ToggleStun(false);
+        player.playerMovement.rb.velocity = direction * 20f;
+        StartCoroutine(DashEnd());
+
+        transform.position -= (Vector3)(1.4f * direction);
+
+        StartCoroutine(Disappear(.2f));
+
+        StartCoroutine(Test());
+    }
+    private IEnumerator DashEnd()
+    {
+        yield return new WaitForSeconds(.1f);
+        player.playerMovement.ToggleGravity(true);
+    }
+    private IEnumerator Test()
+    {
+        yield return new WaitForSeconds(1);
+        player.playerMovement.ToggleStun(false);
     }
 
     public SpriteRenderer blinkRenderer;
@@ -87,7 +128,7 @@ public class LightningAbilities : AbilityBase
         player.transform.position = blinkPosition;
     }
 
-    public Animator rechargeAnimator;
+    public Animator rechargeAnim;
     public GameObject rechargeAura;
     private void RechargeSetup()
     {
@@ -96,7 +137,7 @@ public class LightningAbilities : AbilityBase
     }
     private void Recharge()
     {
-        rechargeAnimator.SetTrigger("RechargeFade");
+        rechargeAnim.SetTrigger("RechargeFade");
         StartCoroutine(RechargeChannel());
     }
     private IEnumerator RechargeChannel()

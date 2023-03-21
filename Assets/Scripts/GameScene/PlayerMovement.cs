@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using FishNet.Object;
 using System;
+using Unity.VisualScripting;
 
 public class PlayerMovement : NetworkBehaviour
 {
@@ -74,19 +75,18 @@ public class PlayerMovement : NetworkBehaviour
 
         if (jumpInputDown || jumpBuffering)
         {
-            jumpInputDown = false;
-
             if (isGrounded)
             {
                 startingY = transform.position.y;
                 rb.velocity = new(rb.velocity.x, speedIncrease * jumpForce);
+
+                StopCoroutine(JumpBuffer());
+                jumpBuffering = false;
             }
-            else
-            {
-                if (jumpBuffering)
-                    StopCoroutine(JumpBuffer());
+            else if (jumpInputDown)
                 StartCoroutine(JumpBuffer());
-            }
+
+            jumpInputDown = false;
         }
 
         if (startingY != -10 && rb.velocity.y < 0) //reset when jump is no longer going up

@@ -142,13 +142,14 @@ public class WaterAbilities : AbilityBase
 
         float angle = Vector2.Angle(aimPoint - casterPosition, Vector2.right);
         int posOrNeg = (aimPoint - casterPosition).y > 0 ? 1 : -1;
-        transform.rotation = Quaternion.Euler(0, 0, angle * posOrNeg);
+        Quaternion rotation = Quaternion.Euler(0, 0, angle * posOrNeg);
+        Vector3 position = casterPosition;
+        transform.SetPositionAndRotation(position, rotation);
 
         Color32 tempColor = tidalSR.color;
         tempColor.a = 0;
         tidalSR.color = tempColor;
 
-        transform.position = casterPosition;
         StartCoroutine(TidalWaveFade());
     }
     private IEnumerator TidalWaveFade()

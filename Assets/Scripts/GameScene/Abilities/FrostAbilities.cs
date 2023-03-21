@@ -56,13 +56,13 @@ public class FrostAbilities : AbilityBase
     private bool icyGrow;
     private void IcyBreath(Vector2 casterPosition, Vector2 aimPoint)
     {
-        float angle = Vector2.Angle(aimPoint - casterPosition, Vector2.right);
-        int posOrNeg = (aimPoint - casterPosition).y > 0 ? 1 : -1;
-        icyPivot.rotation = Quaternion.Euler(0, 0, angle * posOrNeg);
-
         StartCoroutine(StartCooldown());
 
-        icyPivot.position = casterPosition + .5f * new Vector2(transform.right.x, transform.right.y);
+        float angle = Vector2.Angle(aimPoint - casterPosition, Vector2.right);
+        int posOrNeg = (aimPoint - casterPosition).y > 0 ? 1 : -1;
+        Quaternion rotation = Quaternion.Euler(0, 0, angle * posOrNeg);
+        Vector3 position = casterPosition + .5f * new Vector2(transform.right.x, transform.right.y);
+        icyPivot.transform.SetPositionAndRotation(position, rotation);
 
         icyGrow = true;
         StartCoroutine(EndIcyGrow());
