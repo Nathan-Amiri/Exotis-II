@@ -15,6 +15,7 @@ public class GroundCheck : MonoBehaviour
     private void OnTriggerExit2D(Collider2D col)
     {
         if (col.gameObject.CompareTag("Terrain"))
-            StartCoroutine(playerMovement.CoyoteTime());
+            playerMovement.isGrounded = false;
+            //StartCoroutine(playerMovement.CoyoteTime());
     }
 }

@@ -68,15 +68,15 @@ public class LightningAbilities : AbilityBase
     private IEnumerator ElectrifyDashStart(Vector2 direction)
     {
         yield return new WaitForSeconds(.4f);
-        //player.playerMovement.ToggleStun(false);
-        player.playerMovement.rb.velocity = direction * 20f;
+        player.playerMovement.ToggleStun(false);
+        player.playerMovement.rb.velocity += direction * 20f;
         StartCoroutine(DashEnd());
 
         transform.position -= (Vector3)(1.4f * direction);
 
         StartCoroutine(Disappear(.2f));
 
-        StartCoroutine(Test());
+       //StartCoroutine(Test());
     }
     private IEnumerator DashEnd()
     {

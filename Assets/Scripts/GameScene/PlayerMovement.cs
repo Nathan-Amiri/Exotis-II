@@ -8,6 +8,9 @@ using Unity.VisualScripting;
 public class PlayerMovement : NetworkBehaviour
 {
     [NonSerialized] public readonly float moveSpeed = 2.5f; //read by distortion
+    private float moveForce; //x velocity is divided into moveForce and environmentalForce
+    private readonly float minEnvironmentalForce = 2; //the minimum environmental force allowed (ensures environmental force is 0 when walking into a wall)
+
     private readonly float jumpForce = 7.2f;
     private readonly float jumpHeight = 1.2f;
     [NonSerialized] public float speedIncrease = 1; //read by distortion and takeflight
@@ -17,6 +20,7 @@ public class PlayerMovement : NetworkBehaviour
     private readonly float lowJumpMultiplier = 4; //used for dynamic jump
     [NonSerialized] public readonly float fallMultiplier = .7f; //fastfall, read by distortion
 
+    private bool hasJump;
     [NonSerialized] public bool isGrounded; //read by GroundCheck and VenomAbilities
 
     [NonSerialized] public bool isStunned; //read by player
@@ -63,7 +67,11 @@ public class PlayerMovement : NetworkBehaviour
             return;
 
         if (!isStunned)
-            rb.velocity = new(moveInput * moveSpeed * speedIncrease, rb.velocity.y);
+        {
+            float environmentalForce = Mathf.Abs(rb.velocity.x) < minEnvironmentalForce ? 0 : rb.velocity.x - moveForce;
+            moveForce = moveInput * moveSpeed * speedIncrease;
+            rb.velocity = new Vector2(environmentalForce + moveForce, rb.velocity.y);
+        }
 
         if (rb.gravityScale != 0) //turn off fastfall and dymanic jump when gravityless
         {
@@ -73,15 +81,19 @@ public class PlayerMovement : NetworkBehaviour
                 rb.velocity += speedIncrease * (lowJumpMultiplier - 1) * Physics2D.gravity.y * Time.deltaTime * Vector2.up;
         }
 
+        if (isGrounded)
+            hasJump = true;
+
         if (jumpInputDown || jumpBuffering)
         {
-            if (isGrounded)
+            if (hasJump)
             {
                 startingY = transform.position.y;
                 rb.velocity = new(rb.velocity.x, speedIncrease * jumpForce);
 
                 StopCoroutine(JumpBuffer());
                 jumpBuffering = false;
+                StartCoroutine(RemoveJump());
             }
             else if (jumpInputDown)
                 StartCoroutine(JumpBuffer());
@@ -91,6 +103,11 @@ public class PlayerMovement : NetworkBehaviour
 
         if (startingY != -10 && rb.velocity.y < 0) //reset when jump is no longer going up
             startingY = -10;
+    }
+    private IEnumerator RemoveJump()
+    {
+        yield return new WaitForSeconds(.1f);
+        hasJump = false;
     }
 
     public void SpeedChange(bool multiply, int amount) //amount = number of stages (-2, -1, 1, or 2)
@@ -123,11 +140,11 @@ public class PlayerMovement : NetworkBehaviour
         jumpBuffering = false;
     }
 
-    public IEnumerator CoyoteTime() //called by GroundCheck
-    {
-        yield return new WaitForSeconds(.07f);
-        isGrounded = false;
-    }
+    //public IEnumerator CoyoteTime() //called by GroundCheck
+    //{
+    //    yield return new WaitForSeconds(.07f);
+    //    isGrounded = false;
+    //}
 
     public void ToggleStun(bool toggleOn)
     {
