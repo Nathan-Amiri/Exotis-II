@@ -83,11 +83,6 @@ public class LightningAbilities : AbilityBase
         yield return new WaitForSeconds(.1f);
         player.playerMovement.ToggleGravity(true);
     }
-    private IEnumerator Test()
-    {
-        yield return new WaitForSeconds(1);
-        player.playerMovement.ToggleStun(false);
-    }
 
     public SpriteRenderer blinkRenderer;
     public NetworkAnimator blinkAnimator; //assigned in inspector

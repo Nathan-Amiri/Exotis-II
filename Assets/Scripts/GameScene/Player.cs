@@ -17,6 +17,10 @@ public class Player : NetworkBehaviour
     public Animator animator; //^
     public PlayerMovement playerMovement; //^, read by Setup and VenomAbilities
 
+    const int FROST_COLOR = 0;
+    const int WIND_COLOR = 1;
+    // ...
+
     [NonSerialized] public GameManager gameManager; //set by Setup
     [NonSerialized] public Animator countdownAnim; //^
     [NonSerialized] public TMP_Text countdownText; //^
@@ -24,13 +28,15 @@ public class Player : NetworkBehaviour
     [NonSerialized] public PlayAgain playAgain; //^
     [NonSerialized] public PlayerHUD playerHUD; //^
 
-    //colors from lightest to darkest:
     [NonSerialized] public Color32 frost = new(140, 228, 232, 255); //read by index
     [NonSerialized] public Color32 wind = new(205, 205, 255, 255); //^
     [NonSerialized] public Color32 lightning = new(255, 236, 0, 255); //^
     [NonSerialized] public Color32 flame = new(255, 122, 0, 255); //^
     [NonSerialized] public Color32 water = new(35, 182, 255, 255); //^
     [NonSerialized] public Color32 venom = new(23, 195, 0, 255); //^
+
+    [NonSerialized] public Color32[] env_colors = new Color32[7];
+    //curr_color = env_colors[FROST_COLOR];
 
     [NonSerialized] public Color32 shellColor; //set by index, read by abilitybase
     [NonSerialized] public Color32 coreColor; //^
@@ -209,8 +215,9 @@ public class Player : NetworkBehaviour
 
     private IEnumerator Countdown()
     {
+        string[] count = { "3", "2", "1", "Go!" };
         yield return new WaitForSeconds(.3f);
-        countdownText.text = "3";
+        countdownText.text = "3";   // count[i]
         countdownAnim.SetTrigger("TrCountdown");
         yield return new WaitForSeconds(.9f);
         countdownText.text = "2";

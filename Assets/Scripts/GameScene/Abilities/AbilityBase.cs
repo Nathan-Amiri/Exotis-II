@@ -5,7 +5,7 @@ using System;
 using FishNet.Object;
 using UnityEngine.UI;
 
-public class AbilityBase : NetworkBehaviour
+public abstract class AbilityBase : NetworkBehaviour
 {
     public SpriteRenderer coreRenderer; //assigned in inspector, read by Player
 
