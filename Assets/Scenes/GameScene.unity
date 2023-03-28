@@ -207,7 +207,7 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 14904239}
   playerPref: {fileID: 4696052625515170076, guid: 7f221cefc7665ad49ba8ec72a3d22633, type: 3}
   hud: {fileID: 767121060}
-  abilityParent: {fileID: 1557700451}
+  spellParent: {fileID: 1557700451}
   countdownAnim: {fileID: 1834709115}
   countdownText: {fileID: 1834709113}
   winnerText: {fileID: 1153730730}
@@ -5447,7 +5447,7 @@ GameObject:
   - component: {fileID: 1557700452}
   - component: {fileID: 1557700453}
   m_Layer: 0
-  m_Name: Abilities
+  m_Name: Spells
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

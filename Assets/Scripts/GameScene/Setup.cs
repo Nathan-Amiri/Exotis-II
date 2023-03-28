@@ -10,7 +10,7 @@ public class Setup : NetworkBehaviour
 {
     public GameObject playerPref; //assigned in inspector
     public GameObject hud; //^
-    public GameObject abilityParent; //^
+    public GameObject spellParent; //^
     public Animator countdownAnim; //^
     public TMP_Text countdownText; //^
     public TMP_Text winnerText; //^
@@ -59,7 +59,7 @@ public class Setup : NetworkBehaviour
 
         newPlayer.charSelectInfo = newInfo;
         newPlayer.playerHUD = hud.transform.GetChild(newPlayerNumber).GetComponent<PlayerHUD>();
-        newPlayer.abilityParent = abilityParent;
+        newPlayer.spellParent = spellParent;
         newPlayer.gameManager = gameManager;
         newPlayer.countdownAnim = countdownAnim;
         newPlayer.countdownText = countdownText;

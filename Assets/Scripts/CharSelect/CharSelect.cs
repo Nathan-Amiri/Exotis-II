@@ -39,7 +39,7 @@ public class CharSelect : NetworkBehaviour
     public GameObject highlight1; //^
     public GameObject highlight2; //^
 
-    public AbilitySelect abilitySelect; //^
+    public SpellSelect spellSelect; //^
 
     public GameObject nobCanvas; //^
 
@@ -53,7 +53,7 @@ public class CharSelect : NetworkBehaviour
     private string stat2;
     private string[] selectedAbilities = new string[3];
 
-    private int[] loadoutAbilityNumbers; //used for importing loadout
+    private int[] loadoutSpellNumbers; //used for importing loadout
 
     private readonly Color32[] currentColors = new Color32[2]; //currentColors[0] = lighter color, [1] = darker color
 
@@ -156,19 +156,19 @@ public class CharSelect : NetworkBehaviour
         highlight1.transform.localPosition = new Vector2(167, stat1 == "power" ? -220 : -285);
         highlight2.transform.localPosition = new Vector2(167, stat2 == "speed" ? -355 : -425);
 
-        abilitySelect.ElementalSelected(shellElement, coreElement, currentColors);
+        spellSelect.ElementalSelected(shellElement, coreElement, currentColors);
 
         readyButton.interactable = false;
     }
 
-    public void AbilitiesReady(string[] newSelectedAbilities, int[] newAbilityNumbers) //called by AbilitySelect
+    public void AbilitiesReady(string[] newSelectedAbilities, int[] newSpellNumbers) //called by SpellSelect
     {
         selectedAbilities = newSelectedAbilities;
-        loadoutAbilityNumbers = newAbilityNumbers;
+        loadoutSpellNumbers = newSpellNumbers;
         readyButton.interactable = true;
     }
 
-    public void Clear() //called by AbilitySelect
+    public void Clear() //called by SpellSelect
     {
         readyButton.interactable = false;
     }
@@ -259,7 +259,7 @@ public class CharSelect : NetworkBehaviour
         SaveData data = new()
         {
             elementalData = charSelectInfo,
-            abilityNumbers = loadoutAbilityNumbers
+            spellNumbers = loadoutSpellNumbers
         };
 
         formatter.Serialize(stream, data);
@@ -288,15 +288,15 @@ public class CharSelect : NetworkBehaviour
         }
 
         string[] elementalData = newLoadoutData.elementalData;
-        int[] abilityNumbers = newLoadoutData.abilityNumbers;
+        int[] spellNumbers = newLoadoutData.spellNumbers;
         SelectElemental(elementalData[0], elementalData[1], elementalData[2], elementalData[3], elementalData[4]);
         for (int i = 0; i < 3; i++)
-            abilitySelect.SelectAbility(abilityNumbers[i]);
+            spellSelect.SelectSpell(spellNumbers[i]);
     }
 }
 [System.Serializable]
 public class SaveData
 {
     public string[] elementalData;
-    public int[] abilityNumbers;
+    public int[] spellNumbers;
 }

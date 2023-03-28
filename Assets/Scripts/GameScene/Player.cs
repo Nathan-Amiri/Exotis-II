@@ -15,11 +15,7 @@ public class Player : NetworkBehaviour
     public SpriteRenderer spriteRenderer; //assigned in inspector, used by distortion
     public SpriteRenderer coreRenderer; //^
     public Animator animator; //^
-    public PlayerMovement playerMovement; //^, read by Setup and VenomAbilities
-
-    const int FROST_COLOR = 0;
-    const int WIND_COLOR = 1;
-    // ...
+    public PlayerMovement playerMovement; //^, read by Setup and various spells
 
     [NonSerialized] public GameManager gameManager; //set by Setup
     [NonSerialized] public Animator countdownAnim; //^
@@ -35,10 +31,7 @@ public class Player : NetworkBehaviour
     [NonSerialized] public Color32 water = new(35, 182, 255, 255); //^
     [NonSerialized] public Color32 venom = new(23, 195, 0, 255); //^
 
-    [NonSerialized] public Color32[] env_colors = new Color32[7];
-    //curr_color = env_colors[FROST_COLOR];
-
-    [NonSerialized] public Color32 shellColor; //set by index, read by abilitybase
+    [NonSerialized] public Color32 shellColor; //set by index, read by spellbase
     [NonSerialized] public Color32 coreColor; //^
 
     [NonSerialized] public float maxHealth = 15; //can be altered by index
@@ -50,10 +43,10 @@ public class Player : NetworkBehaviour
 
     [NonSerialized] public string[] charSelectInfo = new string[4];
 
-    [NonSerialized] public GameObject abilityParent; //set by Setup
-    private AbilityBase ability1;
-    private AbilityBase ability2;
-    private AbilityBase ability3;
+    [NonSerialized] public GameObject spellParent; //set by Setup
+    private SpellBase spell1;
+    private SpellBase spell2;
+    private SpellBase spell3;
 
     [SyncVar]
     private float health;
@@ -67,7 +60,7 @@ public class Player : NetworkBehaviour
     private float maxMissileBarWidth;
     private bool onMissileCooldown;
 
-    [NonSerialized] public VenomAbilities infectSpell; //read by missile, null unless missiles are infected
+    [NonSerialized] public Infect infectSpell; //used by CreateMissile and Missile, null unless next missile is infected
 
     private bool startUpdate;
 
@@ -99,9 +92,9 @@ public class Player : NetworkBehaviour
         {
             GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
 
-            RpcSpawnAbility(ClientManager.Connection, charSelectInfo[5], 1);
-            RpcSpawnAbility(ClientManager.Connection, charSelectInfo[6], 2);
-            RpcSpawnAbility(ClientManager.Connection, charSelectInfo[7], 3);
+            RpcSpawnSpell(ClientManager.Connection, charSelectInfo[5], 1);
+            RpcSpawnSpell(ClientManager.Connection, charSelectInfo[6], 2);
+            RpcSpawnSpell(ClientManager.Connection, charSelectInfo[7], 3);
         }
 
         shellColor = (Color32)GetType().GetField(charSelectInfo[1]).GetValue(this);
@@ -133,43 +126,43 @@ public class Player : NetworkBehaviour
 
 
     [ServerRpc]
-    private void RpcSpawnAbility(NetworkConnection owner, string abilityName, int abilityNumber)
+    private void RpcSpawnSpell(NetworkConnection owner, string spellName, int spellNumber)
     {
-        GameObject abilityObject = Instantiate(Resources.Load("Abilities/" + abilityName), abilityParent.transform) as GameObject;
-        ServerManager.Spawn(abilityObject, owner);
-        AbilityBase newAbility = abilityObject.GetComponent<AbilityBase>();
-        RpcClientSpawnAbility(newAbility, abilityName, abilityNumber);
+        GameObject spellObject = Instantiate(Resources.Load("Spells/" + spellName), spellParent.transform) as GameObject;
+        ServerManager.Spawn(spellObject, owner);
+        SpellBase newSpell = spellObject.GetComponent<SpellBase>();
+        RpcClientSpawnSpell(newSpell, spellName, spellNumber);
     }
 
     [ObserversRpc]
-    private void RpcClientSpawnAbility(AbilityBase newAbility, string abilityName, int abilityNumber)
+    private void RpcClientSpawnSpell(SpellBase newSpell, string spellName, int spellNumber)
     {
-        if (abilityNumber == 1)
-            ability1 = newAbility;
-        else if (abilityNumber == 2)
-            ability2 = newAbility;
+        if (spellNumber == 1)
+            spell1 = newSpell;
+        else if (spellNumber == 2)
+            spell2 = newSpell;
         else
-            ability3 = newAbility;
+            spell3 = newSpell;
 
-        newAbility.transform.position = new Vector2(-15, 0);
+        newSpell.transform.position = new Vector2(-15, 0);
 
-        newAbility.OnSpawn(this, abilityName);
-        Color32 spellColor = newAbility.spellColor; //set in newAbility.OnSpawn
+        newSpell.OnSpawn(this, spellName);
+        Color32 spellColor = newSpell.spellColor; //set in newSpell.OnSpawn
 
-        if (abilityNumber == 1)
+        if (spellNumber == 1)
         {
             playerHUD.spell1Image.color = spellColor;
-            newAbility.spellGray = playerHUD.spell1Gray;
+            newSpell.spellGray = playerHUD.spell1Gray;
         }
-        else if (abilityNumber == 2)
+        else if (spellNumber == 2)
         {
             playerHUD.spell2Image.color = spellColor;
-            newAbility.spellGray = playerHUD.spell2Gray;
+            newSpell.spellGray = playerHUD.spell2Gray;
         }
-        else //abilityNumber == 3
+        else //spellNumber == 3
         {
             playerHUD.spell3Image.color = spellColor;
-            newAbility.spellGray = playerHUD.spell3Gray;
+            newSpell.spellGray = playerHUD.spell3Gray;
         }
     }
 
@@ -461,17 +454,19 @@ public class Player : NetworkBehaviour
         //missileObject = newMissile; //used for missile timer
 
 
-
         float displacementMagnitude = passedTime / 2.778f; //(number of ticks fired missile has traveled) / 2.778 = the distance the missile has traveled
         Vector3 displacement = (range / 10) * displacementMagnitude * fireDirection;
         Vector3 castPosition = firePosition + new Vector3(fireDirection.x, fireDirection.y) * .5f;
         newMissile.transform.position = castPosition += displacement;
 
         missileScript.rb.velocity = fireDirection * range;
+
+        if (infectSpell != null)
+            infectSpell.FireInfectedMissile();
     }
 
-    //missile timer code used to initially test the average distance a missile travels per tick:
-
+    //missile timer code used to initially test the average distance a missile travels per tick
+    //(2.778 according to last test)
     //private int ticks = 0;
     //private GameObject missileObject;
     //private Vector3 cachedMissilePosition;
@@ -517,50 +512,50 @@ public class Player : NetworkBehaviour
     {
         if (playerMovement.isStunned) return;
 
-        if (Input.GetButtonDown("Ability1")) SelectAbility(1);
-        if (Input.GetButtonDown("Ability2")) SelectAbility(2);
-        if (Input.GetButtonDown("Ability3")) SelectAbility(3);
+        if (Input.GetButtonDown("Spell1")) SelectSpell(1);
+        if (Input.GetButtonDown("Spell2")) SelectSpell(2);
+        if (Input.GetButtonDown("Spell3")) SelectSpell(3);
     }
 
-    private void SelectAbility(int abilityNumber)
+    private void SelectSpell(int spellNumber)
     {
-        AbilityBase currentAbility = ability1;
-        if (abilityNumber == 2) currentAbility = ability2;
-        else if (abilityNumber == 3) currentAbility = ability3;
+        SpellBase currentSpell = spell1;
+        if (spellNumber == 2) currentSpell = spell2;
+        else if (spellNumber == 3) currentSpell = spell3;
 
-        if (currentAbility.spellLock)
+        if (currentSpell.spellLock)
             return;
 
         Vector2 casterPosition = new(transform.position.x, transform.position.y);
         Vector2 aimPoint = mousePosition;
-        if (currentAbility.hasRange)
+        if (currentSpell.hasRange)
         {
             float mouseRange = Vector3.Distance(transform.position, mousePosition);
-            if (mouseRange > currentAbility.spellRange)
+            if (mouseRange > currentSpell.spellRange)
             {
                 Vector2 aimDirection = (mousePosition - casterPosition).normalized;
-                aimPoint = casterPosition + (aimDirection * currentAbility.spellRange);
+                aimPoint = casterPosition + (aimDirection * currentSpell.spellRange);
             }
         }
 
-        currentAbility.TriggerAbility(casterPosition, aimPoint);
-        RpcServerTriggerAbility(ClientManager.Connection, abilityNumber, casterPosition, aimPoint);
+        currentSpell.TriggerSpell(casterPosition, aimPoint);
+        RpcServerTriggerSpell(ClientManager.Connection, spellNumber, casterPosition, aimPoint);
     }
     [ServerRpc]
-    protected void RpcServerTriggerAbility(NetworkConnection caster, int abilityNumber, Vector2 casterPosition, Vector2 aimPoint)
+    protected void RpcServerTriggerSpell(NetworkConnection caster, int spellNumber, Vector2 casterPosition, Vector2 aimPoint)
     {
-        RpcClientTriggerAbility(caster, abilityNumber, casterPosition, aimPoint);
+        RpcClientTriggerSpell(caster, spellNumber, casterPosition, aimPoint);
     }
     [ObserversRpc]
-    protected void RpcClientTriggerAbility(NetworkConnection caster, int abilityNumber, Vector2 casterPosition, Vector2 aimPoint)
+    protected void RpcClientTriggerSpell(NetworkConnection caster, int spellNumber, Vector2 casterPosition, Vector2 aimPoint)
     {
         if (caster == ClientManager.Connection)
             return;
 
-        AbilityBase currentAbility = ability1;
-        if (abilityNumber == 2) currentAbility = ability2;
-        else if (abilityNumber == 3) currentAbility = ability3;
+        SpellBase currentSpell = spell1;
+        if (spellNumber == 2) currentSpell = spell2;
+        else if (spellNumber == 3) currentSpell = spell3;
 
-        currentAbility.TriggerAbility(casterPosition, aimPoint);
+        currentSpell.TriggerSpell(casterPosition, aimPoint);
     }
 }
