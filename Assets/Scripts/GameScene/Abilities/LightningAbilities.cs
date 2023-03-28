@@ -69,7 +69,7 @@ public class LightningAbilities : AbilityBase
     {
         yield return new WaitForSeconds(.4f);
         player.playerMovement.ToggleStun(false);
-        player.playerMovement.rb.velocity += direction * 20f;
+        player.playerMovement.rb.velocity += direction * 20;
         StartCoroutine(DashEnd());
 
         transform.position -= (Vector3)(1.4f * direction);

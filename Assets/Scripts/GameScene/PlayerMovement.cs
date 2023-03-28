@@ -9,7 +9,7 @@ public class PlayerMovement : NetworkBehaviour
 {
     [NonSerialized] public readonly float moveSpeed = 2.5f; //read by distortion
     private float moveForce; //x velocity is divided into moveForce and environmentalForce
-    private readonly float drag = .1f; //only applies to environmental forces, not movement
+    private readonly float drag = 10; //only applies to environmental forces, not movement
 
     private readonly float jumpForce = 7.2f;
     private readonly float jumpHeight = 1.2f;
@@ -77,18 +77,13 @@ public class PlayerMovement : NetworkBehaviour
             else
                 environmentalForce = rb.velocity.x - moveForce;
 
-            Debug.Log(environmentalForce == 0);
-
             //second, decay environmentalForce. This step is only unnecessary if the game has no drag/friction already
             //if there's no room to decay further, drop to zero and stay there
             if (Mathf.Abs(environmentalForce) < drag)
                 environmentalForce = 0;
             //otherwise, decay
             else
-            {
-                float dragAmount = Mathf.Pow(environmentalForce, 2) * drag; //a basic drag equation
-                environmentalForce = (Mathf.Abs(environmentalForce) - dragAmount * Time.fixedDeltaTime) * Mathf.Sign(environmentalForce);
-            }
+                environmentalForce = (Mathf.Abs(environmentalForce) - drag * Time.fixedDeltaTime) * Mathf.Sign(environmentalForce);
 
             //third, update moveForce to match any changes to moveInput
             moveForce = moveInput * moveSpeed * speedIncrease;
