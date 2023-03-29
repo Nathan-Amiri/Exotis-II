@@ -104,6 +104,7 @@ public class GameManager : NetworkBehaviour
                     playerIDs[i] = 0;
                     playerNumbers[i] = 0;
                     SendRemoteClientDisconnectEvent(i + 1);
+                    UpdateAlivePlayers();
                     return;
                 }
         }
@@ -139,4 +140,9 @@ public class GameManager : NetworkBehaviour
     private readonly string disconnectScene = "CharSelect";
 
     [HideInInspector] public string[] charSelectInfo = new string[8]; //filled by CharSelect, accessed by Setup
+
+    private void UpdateAlivePlayers() //run on server
+    {
+        Player.alivePlayers -= 1;
+    }
 }

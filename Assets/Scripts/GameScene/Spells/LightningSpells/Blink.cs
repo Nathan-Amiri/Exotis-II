@@ -5,24 +5,24 @@ using UnityEngine;
 
 public class Blink : SpellBase
 {
-    public SpriteRenderer blinkRenderer; //assigned in inspector
+    public SpriteRenderer coreRenderer; //assigned in inspector
     public NetworkAnimator blinkAnimator; //^
     public override void OnSpawn(Player newPlayer, string newName)
     {
         base.OnSpawn(newPlayer, newName);
 
-        cooldown = 4;
+        cooldown = 8;
         hasRange = true;
         spellRange = 2.5f;
         spellColor = player.lightning;
+        SetCore(coreRenderer);
     }
 
     public override void TriggerSpell(Vector2 casterPosition, Vector2 aimPoint)
     {
         base.TriggerSpell(casterPosition, aimPoint);
 
-        transform.position = player.transform.position;
-        //^ using current position rather than casterPosition for lag compensation (looks better and doesn't affect gameplay)
+        transform.position = casterPosition;
 
         StartCoroutine(StartCooldown());
 
@@ -54,5 +54,12 @@ public class Blink : SpellBase
         }
 
         player.transform.position = blinkPosition;
+
+        StartCoroutine(Disappear(4));
+    }
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        if (IsServer && col.CompareTag("Player") && col.gameObject != player.gameObject)
+            col.GetComponent<Player>().HealthChange(-1.5f);
     }
 }

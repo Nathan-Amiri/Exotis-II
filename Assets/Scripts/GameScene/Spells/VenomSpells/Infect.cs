@@ -23,7 +23,10 @@ public class Infect : SpellBase
         infectAura.transform.position = player.transform.position;
 
         foreach (OnEnterDamage infectTrap in infectTraps)
+        {
+            infectTrap.damage = 1.5f;
             infectTrap.owner = player.gameObject;
+        }
 
         foreach (SpriteRenderer trapCore in trapCores)
             trapCore.color = spellColor.Equals(player.shellColor) ? player.coreColor : player.shellColor;

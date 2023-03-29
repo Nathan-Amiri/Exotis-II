@@ -7,7 +7,7 @@ using FishNet.Object;
 public class OnEnterDamage : NetworkBehaviour
 {
     //used for spells that have multiple damaging hitboxes
-    public float damage;
+    [NonSerialized] public float damage;
     [NonSerialized] public GameObject owner;
 
     private void OnTriggerEnter2D(Collider2D col)
