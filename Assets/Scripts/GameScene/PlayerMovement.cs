@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using FishNet.Object;
 using System;
-using Unity.VisualScripting;
 
 public class PlayerMovement : NetworkBehaviour
 {
@@ -24,7 +23,6 @@ public class PlayerMovement : NetworkBehaviour
     [NonSerialized] public bool isGrounded; //read by GroundCheck and VenomAbilities
 
     [NonSerialized] public bool isStunned; //read by player
-    private int stunStrength;
 
     private int weightlessStrength;
 
@@ -72,7 +70,7 @@ public class PlayerMovement : NetworkBehaviour
             //If moveForce is opposed by an opposite force, (e.g. the player is moving into a wall) set
             //environmentalForce to 0 rather than to the opposite force
             float environmentalForce;
-            if (rb.velocity.x == 0)
+            if (Mathf.Abs(rb.velocity.x) < moveSpeed * speedIncrease)
                 environmentalForce = 0;
             else
                 environmentalForce = rb.velocity.x - moveForce;
@@ -168,14 +166,9 @@ public class PlayerMovement : NetworkBehaviour
     public void ToggleStun(bool toggleOn)
     {
         if (toggleOn)
-        {
             rb.velocity = new Vector2(0, rb.velocity.y);
-            stunStrength += 1;
-        }
-        else
-            stunStrength -= 1;
 
-        isStunned = stunStrength > 0;
+        isStunned = toggleOn;
     }
 
     public void ToggleGravity(bool toggleOn)

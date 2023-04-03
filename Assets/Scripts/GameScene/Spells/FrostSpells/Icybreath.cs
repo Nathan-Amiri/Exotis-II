@@ -56,4 +56,14 @@ public class Icybreath : SpellBase
         icyPivot.localScale = new Vector2(.4f, .4f);
         icyPivot.position = new Vector2(-15, 0);
     }
+
+    public override void GameEnd()
+    {
+        base.GameEnd();
+
+        icyGrow = false;
+        icyPivot.rotation = Quaternion.identity;
+        icyPivot.localScale = new Vector2(.4f, .4f);
+        icyPivot.position = new Vector2(-15, 0);
+    }
 }

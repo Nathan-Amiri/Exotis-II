@@ -45,4 +45,11 @@ public class Freeze : SpellBase
                 col.GetComponent<Player>().StatChange("speed", 1);
         }
     }
+
+    public override void GameEnd()
+    {
+        base.GameEnd();
+
+        StartCoroutine(Disappear(0));
+    }
 }

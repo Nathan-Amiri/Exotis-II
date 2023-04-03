@@ -210,17 +210,13 @@ public class Player : NetworkBehaviour
     {
         string[] count = { "3", "2", "1", "Go!" };
         yield return new WaitForSeconds(.3f);
-        countdownText.text = "3";   // count[i]
-        countdownAnim.SetTrigger("TrCountdown");
-        yield return new WaitForSeconds(.9f);
-        countdownText.text = "2";
-        countdownAnim.SetTrigger("TrCountdown");
-        yield return new WaitForSeconds(.9f);
-        countdownText.text = "1";
-        countdownAnim.SetTrigger("TrCountdown");
-        yield return new WaitForSeconds(.9f);
-        countdownText.text = "Go!";
-        countdownAnim.SetTrigger("TrCountdown");
+
+        for (int i = 0; i < 4; i++)
+        {
+            countdownText.text = count[i];
+            countdownAnim.SetTrigger("TrCountdown");
+            yield return new WaitForSeconds(.9f);
+        }
     }
 
     private IEnumerator UnlockPlayers()
@@ -389,10 +385,19 @@ public class Player : NetworkBehaviour
     [ObserversRpc]
     private void RpcBeginReset(bool isWinner) //called on all player classes on all clients
     {
+        StartCoroutine(SpellGameEnd());
+
         if (isWinner)
             winnerText.text = name + " Wins!";
         if (IsOwner)
             StartCoroutine(PlayAgainScreen());
+    }
+    private IEnumerator SpellGameEnd()
+    {
+        yield return new WaitForSeconds(2);
+        spell1.GameEnd();
+        spell2.GameEnd();
+        spell3.GameEnd();
     }
 
     private IEnumerator PlayAgainScreen()

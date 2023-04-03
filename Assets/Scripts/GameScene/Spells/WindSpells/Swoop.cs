@@ -72,4 +72,22 @@ public class Swoop : SpellBase
 
         StartCoroutine(StartCooldown());
     }
+
+    public override void GameEnd()
+    {
+        base.GameEnd();
+
+        //if swoopSR is enabled, EndSwoop was running
+        if (swoopSR.enabled)
+        {
+            if (IsOwner)
+            {
+                player.playerMovement.ToggleGravity(true);
+                swooping = false;
+            }
+            swoopSR.enabled = false;
+            player.spriteRenderer.enabled = true;
+            player.coreRenderer.enabled = true;
+        }
+    }
 }

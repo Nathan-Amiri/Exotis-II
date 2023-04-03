@@ -15,13 +15,13 @@ public class Heatup : SpellBase
         spellColor = player.flame;
 
         transform.SetParent(player.transform);
+        transform.position = player.transform.position + new Vector3(0, .45f);
     }
 
     public override void TriggerSpell(Vector2 casterPosition, Vector2 aimPoint)
     {
         base.TriggerSpell(casterPosition, aimPoint);
 
-        transform.position = player.transform.position + new Vector3(0, .45f);
         heatAnimator.SetTrigger("HeatFade");
         StartCoroutine(HeatChannel());
     }
@@ -45,5 +45,18 @@ public class Heatup : SpellBase
         player.StatChange("range", -1);
 
         StartCoroutine(StartCooldown());
+    }
+
+    public override void GameEnd()
+    {
+        base.GameEnd();
+
+        //if heatAura is active, heatBuff was running
+        if (heatAura.activeSelf)
+        {
+            heatAura.SetActive(false);
+            player.StatChange("power", -1);
+            player.StatChange("range", -1);
+        }
     }
 }

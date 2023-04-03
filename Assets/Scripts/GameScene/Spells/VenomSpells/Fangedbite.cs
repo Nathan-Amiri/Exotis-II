@@ -22,4 +22,11 @@ public class Fangedbite : SpellBase
 
 
     }
+
+    public override void GameEnd()
+    {
+        base.GameEnd();
+
+
+    }
 }

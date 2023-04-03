@@ -64,4 +64,16 @@ public class Infect : SpellBase
         if (infectCounter == 0)
             player.infectSpell = null;
     }
+
+    public override void GameEnd()
+    {
+        base.GameEnd();
+
+        infectAura.SetActive(false);
+        infectCounter = 0;
+        player.infectSpell = null;
+
+        foreach (OnEnterDamage infectTrap in infectTraps)
+            infectTrap.transform.position = new Vector2(-15, 0);
+    }
 }

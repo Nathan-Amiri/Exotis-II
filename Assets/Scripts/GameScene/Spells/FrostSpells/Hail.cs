@@ -10,7 +10,7 @@ public class Hail : SpellBase
     {
         base.OnSpawn(newPlayer, newName);
 
-        cooldown = 8;
+        cooldown = 4;
         hasRange = true;
         spellColor = player.frost;
         SetCore(coreRenderer);
@@ -19,6 +19,13 @@ public class Hail : SpellBase
     public override void TriggerSpell(Vector2 casterPosition, Vector2 aimPoint)
     {
         base.TriggerSpell(casterPosition, aimPoint);
+
+
+    }
+
+    public override void GameEnd()
+    {
+        base.GameEnd();
 
 
     }

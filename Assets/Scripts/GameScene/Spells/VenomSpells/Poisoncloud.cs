@@ -5,7 +5,6 @@ using UnityEngine;
 public class Poisoncloud : SpellBase
 {
     public SpriteRenderer coreRenderer; //assigned in inspector
-
     public Animator poisonCloudAnim; //^
 
     public override void OnSpawn(Player newPlayer, string newName)
@@ -36,5 +35,12 @@ public class Poisoncloud : SpellBase
     {
         if (IsServer && col.CompareTag("Player") && col.gameObject != player.gameObject)
             col.GetComponent<Player>().HealthChange(-3f);
+    }
+
+    public override void GameEnd()
+    {
+        base.GameEnd();
+
+        StartCoroutine(Disappear(0));
     }
 }

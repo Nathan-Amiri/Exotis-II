@@ -70,4 +70,6 @@ public class Blink : SpellBase
         if (IsServer && col.CompareTag("Player") && col.gameObject != player.gameObject)
             col.GetComponent<Player>().HealthChange(-1.5f);
     }
+
+    //no extra GameEnd code needed
 }

@@ -47,4 +47,17 @@ public class Recharge : SpellBase
 
         StartCoroutine(StartCooldown());
     }
+
+    public override void GameEnd()
+    {
+        base.GameEnd();
+
+        //no need to check whether RechargeChannel is running
+        //if rechargeAura is active, RechargeBuff was running
+        if (rechargeAura.activeSelf)
+        {
+            rechargeAura.SetActive(false);
+            player.StatChange("speed", -1);
+        }
+    }
 }

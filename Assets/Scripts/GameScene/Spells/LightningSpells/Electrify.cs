@@ -49,12 +49,17 @@ public class Electrify : SpellBase
         transform.position -= (Vector3)(1.4f * direction);
 
         StartCoroutine(Disappear(.2f));
-
-        //StartCoroutine(Test());
     }
     private IEnumerator DashEnd()
     {
         yield return new WaitForSeconds(.1f);
         player.playerMovement.ToggleGravity(true);
+    }
+
+    public override void GameEnd()
+    {
+        base.GameEnd();
+
+
     }
 }

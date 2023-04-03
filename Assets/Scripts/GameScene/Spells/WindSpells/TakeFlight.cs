@@ -56,4 +56,20 @@ public class TakeFlight : SpellBase
 
         StartCoroutine(StartCooldown());
     }
+
+    public override void GameEnd()
+    {
+        base.GameEnd();
+
+        //if flightaura is active, EndFlight was running
+        if (flightAura.activeSelf)
+        {
+            if (IsOwner)
+            {
+                player.playerMovement.ToggleGravity(true);
+                flying = false;
+            }
+            flightAura.SetActive(false);
+        }
+    }
 }

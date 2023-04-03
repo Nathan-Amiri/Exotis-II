@@ -55,4 +55,12 @@ public abstract class SpellBase : NetworkBehaviour
         yield return new WaitForSeconds(delay);
         transform.position = new Vector2(-15, 0);
     }
+
+    public virtual void GameEnd()
+    {
+        StopAllCoroutines();
+        remainingCooldown = 0;
+        spellGray.fillAmount = 0;
+        spellLock = false;
+    }
 }
