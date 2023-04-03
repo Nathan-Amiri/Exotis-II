@@ -6,7 +6,8 @@ using UnityEngine;
 public class Blink : SpellBase
 {
     public SpriteRenderer coreRenderer; //assigned in inspector
-    public NetworkAnimator blinkAnimator; //^
+    public NetworkAnimator afterimageAnimator; //^
+    public Animator bombAnimater; //^
     public override void OnSpawn(Player newPlayer, string newName)
     {
         base.OnSpawn(newPlayer, newName);
@@ -26,10 +27,12 @@ public class Blink : SpellBase
 
         StartCoroutine(StartCooldown());
 
+        StartCoroutine(BlinkBomb());
+
         if (!IsOwner)
             return;
 
-        blinkAnimator.SetTrigger("Blink");
+        afterimageAnimator.SetTrigger("Blink");
 
         Vector2 blinkPosition;
         Vector2 blinkDirection = (aimPoint - casterPosition).normalized;
@@ -55,7 +58,12 @@ public class Blink : SpellBase
 
         player.transform.position = blinkPosition;
 
-        StartCoroutine(Disappear(4));
+        StartCoroutine(Disappear(3));
+    }
+    private IEnumerator BlinkBomb()
+    {
+        yield return new WaitForSeconds(.21f);
+        bombAnimater.SetTrigger("Grow");
     }
     private void OnTriggerEnter2D(Collider2D col)
     {

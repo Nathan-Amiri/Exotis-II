@@ -24,7 +24,7 @@ public class Infect : SpellBase
 
         foreach (OnEnterDamage infectTrap in infectTraps)
         {
-            infectTrap.damage = 1.5f;
+            infectTrap.damage = -1.5f;
             infectTrap.owner = player.gameObject;
         }
 
