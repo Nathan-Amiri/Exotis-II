@@ -50,15 +50,15 @@ public class Distortion : SpellBase
             player.spriteRenderer.enabled = false;
             player.coreRenderer.enabled = false;
 
-            Transform aura = player.transform.Find("Aura");
-            if (aura != null && aura.gameObject.activeSelf)
-            {
-                aura.SetParent(transform);
-                aura.position = transform.position;
-            }
+            foreach (Transform aura in player.transform)
+                if (aura.CompareTag("Aura"))
+                {
+                    aura.SetParent(transform);
+                    aura.position = transform.position;
+                }
         }
 
-        StartCoroutine(EndDistortion());
+        StartCoroutine(DistortionDuration());
     }
     protected override void Update()
     {
@@ -71,12 +71,17 @@ public class Distortion : SpellBase
             distRB.velocity = new(distDirection * player.playerMovement.moveSpeed * player.playerMovement.speedIncrease, distRB.velocity.y);
         }
     }
-    private IEnumerator EndDistortion()
+    private IEnumerator DistortionDuration()
     {
         StartCoroutine(Disappear(1.5f));
 
         yield return new WaitForSeconds(1.5f);
 
+        EndDistortion();
+    }
+
+    private void EndDistortion()
+    {
         distorting = false;
         distDirection = 0;
         distRB.velocity = Vector2.zero;
@@ -86,12 +91,21 @@ public class Distortion : SpellBase
             player.spriteRenderer.enabled = true;
             player.coreRenderer.enabled = true;
 
-            Transform aura = transform.Find("Aura");
-            if (aura != null)
-            {
-                aura.SetParent(player.transform);
-                aura.position = player.transform.position;
-            }
+            foreach (Transform aura in transform)
+                if (aura.CompareTag("Aura"))
+                {
+                    aura.SetParent(player.transform);
+                    aura.position = player.transform.position;
+                }
         }
+    }
+
+    public override void GameEnd()
+    {
+        base.GameEnd();
+
+        StartCoroutine(Disappear(0));
+
+        EndDistortion();
     }
 }

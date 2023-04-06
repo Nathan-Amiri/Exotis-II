@@ -112,8 +112,6 @@ public class GameManager : NetworkBehaviour
         sceneLoadedPlayers++;
         if (sceneLoadedPlayers == sceneChangingPlayers)
             SendAllLoadedEvent();
-
-        Debug.Log("scenechanging = " + sceneChangingPlayers + ", scene loaded = " + sceneLoadedPlayers);
     }
 
     public delegate void OnAllClientsLoadedAction(GameManager gm);

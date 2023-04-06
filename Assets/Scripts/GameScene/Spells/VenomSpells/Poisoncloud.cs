@@ -33,8 +33,39 @@ public class Poisoncloud : SpellBase
     }
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (IsServer && col.CompareTag("Player") && col.gameObject != player.gameObject)
+        if (!col.CompareTag("Player"))
+            return;
+
+        if (!IsOwner && col.gameObject == player.gameObject)
+        {
+            player.spriteRenderer.enabled = false;
+            player.coreRenderer.enabled = false;
+
+            foreach (Transform aura in player.transform)
+                if (aura.CompareTag("Aura"))
+                {
+                    aura.SetParent(transform);
+                    aura.position = new Vector3(0, -15, 0);
+                }
+        }
+        else if (IsServer && col.gameObject != player.gameObject)
             col.GetComponent<Player>().HealthChange(-3);
+    }
+
+    private void OnTriggerExit2D(Collider2D col)
+    {
+        if (!IsOwner && col.CompareTag("Player") && col.gameObject == player.gameObject)
+        {
+            player.spriteRenderer.enabled = true;
+            player.coreRenderer.enabled = true;
+
+            foreach (Transform aura in transform)
+                if (aura.CompareTag("Aura"))
+                {
+                    aura.SetParent(player.transform);
+                    aura.position = player.transform.position;
+                }
+        }
     }
 
     public override void GameEnd()
