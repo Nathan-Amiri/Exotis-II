@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using FishNet;
 using FishNet.Transporting.Tugboat;
-using FishNet.Managing.Client;
 
 public class SimpleManager : MonoBehaviour
 {
@@ -39,11 +38,11 @@ public class SimpleManager : MonoBehaviour
 
     private void OnEnable()
     {
-        GameManager.OnClientConnectOrLoad += OnClientConnectOrLoad;
+        GameManager.OnClientConnect += OnClientConnectOrLoad;
     }
     private void OnDisable()
     {
-        GameManager.OnClientConnectOrLoad -= OnClientConnectOrLoad;
+        GameManager.OnClientConnect -= OnClientConnectOrLoad;
     }
 
     private void OnClientConnectOrLoad(GameManager gm)

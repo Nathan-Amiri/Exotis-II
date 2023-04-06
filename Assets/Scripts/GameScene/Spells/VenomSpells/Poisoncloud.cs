@@ -34,7 +34,7 @@ public class Poisoncloud : SpellBase
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (IsServer && col.CompareTag("Player") && col.gameObject != player.gameObject)
-            col.GetComponent<Player>().HealthChange(-3f);
+            col.GetComponent<Player>().HealthChange(-3);
     }
 
     public override void GameEnd()

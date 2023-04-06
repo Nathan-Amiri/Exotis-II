@@ -38,7 +38,7 @@ public class Heatup : SpellBase
         player.StatChange("power", 1);
         player.StatChange("range", 1);
 
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(6);
 
         heatAura.SetActive(false);
         player.StatChange("power", -1);

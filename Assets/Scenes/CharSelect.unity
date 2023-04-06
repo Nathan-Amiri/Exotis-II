@@ -6179,10 +6179,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -8320,6 +8320,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3202967595046840654, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3202967595046840654, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
+      propertyPath: m_ReferenceResolution.x
+      value: 1920
+      objectReference: {fileID: 0}
+    - target: {fileID: 3202967595046840654, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
+      propertyPath: m_ReferenceResolution.y
+      value: 1080
+      objectReference: {fileID: 0}
     - target: {fileID: 4765006347246544569, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
       propertyPath: tugboat
       value: 
@@ -8352,6 +8364,22 @@ PrefabInstance:
       propertyPath: _sceneNetworkObjects.Array.data[2]
       value: 
       objectReference: {fileID: 1819753647}
+    - target: {fileID: 6731652723132295757, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6760811477936694989, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
+      propertyPath: m_SortingLayer
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6760811477936694989, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
+      propertyPath: m_SortingOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6760811477936694989, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 1057344701
+      objectReference: {fileID: 0}
     - target: {fileID: 6787512017726517089, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
       propertyPath: m_RootOrder
       value: 7
@@ -8395,6 +8423,22 @@ PrefabInstance:
     - target: {fileID: 6787512017726517089, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6865911932216226660, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 335332889}
+    - target: {fileID: 6865911932216226660, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
+      propertyPath: m_RenderMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6865911932216226660, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6865911932216226660, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 1057344701
       objectReference: {fileID: 0}
     - target: {fileID: 8833280615851428771, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
       propertyPath: m_LocalPosition.x

@@ -22,11 +22,11 @@ public class Setup : NetworkBehaviour
 
     private void OnEnable()
     {
-        GameManager.OnClientConnectOrLoad += OnSpawn;
+        GameManager.OnAllClientsLoaded += OnSpawn;
     }
     private void OnDisable()
     {
-        GameManager.OnClientConnectOrLoad -= OnSpawn;
+        GameManager.OnAllClientsLoaded -= OnSpawn;
     }
     public void OnSpawn(GameManager gm)
     {
