@@ -63,11 +63,11 @@ TagManager:
   - name: PlayerCore
     uniqueID: 2504054497
     locked: 0
-  - name: Default
-    uniqueID: 0
+  - name: SpellShell
+    uniqueID: 2359521751
     locked: 0
-  - name: Foreground
-    uniqueID: 3444294867
+  - name: SpellCore
+    uniqueID: 212619197
     locked: 0
   - name: HUD
     uniqueID: 3251869899
@@ -83,4 +83,7 @@ TagManager:
     locked: 0
   - name: MissileCore
     uniqueID: 1522982541
+    locked: 0
+  - name: Default
+    uniqueID: 0
     locked: 0

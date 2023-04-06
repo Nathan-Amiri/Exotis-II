@@ -439,7 +439,7 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 3249571368721494047}
   _networkObjectCache: {fileID: 3249571368721494047}
-  waitCanvas: {fileID: 671845600}
+  waitCanvas: {fileID: 671845604}
   charSelectInfo:
   - 
   - 

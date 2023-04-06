@@ -38,11 +38,11 @@ public class SimpleManager : MonoBehaviour
 
     private void OnEnable()
     {
-        GameManager.OnClientConnect += OnClientConnectOrLoad;
+        GameManager.OnClientConnectOrLoad += OnClientConnectOrLoad;
     }
     private void OnDisable()
     {
-        GameManager.OnClientConnect -= OnClientConnectOrLoad;
+        GameManager.OnClientConnectOrLoad -= OnClientConnectOrLoad;
     }
 
     private void OnClientConnectOrLoad(GameManager gm)

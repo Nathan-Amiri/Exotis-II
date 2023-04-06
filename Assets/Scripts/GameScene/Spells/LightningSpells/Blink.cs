@@ -6,8 +6,6 @@ using UnityEngine;
 public class Blink : SpellBase
 {
     public SpriteRenderer coreRenderer; //assigned in inspector
-    public NetworkAnimator afterimageAnimator; //^
-    public Animator bombAnimater; //^
     public override void OnSpawn(Player newPlayer, string newName)
     {
         base.OnSpawn(newPlayer, newName);
@@ -23,17 +21,16 @@ public class Blink : SpellBase
     {
         base.TriggerSpell(casterPosition, aimPoint);
 
-        transform.position = casterPosition;
-
         StartCoroutine(StartCooldown());
 
-        StartCoroutine(BlinkBomb());
+        transform.position = casterPosition;
+
+        StartCoroutine(Disappear(5));
 
         if (!IsOwner)
             return;
 
-        afterimageAnimator.SetTrigger("Blink");
-
+        //blink teleport:
         Vector2 blinkPosition;
         Vector2 blinkDirection = (aimPoint - casterPosition).normalized;
 
@@ -44,6 +41,7 @@ public class Blink : SpellBase
 
         float blinkIncrement = (blinkPosition - casterPosition).magnitude / 10;
 
+        //prevent blinking into walls
         int layerMask = 1 << 7; //raycast only checks layer 7 (Terrain)
         for (int i = 0; i < 11; i++) //loop happens 1 more times than there are blink increments
         {
@@ -57,19 +55,18 @@ public class Blink : SpellBase
         }
 
         player.transform.position = blinkPosition;
+    }
 
-        StartCoroutine(Disappear(3));
-    }
-    private IEnumerator BlinkBomb()
-    {
-        yield return new WaitForSeconds(.21f);
-        bombAnimater.SetTrigger("Grow");
-    }
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (IsServer && col.CompareTag("Player") && col.gameObject != player.gameObject)
             col.GetComponent<Player>().HealthChange(-1.5f);
     }
 
-    //no extra GameEnd code needed
+    public override void GameEnd()
+    {
+        base.GameEnd();
+
+        StartCoroutine(Disappear(0));
+    }
 }

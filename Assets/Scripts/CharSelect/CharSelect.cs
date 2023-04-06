@@ -74,12 +74,12 @@ public class CharSelect : NetworkBehaviour
     }
     private void OnEnable()
     {
-        GameManager.OnClientConnect += OnSpawn;
+        GameManager.OnClientConnectOrLoad += OnSpawn;
         GameManager.OnRemoteClientDisconnect += OnRemoteClientDisconnect;
     }
     private void OnDisable()
     {
-        GameManager.OnClientConnect -= OnSpawn;
+        GameManager.OnClientConnectOrLoad -= OnSpawn;
         GameManager.OnRemoteClientDisconnect -= OnRemoteClientDisconnect;
     }
 

@@ -21,7 +21,7 @@ public class GameManager : NetworkBehaviour
 
     //client variables:
     static public int playerNumber { get; private set; }
-    public GameObject waitCanvas; //assigned in inspector
+    public Canvas waitCanvas; //assigned in inspector
     private SimpleManager simpleManager;
 
     private void Awake()
@@ -43,6 +43,9 @@ public class GameManager : NetworkBehaviour
     [Client]
     private void ReceiveSignal()
     {
+        //set canvas camera every time client connects or loads
+        waitCanvas.worldCamera = Camera.main;
+
         if (playerNumber == 0)
         {
             //if client is connecting and not loading a scene
@@ -50,9 +53,9 @@ public class GameManager : NetworkBehaviour
 
             RpcFirstConnect(InstanceFinder.ClientManager.Connection);
         }
-        else
+        else //if client is loading a scene and not initially connecting
         {
-            SendConnectEvent(); //send client connected
+            SendConnectOrLoadEvent(); //send client connectedorload
             CheckIfAllLoaded(); //prepare to send all clients loaded
         }
     }
@@ -75,7 +78,7 @@ public class GameManager : NetworkBehaviour
     private void RpcAssignPlayerNumber(NetworkConnection conn, int newPlayerNumber)
     {
         playerNumber = newPlayerNumber;
-        SendConnectEvent();
+        SendConnectOrLoadEvent();
     }
 
     //scene changing:
@@ -103,7 +106,7 @@ public class GameManager : NetworkBehaviour
     [ObserversRpc]
     private void TurnOnWaitCanvas()
     {
-        waitCanvas.SetActive(true);
+        waitCanvas.gameObject.SetActive(true);
     }
 
     [ServerRpc (RequireOwnership = false)]
@@ -120,7 +123,7 @@ public class GameManager : NetworkBehaviour
     [ObserversRpc]
     private void SendAllLoadedEvent()
     {
-        waitCanvas.SetActive(false);
+        waitCanvas.gameObject.SetActive(false);
 
         OnAllClientsLoaded?.Invoke(this);
     }
@@ -164,12 +167,12 @@ public class GameManager : NetworkBehaviour
             simpleManager.OnDisconnect();
     }
 
-    public delegate void OnClientConnectAction(GameManager gm);
-    public static event OnClientConnectAction OnClientConnect;
-    private void SendConnectEvent()
+    public delegate void OnClientConnectOrLoadAction(GameManager gm);
+    public static event OnClientConnectOrLoadAction OnClientConnectOrLoad;
+    private void SendConnectOrLoadEvent()
     {
         //when either this client first connects or when new scene has fully loaded for that client
-        OnClientConnect?.Invoke(this);
+        OnClientConnectOrLoad?.Invoke(this);
     }
 
     public delegate void OnRemoteClientDisconnectAction(int disconnectedPlayer);
