@@ -12,11 +12,14 @@ public class SimpleManager : MonoBehaviour
 
     public GameObject escapeMenu; //assigned in prefab
     //^ escapemenu turned off on disconnect by GameManager
+    public TMP_Text errorText;
     public TMP_Text exitDisconnectText; //^
     public Button startLobby; //^
     public Button joinLobby; //^
     public TMP_InputField ipAddress; //^
     public TextMeshProUGUI placeHolder; //^
+    public TMP_Dropdown resolutionDropdown;
+
     public Tugboat tugboat; //assigned in scene
 
     private GameManager gameManager;
@@ -92,5 +95,24 @@ public class SimpleManager : MonoBehaviour
         ipAddress.interactable = true;
 
         escapeMenu.SetActive(true);
+    }
+
+    public void SelectNewResolution()
+    {
+        switch (resolutionDropdown.value)
+        {
+            case 0:
+                Screen.SetResolution(1920, 1080, true);
+                break;
+            case 1:
+                Screen.SetResolution(1280, 720, true);
+                break;
+            case 2:
+                Screen.SetResolution(1366, 768, true);
+                break;
+            case 3:
+                Screen.SetResolution(1600, 900, true);
+                break;
+        }
     }
 }

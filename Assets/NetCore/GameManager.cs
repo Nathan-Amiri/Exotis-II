@@ -63,6 +63,9 @@ public class GameManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void RpcFirstConnect(NetworkConnection playerConnection)
     {
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != connectionScene)
+            RpcSceneConditionFailed(playerConnection);
+
         for (int i = 0; i < playerNumbers.Length; i++)
             if (playerNumbers[i] == 0)
             {
@@ -74,6 +77,12 @@ public class GameManager : NetworkBehaviour
         Debug.LogError("Too Many Players");
     }
 
+    [TargetRpc]
+    private void RpcSceneConditionFailed(NetworkConnection conn)
+    {
+        simpleManager.errorText.text = "Error: Host is already in a game!";
+        ClientManager.StopConnection();
+    }
     [TargetRpc]
     private void RpcAssignPlayerNumber(NetworkConnection conn, int newPlayerNumber)
     {
@@ -161,7 +170,7 @@ public class GameManager : NetworkBehaviour
     {
         base.OnStopClient();
         playerNumber = 0;
-        UnityEngine.SceneManagement.SceneManager.LoadScene(disconnectScene);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(connectionScene);
 
         if (simpleManager != null)
             simpleManager.OnDisconnect();
@@ -185,7 +194,8 @@ public class GameManager : NetworkBehaviour
 
     //game-specific code:
 
-    private readonly string disconnectScene = "CharSelect";
+    //the scene where clients first connect, and which is loaded upon disconnecting
+    private readonly string connectionScene = "CharSelect";
 
     [HideInInspector] public string[] charSelectInfo = new string[8]; //filled by CharSelect, accessed by Setup
 

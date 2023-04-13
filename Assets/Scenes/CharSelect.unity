@@ -220,17 +220,6 @@ PrefabInstance:
       objectReference: {fileID: 3954846544778375738, guid: d1f5f71e116198c469ebb0b203ed23ee, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0b650fca685f2eb41a86538aa883e4c1, type: 3}
---- !u!114 &15121763 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4393252310584637056, guid: 0b650fca685f2eb41a86538aa883e4c1, type: 3}
-  m_PrefabInstance: {fileID: 15121762}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d3606bfdac5a4743890fc1a5ecd8f24, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &19520551
 GameObject:
   m_ObjectHideFlags: 0
@@ -8320,18 +8309,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3202967595046840654, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: m_UiScaleMode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3202967595046840654, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: m_ReferenceResolution.x
-      value: 1920
-      objectReference: {fileID: 0}
-    - target: {fileID: 3202967595046840654, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: m_ReferenceResolution.y
-      value: 1080
-      objectReference: {fileID: 0}
     - target: {fileID: 4765006347246544569, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
       propertyPath: tugboat
       value: 
@@ -8340,17 +8317,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: SimpleManager
       objectReference: {fileID: 0}
-    - target: {fileID: 4765006347823815737, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4765006347823815739, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: _scenePathHash
-      value: 2332773068
-      objectReference: {fileID: 0}
     - target: {fileID: 4765006347823815739, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
       propertyPath: <SceneId>k__BackingField
-      value: 10019184039836489586
+      value: 10019184039620649784
       objectReference: {fileID: 0}
     - target: {fileID: 4765006347823815739, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
       propertyPath: _sceneNetworkObjects.Array.data[0]
@@ -8364,22 +8333,6 @@ PrefabInstance:
       propertyPath: _sceneNetworkObjects.Array.data[2]
       value: 
       objectReference: {fileID: 1819753647}
-    - target: {fileID: 6731652723132295757, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6760811477936694989, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: m_SortingLayer
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 6760811477936694989, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: m_SortingOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6760811477936694989, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: m_SortingLayerID
-      value: 1057344701
-      objectReference: {fileID: 0}
     - target: {fileID: 6787512017726517089, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
       propertyPath: m_RootOrder
       value: 7
@@ -8428,30 +8381,6 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 335332889}
-    - target: {fileID: 6865911932216226660, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: m_RenderMode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6865911932216226660, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: m_SortingOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6865911932216226660, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: m_SortingLayerID
-      value: 1057344701
-      objectReference: {fileID: 0}
-    - target: {fileID: 8833280615851428771, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8833280615851428771, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8833280615851428771, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 561c9c3e9607788478d0f57a5979eeda, type: 3}
 --- !u!1 &1989570813
@@ -9746,10 +9675,6 @@ PrefabInstance:
       value: 10019184037220752349
       objectReference: {fileID: 0}
     - target: {fileID: 2264982880490512898, guid: 34318c18da2bc874888de01aa31a62ac, type: 3}
-      propertyPath: _sceneNetworkObjects.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 2264982880490512898, guid: 34318c18da2bc874888de01aa31a62ac, type: 3}
       propertyPath: _sceneNetworkObjects.Array.data[0]
       value: 
       objectReference: {fileID: 1303231437}
@@ -9757,10 +9682,6 @@ PrefabInstance:
       propertyPath: _sceneNetworkObjects.Array.data[1]
       value: 
       objectReference: {fileID: 1335073995}
-    - target: {fileID: 2264982880490512898, guid: 34318c18da2bc874888de01aa31a62ac, type: 3}
-      propertyPath: _sceneNetworkObjects.Array.data[2]
-      value: 
-      objectReference: {fileID: 1819753647}
     - target: {fileID: 2264982880490512898, guid: 34318c18da2bc874888de01aa31a62ac, type: 3}
       propertyPath: _sceneNetworkObjects.Array.data[3]
       value: 
@@ -9809,14 +9730,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2264982880490512901, guid: 34318c18da2bc874888de01aa31a62ac, type: 3}
-      propertyPath: spawnGameManager
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2264982880490512901, guid: 34318c18da2bc874888de01aa31a62ac, type: 3}
-      propertyPath: networkHudCanvases
-      value: 
-      objectReference: {fileID: 15121763}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 34318c18da2bc874888de01aa31a62ac, type: 3}
 --- !u!224 &3922897067248390992
