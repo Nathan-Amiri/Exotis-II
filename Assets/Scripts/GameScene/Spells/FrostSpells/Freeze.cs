@@ -32,7 +32,7 @@ public class Freeze : SpellBase
             if (col.gameObject == player.gameObject)
                 player.StatChange("speed", 1);
             else
-                col.GetComponent<Player>().StatChange("speed", -1);
+                col.GetComponent<Player>().StatChange("speed", -2);
         }
     }
     private void OnTriggerExit2D(Collider2D col)
@@ -42,7 +42,7 @@ public class Freeze : SpellBase
             if (col.gameObject == player.gameObject)
                 player.StatChange("speed", -1);
             else
-                col.GetComponent<Player>().StatChange("speed", 1);
+                col.GetComponent<Player>().StatChange("speed", 2);
         }
     }
 

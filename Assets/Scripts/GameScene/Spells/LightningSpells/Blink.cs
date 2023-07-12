@@ -55,6 +55,7 @@ public class Blink : SpellBase
         }
 
         player.transform.position = blinkPosition;
+        player.playerMovement.rb.velocity = Vector2.zero;
     }
 
     private void OnTriggerEnter2D(Collider2D col)

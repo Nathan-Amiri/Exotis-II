@@ -74,13 +74,19 @@ public class GameManager : NetworkBehaviour
                 RpcAssignPlayerNumber(playerConnection, i + 1);
                 return;
             }
-        Debug.LogError("Too Many Players");
+        RpcPlayerNumberConditionFailed(playerConnection);
     }
 
     [TargetRpc]
     private void RpcSceneConditionFailed(NetworkConnection conn)
     {
         simpleManager.errorText.text = "Error: Host is already in a game!";
+        ClientManager.StopConnection();
+    }
+    [TargetRpc]
+    private void RpcPlayerNumberConditionFailed(NetworkConnection conn)
+    {
+        simpleManager.errorText.text = "Error: Too Many Players!";
         ClientManager.StopConnection();
     }
     [TargetRpc]

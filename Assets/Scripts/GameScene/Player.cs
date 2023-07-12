@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using FishNet.Connection;
@@ -285,6 +284,7 @@ public class Player : NetworkBehaviour
     [Server]
     public void HealthChange(float amount) //damage changes occur on the server
     {
+        Debug.Log(amount);
         if (isImmune)
             return;
 

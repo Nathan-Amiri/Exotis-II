@@ -25,7 +25,9 @@ public abstract class SpellBase : NetworkBehaviour
 
     public virtual void SetCore(SpriteRenderer coreRenderer)
     {
-        coreRenderer.color = spellColor.Equals(player.shellColor) ? player.coreColor : player.shellColor;
+        Color color = spellColor.Equals(player.shellColor) ? player.coreColor : player.shellColor;
+        color = new Color(color.r, color.g, color.b, .6f); //make transparent
+        coreRenderer.color = color;
     }
 
     public virtual void TriggerSpell(Vector2 casterPosition, Vector2 mousePosition)

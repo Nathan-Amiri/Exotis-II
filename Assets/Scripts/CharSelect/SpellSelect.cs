@@ -43,7 +43,7 @@ public class SpellSelect : MonoBehaviour
     public TMP_Text text5; //^
 
     private readonly string[] waterAbilities = new string[] { "", "Distortion", "Tidalwave" };
-    private readonly string[] flameAbilities = new string[] { "", "", "Heatup" };
+    private readonly string[] flameAbilities = new string[] { "Erupt", "", "Heatup" };
     private readonly string[] windAbilities = new string[] { "Swoop", "Takeflight", "" };
     private readonly string[] lightningAbilities = new string[] { "Electrify", "Blink", "Recharge" };
     private readonly string[] frostAbilities = new string[] { "Icybreath", "", "Freeze" };

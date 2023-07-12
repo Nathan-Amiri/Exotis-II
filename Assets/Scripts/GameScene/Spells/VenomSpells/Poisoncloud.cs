@@ -14,6 +14,7 @@ public class Poisoncloud : SpellBase
         cooldown = 8;
         hasRange = false;
         spellColor = player.venom;
+
         SetCore(coreRenderer);
     }
 
@@ -28,7 +29,9 @@ public class Poisoncloud : SpellBase
         StartCoroutine(StartCooldown());
 
         transform.position = casterPosition + (.17f * Vector2.down);
+
         poisonCloudAnim.SetTrigger("Grow");
+
         StartCoroutine(Disappear(4));
     }
     private void OnTriggerEnter2D(Collider2D col)

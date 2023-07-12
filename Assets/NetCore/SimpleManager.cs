@@ -10,17 +10,19 @@ public class SimpleManager : MonoBehaviour
 {
     //non-networked game manager
 
-    public GameObject escapeMenu; //assigned in prefab
+    //assigned in prefab
+    public GameObject escapeMenu;
     //^ escapemenu turned off on disconnect by GameManager
     public TMP_Text errorText;
-    public TMP_Text exitDisconnectText; //^
-    public Button startLobby; //^
-    public Button joinLobby; //^
-    public TMP_InputField ipAddress; //^
-    public TextMeshProUGUI placeHolder; //^
+    public TMP_Text exitDisconnectText;
+    public Button startLobby;
+    public Button joinLobby;
+    public TMP_InputField ipAddress;
+    public TextMeshProUGUI placeHolder;
     public TMP_Dropdown resolutionDropdown;
 
-    public Tugboat tugboat; //assigned in scene
+    //assigned in scene
+    public Tugboat tugboat;
 
     private GameManager gameManager;
 
@@ -52,6 +54,7 @@ public class SimpleManager : MonoBehaviour
     {
         startLobby.interactable = false;
         ipAddress.interactable = false;
+        joinLobby.interactable = false;
 
         gameManager = gm;
     }
