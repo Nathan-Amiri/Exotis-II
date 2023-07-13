@@ -48,7 +48,6 @@ public class Erupt : SpellBase
         {
             flame.Reset();
             flame.transform.position = casterPosition + (aimDirection * .1f);
-            flame.gameObject.SetActive(true);
         }
 
         flames[0].rb.velocity = aimDirection * launchSpeed;
