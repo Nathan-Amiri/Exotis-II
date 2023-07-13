@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 3732593208090203743}
   - component: {fileID: 3732593208090203742}
   - component: {fileID: 8058279944244913482}
-  - component: {fileID: -8575255546642064583}
   m_Layer: 0
   m_Name: Flame
   m_TagString: Untagged
@@ -79,7 +78,7 @@ SpriteRenderer:
   m_SortingLayer: -7
   m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 1, g: 0.43633658, b: 0, a: 0.6}
+  m_Color: {r: 1, g: 0.47843137, b: 0, a: 0.6}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -140,35 +139,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 3732593208090203743}
   coreRenderer: {fileID: 2881241286042705438}
---- !u!114 &-8575255546642064583
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3732593208090203739}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <IsNested>k__BackingField: 0
-  <ComponentIndex>k__BackingField: 0
-  <PredictedSpawn>k__BackingField: {fileID: 0}
-  _networkBehaviours: []
-  <ParentNetworkObject>k__BackingField: {fileID: 0}
-  <ChildNetworkObjects>k__BackingField: []
-  _isNetworked: 1
-  _isGlobal: 0
-  _initializeOrder: 0
-  _defaultDespawnType: 0
-  NetworkObserver: {fileID: 0}
-  <PrefabId>k__BackingField: 1
-  <SpawnableCollectionId>k__BackingField: 0
-  _scenePathHash: 0
-  <SceneId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 992728529702784507
-  _sceneNetworkObjects: []
 --- !u!1 &4038601761426130323
 GameObject:
   m_ObjectHideFlags: 0
@@ -180,7 +150,7 @@ GameObject:
   - component: {fileID: 8444653598417558418}
   - component: {fileID: 2881241286042705438}
   m_Layer: 0
-  m_Name: Circle
+  m_Name: Core
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

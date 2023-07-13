@@ -72,6 +72,12 @@ TagManager:
   - name: SpellCore
     uniqueID: 212619197
     locked: 0
+  - name: Missile
+    uniqueID: 1488624683
+    locked: 0
+  - name: MissileCore
+    uniqueID: 1522982541
+    locked: 0
   - name: HUD
     uniqueID: 3251869899
     locked: 0
@@ -80,12 +86,6 @@ TagManager:
     locked: 0
   - name: EscapeMenu
     uniqueID: 1057344701
-    locked: 0
-  - name: Missile
-    uniqueID: 1488624683
-    locked: 0
-  - name: MissileCore
-    uniqueID: 1522982541
     locked: 0
   - name: Default
     uniqueID: 0

@@ -23,11 +23,12 @@ public class Erupt : SpellBase
         for (int i = 0; i < 3; i++)
         {
             //flames can't be erupt's children because flames are not networked
-            GameObject flameObject = Instantiate(flamePref);
+            GameObject flameObject = Instantiate(flamePref, transform.position = new Vector2(-15, 0), Quaternion.identity);
             Flame flame = flameObject.GetComponent<Flame>();
 
             flame.owner = newPlayer.gameObject;
             flame.damage = -3;
+            flame.erupt = this;
             flames.Add(flame);
 
             Color color = spellColor.Equals(player.shellColor) ? player.coreColor : player.shellColor;
@@ -55,10 +56,17 @@ public class Erupt : SpellBase
         flames[2].rb.velocity = Quaternion.AngleAxis(-spreadAngle, Vector3.forward) * aimDirection * launchSpeed;
     }
 
+    public void FlameDisappear(Flame flame) //called by Flame
+    {
+        flame.rb.velocity = Vector2.zero;
+        flame.transform.position = new Vector2(-15, 0);
+    }
+
     public override void GameEnd()
     {
         base.GameEnd();
 
-        StartCoroutine(Disappear(0));
+        foreach (Flame flame in flames)
+            FlameDisappear(flame);
     }
 }

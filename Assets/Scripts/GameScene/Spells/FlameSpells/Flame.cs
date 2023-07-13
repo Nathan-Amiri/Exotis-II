@@ -13,6 +13,7 @@ public class Flame : MonoBehaviour
     //set by Erupt
     [NonSerialized] public float damage;
     [NonSerialized] public GameObject owner;
+    [NonSerialized] public Erupt erupt;
 
     private readonly List<GameObject> damagedPlayers = new();
 
@@ -24,7 +25,7 @@ public class Flame : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (col.CompareTag("Terrain"))
-            gameObject.SetActive(false);
+            erupt.FlameDisappear(this);
         else if (InstanceFinder.IsServer && col.CompareTag("Player") && col.gameObject != owner)
         {
             //prevent players from being damaged by more than one flame per erupt cast

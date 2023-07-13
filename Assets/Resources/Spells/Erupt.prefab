@@ -49,8 +49,7 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 4702270878836982905}
   _networkObjectCache: {fileID: 4702270878836982905}
   flamePref: {fileID: 3732593208090203739, guid: 72b165a57020f7c48a82c9277ea69fa0, type: 3}
-  spreadAngle: 0.2
-  launchSpeed: 10
+  test: {fileID: 306098622958396110, guid: 1ec26554dc1e9e54087f75f4bbd97df2, type: 3}
 --- !u!114 &4702270878836982905
 MonoBehaviour:
   m_ObjectHideFlags: 0
