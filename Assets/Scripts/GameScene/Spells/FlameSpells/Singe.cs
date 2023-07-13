@@ -27,11 +27,14 @@ public class Singe : SpellBase
     public override void TriggerSpell(Vector2 casterPosition, Vector2 aimPoint)
     {
         base.TriggerSpell(casterPosition, aimPoint);
+
         StartCoroutine(StartCooldown());
+
         rb.constraints = RigidbodyConstraints2D.FreezeRotation; //default
 
         armed = false;
         StartCoroutine(ArmSinge());
+        StartCoroutine(Disappear(7));
 
         Vector2 aimDirection = (aimPoint - casterPosition).normalized;
         transform.position = casterPosition + (aimDirection * .25f);
@@ -63,11 +66,18 @@ public class Singe : SpellBase
             {
                 Vector2 explodeDirection = (col.transform.position - transform.position).normalized;
                 col.GetComponent<Rigidbody2D>().velocity = explodeDirection * explodeForce;
-            }
 
-            if (InstanceFinder.IsServer && col.gameObject != player.gameObject)
-                target.HealthChange(-3);
+                //damage detected on the client rather than on the server to ensure that damage and explosion always coincide
+                if (!IsOwner)
+                    RpcSendDamageToServer(target);
+            }
         }
+    }
+
+    [ServerRpc (RequireOwnership = false)]
+    private void RpcSendDamageToServer(Player target)
+    {
+        target.HealthChange(-3);
     }
 
     public override void GameEnd()

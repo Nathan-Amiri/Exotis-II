@@ -183,4 +183,9 @@ public class PlayerMovement : NetworkBehaviour
         else
             UpdateGravityScale();
     }
+
+    public void GiveJump() //called by Electrify
+    {
+        hasJump = true;
+    }
 }

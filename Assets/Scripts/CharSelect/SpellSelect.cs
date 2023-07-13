@@ -46,8 +46,8 @@ public class SpellSelect : MonoBehaviour
     private readonly string[] flameAbilities = new string[] { "Erupt", "Singe", "Heatup" };
     private readonly string[] windAbilities = new string[] { "Swoop", "Takeflight", "Whirlwind" };
     private readonly string[] lightningAbilities = new string[] { "Electrify", "Blink", "Recharge" };
-    private readonly string[] frostAbilities = new string[] { "Icybreath", "", "Freeze" };
-    private readonly string[] venomAbilities = new string[] { "", "Infect", "Poisoncloud" };
+    private readonly string[] frostAbilities = new string[] { "Icybreath", "Hail", "Freeze" };
+    private readonly string[] venomAbilities = new string[] { "Fangedbite", "Infect", "Poisoncloud" };
 
     private List<string> selectedAbilities = new();
     private List<int> spellNumbers = new(); //used in charselect for importing loadout

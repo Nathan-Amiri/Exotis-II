@@ -76,4 +76,11 @@ public class Whirlwind : SpellBase
         if (blownPlayer != null)
             blownPlayer.playerMovement.rb.AddForce(windForce * new Vector2(windDirection.x * 2, windDirection.y));
     }
+
+    public override void GameEnd()
+    {
+        base.GameEnd();
+
+        StartCoroutine(Disappear(0));
+    }
 }
