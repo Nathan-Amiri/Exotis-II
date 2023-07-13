@@ -44,7 +44,7 @@ public class SpellSelect : MonoBehaviour
 
     private readonly string[] waterAbilities = new string[] { "Flow", "Distortion", "Tidalwave" };
     private readonly string[] flameAbilities = new string[] { "Erupt", "Singe", "Heatup" };
-    private readonly string[] windAbilities = new string[] { "Swoop", "Takeflight", "" };
+    private readonly string[] windAbilities = new string[] { "Swoop", "Takeflight", "Whirlwind" };
     private readonly string[] lightningAbilities = new string[] { "Electrify", "Blink", "Recharge" };
     private readonly string[] frostAbilities = new string[] { "Icybreath", "", "Freeze" };
     private readonly string[] venomAbilities = new string[] { "", "Infect", "Poisoncloud" };

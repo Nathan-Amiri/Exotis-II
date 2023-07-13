@@ -20,7 +20,7 @@ public class PlayerMovement : NetworkBehaviour
     [NonSerialized] public readonly float fallMultiplier = .7f; //fastfall, read by distortion
 
     private bool hasJump;
-    [NonSerialized] public bool isGrounded; //read by GroundCheck and VenomAbilities
+    [NonSerialized] public bool isGrounded; //set by GroundCheck, read by VenomAbilities
 
     [NonSerialized] public bool isStunned; //read by player
 
