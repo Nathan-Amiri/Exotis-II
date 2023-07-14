@@ -16,7 +16,6 @@ public class Tidalwave : SpellBase
         base.OnSpawn(newPlayer, newName);
 
         cooldown = 12;
-        hasRange = false;
         spellColor = player.water;
         SetCore(coreRenderer);
     }

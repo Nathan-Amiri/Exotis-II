@@ -11,8 +11,6 @@ public class Blink : SpellBase
         base.OnSpawn(newPlayer, newName);
 
         cooldown = 8;
-        hasRange = true;
-        spellRange = 2.5f;
         spellColor = player.lightning;
         SetCore(coreRenderer);
     }
@@ -34,10 +32,10 @@ public class Blink : SpellBase
         Vector2 blinkPosition;
         Vector2 blinkDirection = (aimPoint - casterPosition).normalized;
 
-        if ((casterPosition - aimPoint).magnitude < spellRange)
+        if ((casterPosition - aimPoint).magnitude < 2.5f)
             blinkPosition = aimPoint;
         else
-            blinkPosition = casterPosition + blinkDirection * spellRange;
+            blinkPosition = casterPosition + blinkDirection * 2.5f;
 
         float blinkIncrement = (blinkPosition - casterPosition).magnitude / 10;
 

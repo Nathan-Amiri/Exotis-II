@@ -532,15 +532,6 @@ public class Player : NetworkBehaviour
 
         Vector2 casterPosition = new(transform.position.x, transform.position.y);
         Vector2 aimPoint = mousePosition;
-        if (currentSpell.hasRange)
-        {
-            float mouseRange = Vector3.Distance(transform.position, mousePosition);
-            if (mouseRange > currentSpell.spellRange)
-            {
-                Vector2 aimDirection = (mousePosition - casterPosition).normalized;
-                aimPoint = casterPosition + (aimDirection * currentSpell.spellRange);
-            }
-        }
 
         currentSpell.TriggerSpell(casterPosition, aimPoint);
         RpcServerTriggerSpell(ClientManager.Connection, spellNumber, casterPosition, aimPoint);

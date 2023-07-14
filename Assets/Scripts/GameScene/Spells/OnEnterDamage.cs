@@ -13,6 +13,6 @@ public class OnEnterDamage : NetworkBehaviour
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (IsServer && col.CompareTag("Player") && col.gameObject != owner)
-                col.GetComponent<Player>().HealthChange(damage);
+            col.GetComponent<Player>().HealthChange(damage);
     }
 }

@@ -20,7 +20,6 @@ public class Whirlwind : SpellBase
         base.OnSpawn(newPlayer, newName);
 
         cooldown = 4;
-        hasRange = false;
         spellColor = player.wind;
 
         SetCore(coreRenderer);

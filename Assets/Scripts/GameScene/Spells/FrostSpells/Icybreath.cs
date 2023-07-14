@@ -13,7 +13,6 @@ public class Icybreath : SpellBase
         base.OnSpawn(newPlayer, newName);
 
         cooldown = 12;
-        hasRange = false;
         spellColor = player.frost;
         SetCore(coreRenderer);
 

@@ -14,7 +14,6 @@ public class Flow : SpellBase
         base.OnSpawn(newPlayer, newName);
 
         cooldown = 4;
-        hasRange = false;
         spellColor = player.water;
 
         transform.parent = player.transform;

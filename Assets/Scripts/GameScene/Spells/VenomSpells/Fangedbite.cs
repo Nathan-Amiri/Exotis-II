@@ -14,7 +14,6 @@ public class Fangedbite : SpellBase
         base.OnSpawn(newPlayer, newName);
 
         cooldown = 4;
-        hasRange = false;
         spellColor = player.venom;
 
         SetCore(neckSR);

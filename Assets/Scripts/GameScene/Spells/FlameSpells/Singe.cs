@@ -19,7 +19,6 @@ public class Singe : SpellBase
         base.OnSpawn(newPlayer, newName);
 
         cooldown = 8;
-        hasRange = false;
         spellColor = player.flame;
         SetCore(coreRenderer);
     }

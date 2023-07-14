@@ -16,7 +16,6 @@ public class Infect : SpellBase
         base.OnSpawn(newPlayer, newName);
 
         cooldown = 12;
-        hasRange = false;
         spellColor = player.venom;
 
         infectAura.transform.SetParent(player.transform);

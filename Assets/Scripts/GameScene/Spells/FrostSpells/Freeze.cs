@@ -11,7 +11,6 @@ public class Freeze : SpellBase
         base.OnSpawn(newPlayer, newName);
 
         cooldown = 8;
-        hasRange = false;
         spellColor = player.frost;
         SetCore(coreRenderer);
     }

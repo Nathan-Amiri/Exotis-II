@@ -15,7 +15,6 @@ public class Distortion : SpellBase
         base.OnSpawn(newPlayer, newName);
 
         cooldown = 8;
-        hasRange = false;
         spellColor = player.water;
 
         byte transparency = (byte)(IsOwner ? 153 : 255);

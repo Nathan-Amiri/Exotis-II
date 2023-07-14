@@ -12,7 +12,6 @@ public class Recharge : SpellBase
         base.OnSpawn(newPlayer, newName);
 
         cooldown = 12;
-        hasRange = false;
         spellColor = player.lightning;
 
         transform.SetParent(player.transform);

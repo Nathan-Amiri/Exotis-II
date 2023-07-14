@@ -11,9 +11,7 @@ public abstract class SpellBase : NetworkBehaviour
 
     [NonSerialized] public bool spellLock; //read by Player
 
-    [NonSerialized] public float spellRange; //set by derived class
     [NonSerialized] public Color32 spellColor; //^
-    [NonSerialized] public bool hasRange; //^, read by Player
 
     [NonSerialized] public Player player;
 

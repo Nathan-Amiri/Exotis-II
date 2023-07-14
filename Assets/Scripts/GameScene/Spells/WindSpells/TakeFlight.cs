@@ -12,7 +12,6 @@ public class TakeFlight : SpellBase
         base.OnSpawn(newPlayer, newName);
 
         cooldown = 12;
-        hasRange = false;
         spellColor = player.wind;
 
         transform.SetParent(player.transform);

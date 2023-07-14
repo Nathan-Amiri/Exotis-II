@@ -12,7 +12,6 @@ public class Swoop : SpellBase
         base.OnSpawn(newPlayer, newName);
 
         cooldown = 8;
-        hasRange = false;
         spellColor = player.wind;
 
         transform.SetParent(player.transform);

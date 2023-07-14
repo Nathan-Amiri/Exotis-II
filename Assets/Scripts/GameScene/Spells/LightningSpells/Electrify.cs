@@ -19,7 +19,6 @@ public class Electrify : SpellBase
         base.OnSpawn(newPlayer, newName);
 
         cooldown = 4;
-        hasRange = false;
         spellColor = player.lightning;
 
         anchorRB.transform.SetParent(null);

@@ -17,7 +17,6 @@ public class Erupt : SpellBase
         base.OnSpawn(newPlayer, newName);
 
         cooldown = 4;
-        hasRange = false;
         spellColor = player.flame;
 
         for (int i = 0; i < 3; i++)
