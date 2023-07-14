@@ -34,7 +34,7 @@ public class Tidalwave : SpellBase
         transform.SetPositionAndRotation(position, rotation);
 
         Color32 tempColor = tidalSR.color;
-        tempColor.a = 0;
+        tempColor.a = 0; //make transparent
         tidalSR.color = tempColor;
 
         StartCoroutine(TidalWaveFade());

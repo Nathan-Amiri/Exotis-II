@@ -32,17 +32,17 @@ public class Whirlwind : SpellBase
 
         windDirection = (aimPoint - casterPosition).normalized;
 
-        Vector2 newPosition = casterPosition + (windDirection * .3f);
+        Vector2 aimPosition = casterPosition + (windDirection * .3f);
 
-        float angle = Vector2.Angle(aimPoint - casterPosition, Vector2.right);
+        float angle = Vector2.Angle(aimPosition, Vector2.right);
         int posOrNeg = (aimPoint - casterPosition).y > 0 ? 1 : -1;
         Quaternion newRotation = Quaternion.Euler(0, 0, angle * posOrNeg);
         
-        transform.SetPositionAndRotation(newPosition, newRotation);
+        transform.SetPositionAndRotation(aimPosition, newRotation);
 
         float duration = 2;
 
-        StartCoroutine(Disappear(duration));
+        StartCoroutine(DisappearDelay(duration));
         StartCoroutine(CooldownDelay(duration));
     }
 
@@ -81,6 +81,6 @@ public class Whirlwind : SpellBase
     {
         base.GameEnd();
 
-        StartCoroutine(Disappear(0));
+        Disappear();
     }
 }

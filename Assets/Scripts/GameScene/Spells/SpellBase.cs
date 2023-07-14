@@ -52,9 +52,13 @@ public abstract class SpellBase : NetworkBehaviour
         }
     }
 
-    protected IEnumerator Disappear(float delay)
+    protected IEnumerator DisappearDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
+        Disappear();
+    }
+    protected void Disappear()
+    {
         transform.position = new Vector2(-15, 0);
     }
 

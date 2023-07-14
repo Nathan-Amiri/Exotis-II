@@ -34,7 +34,7 @@ public class Singe : SpellBase
 
         armed = false;
         StartCoroutine(ArmSinge());
-        StartCoroutine(Disappear(7));
+        StartCoroutine(DisappearDelay(7));
 
         Vector2 aimDirection = (aimPoint - casterPosition).normalized;
         transform.position = casterPosition + (aimDirection * .25f);
@@ -87,6 +87,6 @@ public class Singe : SpellBase
         rb.velocity = Vector2.zero;
         rb.constraints = RigidbodyConstraints2D.FreezeAll;
 
-        StartCoroutine(Disappear(0));
+        Disappear();
     }
 }

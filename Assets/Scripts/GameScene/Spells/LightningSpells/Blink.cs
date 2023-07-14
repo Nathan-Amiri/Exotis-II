@@ -25,7 +25,7 @@ public class Blink : SpellBase
 
         transform.position = casterPosition;
 
-        StartCoroutine(Disappear(5));
+        StartCoroutine(DisappearDelay(5));
 
         if (!IsOwner)
             return;
@@ -68,6 +68,6 @@ public class Blink : SpellBase
     {
         base.GameEnd();
 
-        StartCoroutine(Disappear(0));
+        Disappear();
     }
 }

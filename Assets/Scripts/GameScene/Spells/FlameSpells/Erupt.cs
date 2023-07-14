@@ -32,7 +32,7 @@ public class Erupt : SpellBase
             flames.Add(flame);
 
             Color color = spellColor.Equals(player.shellColor) ? player.coreColor : player.shellColor;
-            color = new Color(color.r, color.g, color.b, .6f); //make transparent
+            color.a = .6f; //make transparent
             flame.coreRenderer.color = color;
         }
     }

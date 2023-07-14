@@ -10,7 +10,7 @@ public class Freeze : SpellBase
     {
         base.OnSpawn(newPlayer, newName);
 
-        cooldown = 12;
+        cooldown = 8;
         hasRange = false;
         spellColor = player.frost;
         SetCore(coreRenderer);
@@ -23,7 +23,7 @@ public class Freeze : SpellBase
         StartCoroutine(StartCooldown());
 
         transform.position = aimPoint;
-        StartCoroutine(Disappear(5));
+        StartCoroutine(DisappearDelay(3));
     }
     private void OnTriggerEnter2D(Collider2D col)
     {
@@ -50,6 +50,6 @@ public class Freeze : SpellBase
     {
         base.GameEnd();
 
-        StartCoroutine(Disappear(0));
+        Disappear();
     }
 }

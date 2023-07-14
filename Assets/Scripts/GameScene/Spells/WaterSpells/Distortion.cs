@@ -73,7 +73,7 @@ public class Distortion : SpellBase
     }
     private IEnumerator DistortionDuration()
     {
-        StartCoroutine(Disappear(1.5f));
+        StartCoroutine(DisappearDelay(1.5f));
 
         yield return new WaitForSeconds(1.5f);
 
@@ -104,7 +104,7 @@ public class Distortion : SpellBase
     {
         base.GameEnd();
 
-        StartCoroutine(Disappear(0));
+        Disappear();
 
         EndDistortion();
     }

@@ -32,7 +32,7 @@ public class Poisoncloud : SpellBase
 
         poisonCloudAnim.SetTrigger("Grow");
 
-        StartCoroutine(Disappear(4));
+        StartCoroutine(DisappearDelay(4));
     }
     private void OnTriggerEnter2D(Collider2D col)
     {
@@ -75,6 +75,6 @@ public class Poisoncloud : SpellBase
     {
         base.GameEnd();
 
-        StartCoroutine(Disappear(0));
+        Disappear();
     }
 }
