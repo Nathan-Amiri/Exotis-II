@@ -9,7 +9,7 @@ public class PlayerMovement : NetworkBehaviour
     //MOVEMENT WITHOUT ACCELERATION values:
     [NonSerialized] public readonly float defaultMoveSpeed = 2.5f; //read by distortion
     private float moveForce; //x velocity is divided into moveForce and environmentalForce
-    private readonly float drag = 30; //only applies to environmental forces, not movement
+    private readonly float drag = 5; //only applies to environmental forces, not movement
 
     private readonly float jumpForce = 7.2f;
     private readonly float jumpHeight = 1.2f;
@@ -88,19 +88,22 @@ public class PlayerMovement : NetworkBehaviour
             //already. However, using rb.drag will cause the player to have more drag if they're moving
             //horizontally in the same direction as any environmental forces, so if you want drag to affect
             //only the environmental forces, better to handle it yourself as shown below
-            //Note: the below method uses linear drag
-            float decayAmount = drag * Time.fixedDeltaTime;
-            //If there's no room to decay further, drop to zero
-            if (Mathf.Abs(environmentalForce) < decayAmount)
+            if (Mathf.Abs(environmentalForce) < .1f) //once a minimum speed is reached, drop to zero
                 environmentalForce = 0;
-            else //Otherwise, decay
-                environmentalForce = (Mathf.Abs(environmentalForce) - decayAmount) * Mathf.Sign(environmentalForce);
+            else
+                environmentalForce *= 1 - drag * Time.deltaTime;
 
             //3. Update moveForce to match any changes to moveInput, caching it for step 1 next FixedUpdate
             moveForce = moveInput * moveSpeed;
 
             //4. Update velocity using updated forces
             rb.velocity = new Vector2(environmentalForce + moveForce, rb.velocity.y);
+
+            //Movement without acceleration in 4 lines of code:
+            //float environmentalForce = rb.velocity.x == 0 ? 0 : rb.velocity.x - moveForce; //1
+            //environmentalForce *= Mathf.Abs(environmentalForce) < .1f ? 0 : 1 - drag * Time.deltaTime; //2
+            //moveForce = moveInput * moveSpeed; //3
+            //rb.velocity = new Vector2(environmentalForce + moveForce, rb.velocity.y); //4
         }
 
         if (rb.gravityScale != 0) //turn off fastfall and dymanic jump when gravityless

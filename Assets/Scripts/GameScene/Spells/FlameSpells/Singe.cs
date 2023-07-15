@@ -29,7 +29,6 @@ public class Singe : SpellBase
 
         rb.constraints = RigidbodyConstraints2D.FreezeRotation; //default
 
-        StartCoroutine(ArmSinge());
         StartCoroutine(DisappearDelay(7));
 
         Vector2 aimDirection = (aimPoint - casterPosition).normalized;

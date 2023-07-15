@@ -8,7 +8,7 @@ public class Whirlwind : SpellBase
     public SpriteRenderer coreRenderer;
     public BoxCollider2D boxCollider;
 
-    private readonly float windForce = 7;
+    private readonly float windForce = 3;
 
     //direction wind is blowing
     private Vector2 windDirection;
@@ -73,7 +73,7 @@ public class Whirlwind : SpellBase
 
         //wind is more powerful horizontally (to compensate for x movement)
         if (blownPlayer != null)
-            blownPlayer.playerMovement.rb.AddForce(windForce * new Vector2(windDirection.x * 2, windDirection.y));
+            blownPlayer.playerMovement.rb.AddForce(windForce * windDirection);
     }
 
     public override void GameEnd()
