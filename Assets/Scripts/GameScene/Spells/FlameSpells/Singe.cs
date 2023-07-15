@@ -12,8 +12,6 @@ public class Singe : SpellBase
     private readonly float launchSpeed = 8;
     private readonly float explodeForce = 20;
 
-    private bool armed;
-
     public override void OnSpawn(Player newPlayer, string newName)
     {
         base.OnSpawn(newPlayer, newName);
@@ -31,21 +29,12 @@ public class Singe : SpellBase
 
         rb.constraints = RigidbodyConstraints2D.FreezeRotation; //default
 
-        armed = false;
         StartCoroutine(ArmSinge());
         StartCoroutine(DisappearDelay(7));
 
         Vector2 aimDirection = (aimPoint - casterPosition).normalized;
         transform.position = casterPosition + (aimDirection * .25f);
         rb.velocity = aimDirection * launchSpeed;
-    }
-
-    private IEnumerator ArmSinge()
-    {
-        //singe must be armed before detonating on self, but not enemies
-        yield return new WaitForSeconds(.1f);
-
-        armed = true;
     }
 
     private void OnTriggerEnter2D(Collider2D col)
@@ -57,14 +46,12 @@ public class Singe : SpellBase
         }
         else if (col.CompareTag("Player"))
         {
-            if (col.gameObject == player.gameObject && !armed) return;
-
             Player target = col.gameObject.GetComponent<Player>();
-
             if (target.IsOwner)
             {
                 Vector2 explodeDirection = (col.transform.position - transform.position).normalized;
                 col.GetComponent<Rigidbody2D>().velocity = explodeDirection * explodeForce;
+                target.playerMovement.GiveJump();
 
                 //damage detected on the client rather than on the server to ensure that damage and explosion always coincide
                 if (!IsOwner)

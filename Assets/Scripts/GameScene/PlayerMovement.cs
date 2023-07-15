@@ -6,9 +6,10 @@ using System;
 
 public class PlayerMovement : NetworkBehaviour
 {
-    [NonSerialized] public readonly float moveSpeed = 2.5f; //read by distortion
+    //MOVEMENT WITHOUT ACCELERATION values:
+    [NonSerialized] public readonly float defaultMoveSpeed = 2.5f; //read by distortion
     private float moveForce; //x velocity is divided into moveForce and environmentalForce
-    private readonly float drag = 10; //only applies to environmental forces, not movement
+    private readonly float drag = 30; //only applies to environmental forces, not movement
 
     private readonly float jumpForce = 7.2f;
     private readonly float jumpHeight = 1.2f;
@@ -66,27 +67,39 @@ public class PlayerMovement : NetworkBehaviour
 
         if (!isStunned)
         {
-            //first, get environmentalForce using previous moveForce value, BEFORE updating moveForce.
-            //If moveForce is opposed by an opposite force, (e.g. the player is moving into a wall) set
+            float moveSpeed = defaultMoveSpeed * speedIncrease;
+
+            //MOVEMENT WITHOUT ACCELERATION: My 4-step method to moving by directly altering the player's
+            //velocity while still allowing other forces in the environment to affect the player:
+            //1: separate velocity into moveForce and environmentalForce so they can be handled separately
+            //2: decay environmentalForce using custom drag (optional)
+            //3: change moveForce based on moveInput
+            //4: re-combine moveForce and environmentalForce to get the new velocity
+
+            //1. Get the sum of all current environmental forces by subtracting the force of your last movement
+            //from the total velocity
+            float environmentalForce = rb.velocity.x - moveForce;
+            //If moveForce is opposed by an equal and opposite force, (e.g. the player is moving into a wall) set
             //environmentalForce to 0 rather than to the opposite force
-            float environmentalForce;
-            if (Mathf.Abs(rb.velocity.x) < moveSpeed * speedIncrease)
+            if (rb.velocity.x == 0)
                 environmentalForce = 0;
-            else
-                environmentalForce = rb.velocity.x - moveForce;
 
-            //second, decay environmentalForce. This step is only unnecessary if the game has no drag/friction already
-            //if there's no room to decay further, drop to zero and stay there
-            if (Mathf.Abs(environmentalForce) < drag)
+            //2. Decay environmentalForce. This step is unnecessary if the game has drag/friction in it
+            //already. However, using rb.drag will cause the player to have more drag if they're moving
+            //horizontally in the same direction as any environmental forces, so if you want drag to affect
+            //only the environmental forces, better to handle it yourself as shown below
+            //Note: the below method uses linear drag
+            float decayAmount = drag * Time.fixedDeltaTime;
+            //If there's no room to decay further, drop to zero
+            if (Mathf.Abs(environmentalForce) < decayAmount)
                 environmentalForce = 0;
-            //otherwise, decay
-            else
-                environmentalForce = (Mathf.Abs(environmentalForce) - drag * Time.fixedDeltaTime) * Mathf.Sign(environmentalForce);
+            else //Otherwise, decay
+                environmentalForce = (Mathf.Abs(environmentalForce) - decayAmount) * Mathf.Sign(environmentalForce);
 
-            //third, update moveForce to match any changes to moveInput
-            moveForce = moveInput * moveSpeed * speedIncrease;
+            //3. Update moveForce to match any changes to moveInput, caching it for step 1 next FixedUpdate
+            moveForce = moveInput * moveSpeed;
 
-            //fourth, update velocity using updated forces
+            //4. Update velocity using updated forces
             rb.velocity = new Vector2(environmentalForce + moveForce, rb.velocity.y);
         }
 

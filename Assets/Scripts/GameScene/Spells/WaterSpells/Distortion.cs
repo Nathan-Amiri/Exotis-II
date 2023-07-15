@@ -67,7 +67,7 @@ public class Distortion : SpellBase
         {
             if (distRB.velocity.y < 0)
                 distRB.velocity += (player.playerMovement.fallMultiplier - 1) * Physics2D.gravity.y * Time.deltaTime * Vector2.up; //identical code to playerMovement
-            distRB.velocity = new(distDirection * player.playerMovement.moveSpeed * player.playerMovement.speedIncrease, distRB.velocity.y);
+            distRB.velocity = new(distDirection * player.playerMovement.defaultMoveSpeed * player.playerMovement.speedIncrease, distRB.velocity.y);
         }
     }
     private IEnumerator DistortionDuration()

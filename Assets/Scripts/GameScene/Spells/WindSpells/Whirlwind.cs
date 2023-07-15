@@ -33,8 +33,8 @@ public class Whirlwind : SpellBase
 
         Vector2 aimPosition = casterPosition + (windDirection * .3f);
 
-        float angle = Vector2.Angle(aimPosition, Vector2.right);
-        int posOrNeg = (aimPoint - casterPosition).y > 0 ? 1 : -1;
+        float angle = Vector2.Angle(windDirection, Vector2.right);
+        int posOrNeg = windDirection.y > 0 ? 1 : -1;
         Quaternion newRotation = Quaternion.Euler(0, 0, angle * posOrNeg);
         
         transform.SetPositionAndRotation(aimPosition, newRotation);
