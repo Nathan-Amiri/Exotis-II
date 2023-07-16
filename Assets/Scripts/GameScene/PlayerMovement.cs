@@ -72,7 +72,7 @@ public class PlayerMovement : NetworkBehaviour
             //MOVEMENT WITHOUT ACCELERATION: My 4-step method to moving by directly altering the player's
             //velocity while still allowing other forces in the environment to affect the player:
             //1: separate velocity into moveForce and environmentalForce so they can be handled separately
-            //2: decay environmentalForce using custom drag (optional)
+            //2: decay environmentalForce using custom drag
             //3: change moveForce based on moveInput
             //4: re-combine moveForce and environmentalForce to get the new velocity
 
@@ -81,7 +81,7 @@ public class PlayerMovement : NetworkBehaviour
             float environmentalForce = rb.velocity.x - moveForce;
             //If moveForce is opposed by an equal and opposite force, (e.g. the player is moving into a wall) set
             //environmentalForce to 0 rather than to the opposite force
-            if (rb.velocity.x == 0)
+            if (Mathf.Abs(rb.velocity.x) < 1)
                 environmentalForce = 0;
 
             //2. Decay environmentalForce. This step is unnecessary if the game has drag/friction in it
@@ -100,7 +100,7 @@ public class PlayerMovement : NetworkBehaviour
             rb.velocity = new Vector2(environmentalForce + moveForce, rb.velocity.y);
 
             //Movement without acceleration in 4 lines of code:
-            //float environmentalForce = rb.velocity.x == 0 ? 0 : rb.velocity.x - moveForce; //1
+            //float environmentalForce = Mathf.Abs(rb.velocity.x) < 1 ? 0 : rb.velocity.x - moveForce; //1
             //environmentalForce *= Mathf.Abs(environmentalForce) < .1f ? 0 : 1 - drag * Time.deltaTime; //2
             //moveForce = moveInput * moveSpeed; //3
             //rb.velocity = new Vector2(environmentalForce + moveForce, rb.velocity.y); //4

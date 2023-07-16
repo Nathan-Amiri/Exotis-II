@@ -8,7 +8,7 @@ public class Whirlwind : SpellBase
     public SpriteRenderer coreRenderer;
     public BoxCollider2D boxCollider;
 
-    private readonly float windForce = 3;
+    private readonly float windForce = 35;
 
     //direction wind is blowing
     private Vector2 windDirection;
