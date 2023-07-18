@@ -13,7 +13,7 @@ public class Electrify : SpellBase
     private DistanceJoint2D tetherJoint;
 
     private readonly float maxTetherLength = 2.25f;
-    public float swingSpeed = .2f;
+    private readonly float swingSpeed = .08f;
 
     public override void OnSpawn(Player newPlayer, string newName)
     {
@@ -38,14 +38,13 @@ public class Electrify : SpellBase
         if (hit.collider == null)
         {
             cooldown = .5f; //if it fails
+            StartCoroutine(StartCooldown());
 
             StartCoroutine(ElectrifyFail(aimDirection));
             RpcSendServerElectrifyFail(aimDirection);
         }
         else
         {
-            cooldown = 4; //default
-
             ToggleTether(true, hit.point);
             RpcServerToggleTether(true, hit.point);
 
@@ -56,8 +55,6 @@ public class Electrify : SpellBase
             player.playerMovement.GiveJump();
             player.playerMovement.ToggleGravity(false);
         }
-
-        StartCoroutine(StartCooldown());
     }
 
     [ServerRpc]
@@ -146,7 +143,11 @@ public class Electrify : SpellBase
 
 
             if (Input.GetButtonDown("Jump"))
+            {
+                cooldown = 4; //default
+                StartCoroutine(StartCooldown());
                 DestroyTether();
+            }
         }
     }
 
