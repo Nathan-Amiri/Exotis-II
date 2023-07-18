@@ -13,6 +13,7 @@ public class Electrify : SpellBase
     private DistanceJoint2D tetherJoint;
 
     private readonly float maxTetherLength = 2.25f;
+    public float swingSpeed = .2f;
 
     public override void OnSpawn(Player newPlayer, string newName)
     {
@@ -53,8 +54,7 @@ public class Electrify : SpellBase
             tetherJoint.connectedBody = anchorRB;
 
             player.playerMovement.GiveJump();
-
-            player.StatChange("speed", 2);
+            player.playerMovement.ToggleGravity(false);
         }
 
         StartCoroutine(StartCooldown());
@@ -109,7 +109,7 @@ public class Electrify : SpellBase
 
     private void DestroyTether() //run on owners only
     {
-        player.StatChange("speed", -2);
+        player.playerMovement.ToggleGravity(true);
 
         Destroy(tetherJoint);
         ToggleTether(false, default);
@@ -123,14 +123,31 @@ public class Electrify : SpellBase
         if (tetherRenderer.enabled == true)
         {
             tetherRenderer.SetPosition(0, player.transform.position);
+
             if (failAimDirection != default)
                 tetherRenderer.SetPosition(1, player.transform.position + ((Vector3)failAimDirection * maxTetherLength));
             else
                 tetherRenderer.SetPosition(1, tetherHitPoint);
         }
 
-        if (IsOwner && tetherHitPoint != default && Input.GetButtonDown("Jump"))
-            DestroyTether();
+        if (IsOwner && tetherHitPoint != default)
+        {
+            //swing
+            float input = Input.GetAxisRaw("Horizontal");
+
+            Vector2 direction = (anchorRB.transform.position - player.transform.position).normalized;
+
+            float heightDifference = Mathf.Abs(player.transform.position.y - anchorRB.transform.position.y);
+            float speed = heightDifference / maxTetherLength * swingSpeed;
+
+            int reverse = player.transform.position.y > anchorRB.transform.position.y ? 1 : -1;
+
+            player.playerMovement.rb.velocity += input * speed * reverse * Vector2.Perpendicular(direction);
+
+
+            if (Input.GetButtonDown("Jump"))
+                DestroyTether();
+        }
     }
 
     public override void GameEnd()

@@ -187,9 +187,9 @@ public class PlayerMovement : NetworkBehaviour
         isStunned = toggleOn;
     }
 
-    public void ToggleGravity(bool toggleOn)
+    public void ToggleGravity(bool on)
     {
-        if (!toggleOn)
+        if (!on)
             weightlessStrength += 1;
         else
             weightlessStrength -= 1;
