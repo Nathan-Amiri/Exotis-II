@@ -15,6 +15,8 @@ public class Electrify : SpellBase
     private readonly float maxTetherLength = 2.25f;
     private readonly float swingSpeed = .08f;
 
+    private int reverse; //swing direction is reversed when player is above the anchor
+
     public override void OnSpawn(Player newPlayer, string newName)
     {
         base.OnSpawn(newPlayer, newName);
@@ -45,6 +47,9 @@ public class Electrify : SpellBase
         }
         else
         {
+            player.playerMovement.LockMovement(true);
+            reverse = player.transform.position.y > hit.point.y ? 1 : -1;
+
             ToggleTether(true, hit.point);
             RpcServerToggleTether(true, hit.point);
 
@@ -107,6 +112,7 @@ public class Electrify : SpellBase
     private void DestroyTether() //run on owners only
     {
         player.playerMovement.ToggleGravity(true);
+        player.playerMovement.LockMovement(false);
 
         Destroy(tetherJoint);
         ToggleTether(false, default);
@@ -131,15 +137,8 @@ public class Electrify : SpellBase
         {
             //swing
             float input = Input.GetAxisRaw("Horizontal");
-
-            Vector2 direction = (anchorRB.transform.position - player.transform.position).normalized;
-
-            float heightDifference = Mathf.Abs(player.transform.position.y - anchorRB.transform.position.y);
-            float speed = heightDifference / maxTetherLength * swingSpeed;
-
-            int reverse = player.transform.position.y > anchorRB.transform.position.y ? 1 : -1;
-
-            player.playerMovement.rb.velocity += input * speed * reverse * Vector2.Perpendicular(direction);
+            Vector2 direction = Vector2.Perpendicular(anchorRB.transform.position - player.transform.position).normalized;
+            player.playerMovement.rb.velocity += input * swingSpeed * reverse * direction;
 
 
             if (Input.GetButtonDown("Jump"))

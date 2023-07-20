@@ -16,6 +16,5 @@ public class GroundCheck : MonoBehaviour
     {
         if (col.gameObject.CompareTag("Terrain"))
             playerMovement.isGrounded = false;
-            //StartCoroutine(playerMovement.CoyoteTime());
     }
 }

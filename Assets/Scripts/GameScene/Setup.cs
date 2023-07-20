@@ -15,6 +15,7 @@ public class Setup : NetworkBehaviour
     public TMP_Text countdownText; //^
     public TMP_Text winnerText; //^
     public PlayAgain playAgain; //^
+    public MapManager mapManager;
 
     private GameManager gameManager;
 
@@ -65,6 +66,7 @@ public class Setup : NetworkBehaviour
         newPlayer.countdownText = countdownText;
         newPlayer.winnerText = winnerText;
         newPlayer.playAgain = playAgain;
+        newPlayer.mapManager = mapManager;
 
         newPlayer.OnSpawn();
     }

@@ -46,16 +46,15 @@ public class Singe : SpellBase
         else if (col.CompareTag("Player"))
         {
             Player target = col.gameObject.GetComponent<Player>();
-            if (target.IsOwner)
-            {
-                Vector2 explodeDirection = (col.transform.position - transform.position).normalized;
-                col.GetComponent<Rigidbody2D>().velocity = explodeDirection * explodeForce;
-                target.playerMovement.GiveJump();
+            if (!target.IsOwner) return;
 
-                //damage detected on the client rather than on the server to ensure that damage and explosion always coincide
-                if (!IsOwner)
-                    RpcSendDamageToServer(target);
-            }
+            Vector2 explodeDirection = (col.transform.position - transform.position).normalized;
+            col.GetComponent<Rigidbody2D>().velocity = explodeDirection * explodeForce;
+            target.playerMovement.GiveJump();
+
+            //damage detected on the client rather than on the server to ensure that damage and explosion always coincide
+            if (!IsOwner)
+                RpcSendDamageToServer(target);
         }
     }
 

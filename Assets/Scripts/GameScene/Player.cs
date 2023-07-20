@@ -9,29 +9,34 @@ using System;
 
 public class Player : NetworkBehaviour
 {
-    //layers: -2 = background, -1 = editorgrid, 0 = terrain, 1 = players/some HUD, 2 = missiles/spells/more HUD
+    //assigned in inspector, used by distortion
+    public SpriteRenderer spriteRenderer;
+    public SpriteRenderer coreRenderer;
+    public Animator animator;
 
-    public SpriteRenderer spriteRenderer; //assigned in inspector, used by distortion
-    public SpriteRenderer coreRenderer; //^
-    public Animator animator; //^
-    public PlayerMovement playerMovement; //^, read by Setup and various spells
+    //assigned in inspector, read by Setup and various spells
+    public PlayerMovement playerMovement;
 
-    [NonSerialized] public GameManager gameManager; //set by Setup
-    [NonSerialized] public Animator countdownAnim; //^
-    [NonSerialized] public TMP_Text countdownText; //^
-    [NonSerialized] public TMP_Text winnerText; //^
-    [NonSerialized] public PlayAgain playAgain; //^
-    [NonSerialized] public PlayerHUD playerHUD; //^
+    //set by Setup
+    [NonSerialized] public GameManager gameManager;
+    [NonSerialized] public Animator countdownAnim;
+    [NonSerialized] public TMP_Text countdownText;
+    [NonSerialized] public TMP_Text winnerText;
+    [NonSerialized] public PlayAgain playAgain;
+    [NonSerialized] public MapManager mapManager;
+    [NonSerialized] public PlayerHUD playerHUD;
 
-    [NonSerialized] public Color32 frost = new(140, 228, 232, 255); //read by index
-    [NonSerialized] public Color32 wind = new(205, 205, 255, 255); //^
-    [NonSerialized] public Color32 lightning = new(255, 236, 0, 255); //^
-    [NonSerialized] public Color32 flame = new(255, 122, 0, 255); //^
-    [NonSerialized] public Color32 water = new(35, 182, 255, 255); //^
-    [NonSerialized] public Color32 venom = new(23, 195, 0, 255); //^
+    //read by index
+    [NonSerialized] public Color32 frost = new(140, 228, 232, 255);
+    [NonSerialized] public Color32 wind = new(205, 205, 255, 255);
+    [NonSerialized] public Color32 lightning = new(255, 236, 0, 255);
+    [NonSerialized] public Color32 flame = new(255, 122, 0, 255);
+    [NonSerialized] public Color32 water = new(35, 182, 255, 255);
+    [NonSerialized] public Color32 venom = new(23, 195, 0, 255);
 
-    [NonSerialized] public Color32 shellColor; //set by index, read by spellbase
-    [NonSerialized] public Color32 coreColor; //^
+    //set by index, read by spellbase
+    [NonSerialized] public Color32 shellColor;
+    [NonSerialized] public Color32 coreColor;
 
     [NonSerialized] public float maxHealth = 15; //can be altered by index
 
@@ -203,6 +208,8 @@ public class Player : NetworkBehaviour
                 if (gameManager.playerNumbers[i] != 0)
                     alivePlayers++;
         }
+
+        mapManager.LoadNewMap();
     }
 
     private IEnumerator Countdown()

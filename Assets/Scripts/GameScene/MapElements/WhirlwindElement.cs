@@ -4,15 +4,30 @@ using UnityEngine;
 
 public class WhirlwindElement : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private readonly float windForce = 15; //idenitcal force to Whirlwind
+
+    private Player blownPlayer; //this client's player, if it's currently in the wind
+
+    private void OnTriggerEnter2D(Collider2D col)
     {
-        
+        if (col.CompareTag("Player"))
+        {
+            //blow player if this client owns it
+            Player newPlayer = col.GetComponent<Player>();
+            if (newPlayer.IsOwner)
+                blownPlayer = newPlayer;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerExit2D(Collider2D col)
     {
-        
+        if (blownPlayer != null && col.CompareTag("Player") && col.GetComponent<Player>() == blownPlayer)
+            blownPlayer = null;
+    }
+
+    private void Update()
+    {
+        if (blownPlayer != null)
+            blownPlayer.playerMovement.rb.AddForce(windForce * transform.right);
     }
 }

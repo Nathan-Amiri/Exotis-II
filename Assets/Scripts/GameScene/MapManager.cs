@@ -2,9 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using FishNet.Object;
+using FishNet;
 
-public class MapManager : MonoBehaviour
+public class MapManager : NetworkBehaviour
 {
+    public TidalwaveElement tidalwaveElement;
+
     public List<GameObject> maps = new();
     public List<Tilemap> tilemaps = new();
 
@@ -21,12 +25,7 @@ public class MapManager : MonoBehaviour
         new Color32(23, 195, 0, 255) //venom
     };
 
-    private void Start()
-    {
-        LoadNewMap();
-    }
-
-    public void LoadNewMap()
+    public void LoadNewMap() //called by Player
     {
         if (currentMap != -1)
         {
@@ -46,10 +45,17 @@ public class MapManager : MonoBehaviour
             return;
         }
 
-        currentMap = availableMaps[Random.Range(0, availableMaps.Count)];
+        currentMap = 0;//availableMaps[Random.Range(0, availableMaps.Count)];
 
         tilemaps[currentMap].color = mapColors[currentMap];
 
         maps[currentMap].SetActive(true);
+
+        if (currentMap == 0 && InstanceFinder.IsServer)
+        {
+            tidalwaveElement.gameObject.SetActive(true);
+            ServerManager.Spawn(tidalwaveElement.gameObject);
+            tidalwaveElement.OnSpawn();
+        }
     }
 }

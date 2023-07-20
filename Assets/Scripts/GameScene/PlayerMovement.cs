@@ -20,10 +20,12 @@ public class PlayerMovement : NetworkBehaviour
     private readonly float lowJumpMultiplier = 4; //used for dynamic jump
     [NonSerialized] public readonly float fallMultiplier = .7f; //fastfall, read by distortion
 
-    private bool hasJump;
     [NonSerialized] public bool isGrounded; //set by GroundCheck, read by VenomAbilities
 
     [NonSerialized] public bool isStunned; //read by player
+
+    private bool hasJump;
+    private bool movementLocked;
 
     private int weightlessStrength;
 
@@ -52,7 +54,7 @@ public class PlayerMovement : NetworkBehaviour
             return;
         }
 
-        moveInput = Input.GetAxisRaw("Horizontal");
+        moveInput = movementLocked ? 0 : Input.GetAxisRaw("Horizontal");
 
         if (Input.GetButtonDown("Jump"))
             jumpInputDown = true;
@@ -81,7 +83,7 @@ public class PlayerMovement : NetworkBehaviour
             float environmentalForce = rb.velocity.x - moveForce;
             //If moveForce is opposed by an equal and opposite force, (e.g. the player is moving into a wall) set
             //environmentalForce to 0 rather than to the opposite force
-            if (Mathf.Abs(rb.velocity.x) < 1)
+            if (rb.velocity.x == 0)
                 environmentalForce = 0;
 
             //2. Decay environmentalForce. This step is unnecessary if the game has drag/friction in it
@@ -173,18 +175,18 @@ public class PlayerMovement : NetworkBehaviour
         jumpBuffering = false;
     }
 
-    //public IEnumerator CoyoteTime() //called by GroundCheck
-    //{
-    //    yield return new WaitForSeconds(.07f);
-    //    isGrounded = false;
-    //}
-
-    public void ToggleStun(bool toggleOn)
+    public void ToggleStun(bool on)
     {
-        if (toggleOn)
+        if (on)
             rb.velocity = new Vector2(0, rb.velocity.y);
 
-        isStunned = toggleOn;
+        isStunned = on;
+    }
+
+    public void LockMovement(bool on)
+    {
+        //locks horizontal movement, but not jumping, spells, or missiles
+        movementLocked = on;
     }
 
     public void ToggleGravity(bool on)
