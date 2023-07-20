@@ -191,6 +191,8 @@ public class Player : NetworkBehaviour
             StartCoroutine(Countdown());
 
             playerMovement.ToggleStun(true);
+
+            mapManager.LoadNewMap();
         }
 
         if (IsServer)
@@ -201,15 +203,13 @@ public class Player : NetworkBehaviour
             health = maxHealth;
         }
 
-        if (IsServer && IsOwner)
+        if (IsOwner && IsServer)
         {
             alivePlayers = 0;
             for (int i = 0; i < gameManager.playerNumbers.Length; i++)
                 if (gameManager.playerNumbers[i] != 0)
                     alivePlayers++;
         }
-
-        mapManager.LoadNewMap();
     }
 
     private IEnumerator Countdown()

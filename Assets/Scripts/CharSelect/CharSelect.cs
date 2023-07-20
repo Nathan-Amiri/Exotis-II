@@ -140,7 +140,7 @@ public class CharSelect : NetworkBehaviour
         currentColors[1] = (Color32)GetType().GetField(coreElement).GetValue(this);
 
         RpcChangeAvatar(GameManager.playerNumber, emptyColors);
-        RpcChangeReadyStatus(GameManager.playerNumber, false);
+        RpcChangeReadyStatus(ClientManager.Connection, GameManager.playerNumber, false);
 
         selectedElemental = newElemental;
         charName.text = selectedElemental;
@@ -203,6 +203,12 @@ public class CharSelect : NetworkBehaviour
     }
 
     [TargetRpc]
+    private void RpcNotEnoughPlayers(NetworkConnection conn)
+    {
+        error.text = "Must have at least two players to start the game";
+    }
+
+    [TargetRpc]
     private void RpcElementalApproved(NetworkConnection conn)
     {
         error.text = "";
@@ -222,11 +228,11 @@ public class CharSelect : NetworkBehaviour
         gameManager.charSelectInfo = charSelectInfo;
 
         RpcChangeAvatar(GameManager.playerNumber, currentColors);
-        RpcChangeReadyStatus(GameManager.playerNumber, true);
+        RpcChangeReadyStatus(ClientManager.Connection, GameManager.playerNumber, true);
     }
 
     [ServerRpc (RequireOwnership = false)]
-    private void RpcChangeReadyStatus(int newPlayer, bool isReady)
+    private void RpcChangeReadyStatus(NetworkConnection conn, int newPlayer, bool isReady)
     {
         if (isReady == false)
             claimedElementals[newPlayer - 1] = null;
@@ -236,6 +242,17 @@ public class CharSelect : NetworkBehaviour
         for (int i = 0; i < readyPlayers.Length; i++)
             if (gameManager.playerNumbers[i] != 0 && !readyPlayers[i])
                 return;
+
+        ////must have at least two players to connect
+        //int connectedPlayers = 0;
+        //foreach (int player in gameManager.playerNumbers)
+        //    if (player != 0)
+        //        connectedPlayers++;
+        //if (connectedPlayers == 1)
+        //{
+        //    RpcNotEnoughPlayers(conn);
+        //    return;
+        //}
 
         gameManager.SceneChange("GameScene");
     }

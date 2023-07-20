@@ -8,6 +8,7 @@ using FishNet;
 public class MapManager : NetworkBehaviour
 {
     public TidalwaveElement tidalwaveElement;
+    public List<ElectrifyElement> electrifyElements;
     public IcybreathElement icybreathElement;
     public List<InfectElement> infectElements;
 
@@ -47,7 +48,7 @@ public class MapManager : NetworkBehaviour
             return;
         }
 
-        currentMap = 5;//availableMaps[Random.Range(0, availableMaps.Count)];
+        currentMap = 3;//availableMaps[Random.Range(0, availableMaps.Count)];
 
         tilemaps[currentMap].color = mapColors[currentMap];
 
@@ -61,6 +62,12 @@ public class MapManager : NetworkBehaviour
                 ServerManager.Spawn(tidalwaveElement.gameObject);
                 tidalwaveElement.OnSpawn();
             }
+            else if (currentMap == 3)
+                foreach (ElectrifyElement element in electrifyElements)
+                {
+                    element.gameObject.SetActive(true);
+                    ServerManager.Spawn(element.gameObject);
+                }
             else if (currentMap == 4)
             {
                 icybreathElement.gameObject.SetActive(true);

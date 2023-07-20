@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using FishNet.Object;
 using System;
-using UnityEditorInternal;
 
 public class PlayerMovement : NetworkBehaviour
 {

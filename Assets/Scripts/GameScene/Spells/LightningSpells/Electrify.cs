@@ -32,7 +32,6 @@ public class Electrify : SpellBase
     {
         base.TriggerSpell(casterPosition, aimPoint);
 
-
         if (!IsOwner) return;
 
         Vector2 aimDirection = (aimPoint - casterPosition).normalized;
@@ -48,17 +47,16 @@ public class Electrify : SpellBase
         }
         else
         {
-            player.playerMovement.LockMovement(true);
-
             ToggleTether(true, hit.point);
             RpcServerToggleTether(true, hit.point);
 
-            anchorRB.transform.position = hit.point;
+            anchorRB.position = hit.point;
             tetherJoint = player.gameObject.AddComponent<DistanceJoint2D>();
             tetherJoint.connectedBody = anchorRB;
 
             UpdateReverse(); //can't update reverse until anchor position is set
 
+            player.playerMovement.LockMovement(true);
             player.playerMovement.GiveJump();
             player.playerMovement.ToggleGravity(false);
         }
@@ -66,7 +64,7 @@ public class Electrify : SpellBase
 
     private void UpdateReverse()
     {
-        reverse = player.transform.position.y > anchorRB.transform.position.y ? 1 : -1;
+        reverse = player.transform.position.y > anchorRB.position.y ? 1 : -1;
     }
 
     [ServerRpc]
@@ -118,8 +116,8 @@ public class Electrify : SpellBase
 
     private void DestroyTether() //run on owners only
     {
-        player.playerMovement.ToggleGravity(true);
         player.playerMovement.LockMovement(false);
+        player.playerMovement.ToggleGravity(true);
 
         Destroy(tetherJoint);
         ToggleTether(false, default);
