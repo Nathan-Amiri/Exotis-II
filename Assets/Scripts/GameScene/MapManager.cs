@@ -8,6 +8,8 @@ using FishNet;
 public class MapManager : NetworkBehaviour
 {
     public TidalwaveElement tidalwaveElement;
+    public IcybreathElement icybreathElement;
+    public List<InfectElement> infectElements;
 
     public List<GameObject> maps = new();
     public List<Tilemap> tilemaps = new();
@@ -45,17 +47,32 @@ public class MapManager : NetworkBehaviour
             return;
         }
 
-        currentMap = 0;//availableMaps[Random.Range(0, availableMaps.Count)];
+        currentMap = 5;//availableMaps[Random.Range(0, availableMaps.Count)];
 
         tilemaps[currentMap].color = mapColors[currentMap];
 
         maps[currentMap].SetActive(true);
 
-        if (currentMap == 0 && InstanceFinder.IsServer)
+        if (InstanceFinder.IsServer)
         {
-            tidalwaveElement.gameObject.SetActive(true);
-            ServerManager.Spawn(tidalwaveElement.gameObject);
-            tidalwaveElement.OnSpawn();
+            if (currentMap == 0)
+            {
+                tidalwaveElement.gameObject.SetActive(true);
+                ServerManager.Spawn(tidalwaveElement.gameObject);
+                tidalwaveElement.OnSpawn();
+            }
+            else if (currentMap == 4)
+            {
+                icybreathElement.gameObject.SetActive(true);
+                ServerManager.Spawn(icybreathElement.gameObject);
+                icybreathElement.OnSpawn();
+            }
+            else if (currentMap == 5)
+                foreach (InfectElement element in infectElements)
+                {
+                    element.gameObject.SetActive(true);
+                    ServerManager.Spawn(element.gameObject);
+                }
         }
     }
 }

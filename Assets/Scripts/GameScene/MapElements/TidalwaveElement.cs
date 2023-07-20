@@ -48,8 +48,6 @@ public class TidalwaveElement : NetworkBehaviour
     [ObserversRpc]
     private void RpcSpawnWave(Vector2 zone)
     {
-        //boxCollider.enabled = false; //reset for animation
-
         //if zone is higher, use offset to get the new position (the y center of the map is not 0)
         Vector2 newSpawnPosition = zone.y == -1 ? spawnPosition : spawnPosition + new Vector2(0, 1);
         transform.position = newSpawnPosition * zone;

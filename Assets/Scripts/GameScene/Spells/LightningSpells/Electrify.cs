@@ -13,9 +13,10 @@ public class Electrify : SpellBase
     private DistanceJoint2D tetherJoint;
 
     private readonly float maxTetherLength = 2.25f;
-    private readonly float swingSpeed = .08f;
+    private readonly float swingSpeed = .15f;
 
     private int reverse; //swing direction is reversed when player is above the anchor
+    private bool horizontalDown; //true when player presses a new horizontal key
 
     public override void OnSpawn(Player newPlayer, string newName)
     {
@@ -48,7 +49,6 @@ public class Electrify : SpellBase
         else
         {
             player.playerMovement.LockMovement(true);
-            reverse = player.transform.position.y > hit.point.y ? 1 : -1;
 
             ToggleTether(true, hit.point);
             RpcServerToggleTether(true, hit.point);
@@ -57,9 +57,16 @@ public class Electrify : SpellBase
             tetherJoint = player.gameObject.AddComponent<DistanceJoint2D>();
             tetherJoint.connectedBody = anchorRB;
 
+            UpdateReverse(); //can't update reverse until anchor position is set
+
             player.playerMovement.GiveJump();
             player.playerMovement.ToggleGravity(false);
         }
+    }
+
+    private void UpdateReverse()
+    {
+        reverse = player.transform.position.y > anchorRB.transform.position.y ? 1 : -1;
     }
 
     [ServerRpc]
@@ -140,6 +147,14 @@ public class Electrify : SpellBase
             Vector2 direction = Vector2.Perpendicular(anchorRB.transform.position - player.transform.position).normalized;
             player.playerMovement.rb.velocity += input * swingSpeed * reverse * direction;
 
+            //update reverse whenever a new direction is pressed
+            if (input == 0)
+                horizontalDown = false;
+            else if (horizontalDown == false)
+            {
+                UpdateReverse();
+                horizontalDown = true;
+            }
 
             if (Input.GetButtonDown("Jump"))
             {

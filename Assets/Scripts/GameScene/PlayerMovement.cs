@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using FishNet.Object;
 using System;
+using UnityEditorInternal;
 
 public class PlayerMovement : NetworkBehaviour
 {
     //MOVEMENT WITHOUT ACCELERATION values:
     [NonSerialized] public readonly float defaultMoveSpeed = 2.5f; //read by distortion
     private float moveForce; //x velocity is divided into moveForce and environmentalForce
-    private readonly float drag = 5; //only applies to environmental forces, not movement
+    private readonly float drag = 10;//5; //only applies to environmental forces, not movement
 
     private readonly float jumpForce = 7.2f;
     private readonly float jumpHeight = 1.2f;

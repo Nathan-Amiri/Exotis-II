@@ -1,4 +1,3 @@
-using FishNet;
 using FishNet.Object;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ public class Singe : SpellBase
     public Rigidbody2D rb;
 
     private readonly float launchSpeed = 8;
-    private readonly float explodeForce = 20;
+    private readonly float explodeForce = 25;
 
     public override void OnSpawn(Player newPlayer, string newName)
     {
