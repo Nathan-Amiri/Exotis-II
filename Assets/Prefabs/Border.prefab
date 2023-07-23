@@ -121,6 +121,10 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0.38679248
       objectReference: {fileID: 0}
+    - target: {fileID: 561456024345029564, guid: fe5961c916cc92943a58fa51a5d9cf2a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 561456024345029565, guid: fe5961c916cc92943a58fa51a5d9cf2a, type: 3}
       propertyPath: m_Name
       value: Terrain (2)
@@ -203,6 +207,10 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0.38679248
       objectReference: {fileID: 0}
+    - target: {fileID: 561456024345029564, guid: fe5961c916cc92943a58fa51a5d9cf2a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 561456024345029565, guid: fe5961c916cc92943a58fa51a5d9cf2a, type: 3}
       propertyPath: m_Name
       value: Terrain (3)
@@ -221,7 +229,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 561456024345029567, guid: fe5961c916cc92943a58fa51a5d9cf2a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.7
+      value: -9.7265
       objectReference: {fileID: 0}
     - target: {fileID: 561456024345029567, guid: fe5961c916cc92943a58fa51a5d9cf2a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -285,6 +293,10 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0.38679248
       objectReference: {fileID: 0}
+    - target: {fileID: 561456024345029564, guid: fe5961c916cc92943a58fa51a5d9cf2a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 561456024345029565, guid: fe5961c916cc92943a58fa51a5d9cf2a, type: 3}
       propertyPath: m_Name
       value: Terrain (1)
@@ -307,7 +319,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 561456024345029567, guid: fe5961c916cc92943a58fa51a5d9cf2a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.3619
+      value: 5.8619
       objectReference: {fileID: 0}
     - target: {fileID: 561456024345029567, guid: fe5961c916cc92943a58fa51a5d9cf2a, type: 3}
       propertyPath: m_LocalPosition.z
@@ -366,6 +378,10 @@ PrefabInstance:
     - target: {fileID: 561456024345029564, guid: fe5961c916cc92943a58fa51a5d9cf2a, type: 3}
       propertyPath: m_Color.r
       value: 0.38679248
+      objectReference: {fileID: 0}
+    - target: {fileID: 561456024345029564, guid: fe5961c916cc92943a58fa51a5d9cf2a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 561456024345029565, guid: fe5961c916cc92943a58fa51a5d9cf2a, type: 3}
       propertyPath: m_Name

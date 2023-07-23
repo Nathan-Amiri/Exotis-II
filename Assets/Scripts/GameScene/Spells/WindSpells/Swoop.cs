@@ -26,8 +26,7 @@ public class Swoop : SpellBase
             StartCoroutine(player.BecomeImmune(1));
         if (IsOwner)
         {
-            player.playerMovement.ToggleStun(true);
-            player.playerMovement.ToggleGravity(false);
+            player.playerMovement.ToggleFreeze(true);
 
             float angle = Vector2.Angle(player.mousePosition - (Vector2)player.transform.position, Vector2.right);
             int posOrNeg = (player.mousePosition - (Vector2)player.transform.position).y > 0 ? 1 : -1;
@@ -61,8 +60,7 @@ public class Swoop : SpellBase
         yield return new WaitForSeconds(.9f);
         if (IsOwner)
         {
-            player.playerMovement.ToggleStun(false);
-            player.playerMovement.ToggleGravity(true);
+            player.playerMovement.ToggleFreeze(false);
             swooping = false;
         }
         swoopSR.enabled = false;
@@ -81,7 +79,7 @@ public class Swoop : SpellBase
         {
             if (IsOwner)
             {
-                player.playerMovement.ToggleGravity(true);
+                player.playerMovement.ToggleFreeze(false);
                 swooping = false;
             }
             swoopSR.enabled = false;

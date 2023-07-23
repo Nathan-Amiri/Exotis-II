@@ -5,6 +5,10 @@ using UnityEngine;
 
 public class Electrify : SpellBase
 {
+    //local player cannot swing on more than one tether at once
+    public static bool localElectrifyActive; //used by electrifyelement
+
+
     public LineRenderer tetherRenderer;
     public Rigidbody2D anchorRB;
 
@@ -13,14 +17,14 @@ public class Electrify : SpellBase
     private DistanceJoint2D tetherJoint;
 
     private readonly float maxTetherLength = 2.25f;
-    private readonly float swingSpeed = .15f;
-
-    private int reverse; //swing direction is reversed when player is above the anchor
-    private bool horizontalDown; //true when player presses a new horizontal key
+    private readonly float swingSpeed = 9;
+    private readonly float endBoost = 10;
 
     public override void OnSpawn(Player newPlayer, string newName)
     {
         base.OnSpawn(newPlayer, newName);
+
+        localElectrifyActive = false;
 
         cooldown = 4;
         spellColor = player.lightning;
@@ -33,6 +37,8 @@ public class Electrify : SpellBase
         base.TriggerSpell(casterPosition, aimPoint);
 
         if (!IsOwner) return;
+
+        if (localElectrifyActive) return;
 
         Vector2 aimDirection = (aimPoint - casterPosition).normalized;
         int layerMask = 1 << 7;
@@ -47,6 +53,8 @@ public class Electrify : SpellBase
         }
         else
         {
+            localElectrifyActive = true;
+
             ToggleTether(true, hit.point);
             RpcServerToggleTether(true, hit.point);
 
@@ -54,17 +62,9 @@ public class Electrify : SpellBase
             tetherJoint = player.gameObject.AddComponent<DistanceJoint2D>();
             tetherJoint.connectedBody = anchorRB;
 
-            UpdateReverse(); //can't update reverse until anchor position is set
-
-            player.playerMovement.LockMovement(true);
+            player.playerMovement.ToggleFreeze(true);
             player.playerMovement.GiveJump();
-            player.playerMovement.ToggleGravity(false);
         }
-    }
-
-    private void UpdateReverse()
-    {
-        reverse = player.transform.position.y > anchorRB.position.y ? 1 : -1;
     }
 
     [ServerRpc]
@@ -116,12 +116,13 @@ public class Electrify : SpellBase
 
     private void DestroyTether() //run on owners only
     {
-        player.playerMovement.LockMovement(false);
-        player.playerMovement.ToggleGravity(true);
+        player.playerMovement.ToggleFreeze(false);
 
         Destroy(tetherJoint);
         ToggleTether(false, default);
         RpcServerToggleTether(false, default);
+
+        localElectrifyActive = false;
     }
 
     protected override void Update()
@@ -132,7 +133,7 @@ public class Electrify : SpellBase
         {
             tetherRenderer.SetPosition(0, player.transform.position);
 
-            if (failAimDirection != default)
+            if (failAimDirection != default) //if failed
                 tetherRenderer.SetPosition(1, player.transform.position + ((Vector3)failAimDirection * maxTetherLength));
             else
                 tetherRenderer.SetPosition(1, tetherHitPoint);
@@ -142,20 +143,13 @@ public class Electrify : SpellBase
         {
             //swing
             float input = Input.GetAxisRaw("Horizontal");
-            Vector2 direction = Vector2.Perpendicular(anchorRB.transform.position - player.transform.position).normalized;
-            player.playerMovement.rb.velocity += input * swingSpeed * reverse * direction;
-
-            //update reverse whenever a new direction is pressed
-            if (input == 0)
-                horizontalDown = false;
-            else if (horizontalDown == false)
-            {
-                UpdateReverse();
-                horizontalDown = true;
-            }
+            Vector2 direction = -1 * Vector2.Perpendicular(anchorRB.transform.position - player.transform.position).normalized;
+            player.playerMovement.rb.velocity = input * swingSpeed * direction;
 
             if (Input.GetButtonDown("Jump"))
             {
+                player.playerMovement.AddNewForce(input * endBoost * direction);
+
                 cooldown = 4; //default
                 StartCoroutine(StartCooldown());
                 DestroyTether();

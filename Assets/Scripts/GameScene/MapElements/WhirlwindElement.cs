@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WhirlwindElement : MonoBehaviour
 {
-    private readonly float windForce = 15; //idenitcal force to Whirlwind
+    private readonly float windForce = .22f; //identical force to Whirlwind
 
     private Player blownPlayer; //this client's player, if it's currently in the wind
 
@@ -28,6 +28,6 @@ public class WhirlwindElement : MonoBehaviour
     private void Update()
     {
         if (blownPlayer != null)
-            blownPlayer.playerMovement.rb.AddForce(windForce * transform.right);
+            blownPlayer.playerMovement.AddNewForce(windForce * transform.right);
     }
 }

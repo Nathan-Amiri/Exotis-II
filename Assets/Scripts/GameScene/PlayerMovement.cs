@@ -7,9 +7,8 @@ using System;
 public class PlayerMovement : NetworkBehaviour
 {
     //MOVEMENT WITHOUT ACCELERATION values:
-    [NonSerialized] public readonly float defaultMoveSpeed = 2.5f; //read by distortion
-    private float moveForce; //x velocity is divided into moveForce and environmentalForce
-    private readonly float drag = 10;//5; //only applies to environmental forces, not movement
+    [NonSerialized] public readonly float moveSpeed = 2.5f; //read by distortion
+    private readonly float drag = 5; //only applies to x environmental forces, not x movement
 
     private readonly float jumpForce = 7.2f;
     private readonly float jumpHeight = 1.2f;
@@ -22,10 +21,14 @@ public class PlayerMovement : NetworkBehaviour
 
     [NonSerialized] public bool isGrounded; //set by GroundCheck, read by VenomAbilities
 
-    [NonSerialized] public bool isStunned; //read by player
+    [NonSerialized] public bool isStunned; //stunned = cannot act. read by player
+    private int stunStrength;
+    private bool isFrozen; //freeze = frozen in place
+    private int freezeStrength;
 
     private bool hasJump;
-    private bool movementLocked;
+
+    private float environmentalVelocity; //x velocity applied by outside sources
 
     private int weightlessStrength;
 
@@ -54,7 +57,7 @@ public class PlayerMovement : NetworkBehaviour
             return;
         }
 
-        moveInput = movementLocked ? 0 : Input.GetAxisRaw("Horizontal");
+        moveInput = isStunned ? 0 : Input.GetAxisRaw("Horizontal");
 
         if (Input.GetButtonDown("Jump"))
             jumpInputDown = true;
@@ -67,51 +70,21 @@ public class PlayerMovement : NetworkBehaviour
         if (!IsOwner)
             return;
 
-        if (!isStunned)
+        if (!isFrozen)
         {
-            float moveSpeed = defaultMoveSpeed * speedIncrease;
+            //x movement
+            float moveForce = moveSpeed * speedIncrease * moveInput;
+            rb.velocity = new Vector2(moveForce + environmentalVelocity, rb.velocity.y);
 
-            //MOVEMENT WITHOUT ACCELERATION: My 4-step method to moving by directly altering the player's
-            //velocity while still allowing other forces in the environment to affect the player:
-            //1: separate velocity into moveForce and environmentalForce so they can be handled separately
-            //2: decay environmentalForce using custom drag
-            //3: change moveForce based on moveInput
-            //4: re-combine moveForce and environmentalForce to get the new velocity
-
-            //1. Get the sum of all current environmental forces by subtracting the force of your last movement
-            //from the total velocity
-            float environmentalForce = rb.velocity.x - moveForce;
-            //If moveForce is opposed by an equal and opposite force, (e.g. the player is moving into a wall) set
-            //environmentalForce to 0 rather than to the opposite force
-            if (rb.velocity.x == 0)
-                environmentalForce = 0;
-
-            //2. Decay environmentalForce. This step is unnecessary if the game has drag/friction in it
-            //already. However, using rb.drag will cause the player to have more drag if they're moving
-            //horizontally in the same direction as any environmental forces, so if you want drag to affect
-            //only the environmental forces, better to handle it yourself as shown below
-            if (Mathf.Abs(environmentalForce) < .1f) //once a minimum speed is reached, drop to zero
-                environmentalForce = 0;
-            else
-                environmentalForce *= 1 - drag * Time.deltaTime;
-
-            //3. Update moveForce to match any changes to moveInput, caching it for step 1 next FixedUpdate
-            moveForce = moveInput * moveSpeed;
-
-            //4. Update velocity using updated forces
-            rb.velocity = new Vector2(environmentalForce + moveForce, rb.velocity.y);
-
-            //Movement without acceleration in 4 lines of code:
-            //float environmentalForce = Mathf.Abs(rb.velocity.x) < 1 ? 0 : rb.velocity.x - moveForce; //1
-            //environmentalForce *= Mathf.Abs(environmentalForce) < .1f ? 0 : 1 - drag * Time.deltaTime; //2
-            //moveForce = moveInput * moveSpeed; //3
-            //rb.velocity = new Vector2(environmentalForce + moveForce, rb.velocity.y); //4
+            //x environmental drag
+            environmentalVelocity *= 1 - drag * Time.fixedDeltaTime;
         }
 
         if (rb.gravityScale != 0) //turn off fastfall and dymanic jump when gravityless
         {
             if (rb.velocity.y < 0)
-                rb.velocity += (fallMultiplier - 1) * Physics2D.gravity.y * Time.deltaTime * Vector2.up; //fastfall not multiplied by speedIncrease to make walljumping easier when speed is high
+                //fastfall not multiplied by speedIncrease to make walljumping easier when speed is high
+                rb.velocity += (fallMultiplier - 1) * Physics2D.gravity.y * Time.deltaTime * Vector2.up;
             else if (rb.velocity.y > 0 && !jumpInput)
                 rb.velocity += speedIncrease * (lowJumpMultiplier - 1) * Physics2D.gravity.y * Time.deltaTime * Vector2.up;
         }
@@ -145,6 +118,20 @@ public class PlayerMovement : NetworkBehaviour
         hasJump = false;
     }
 
+    private void UpdateGravityScale()
+    {
+        rb.gravityScale = Mathf.Pow(jumpForce * speedIncrease, 2) / (2 * -Physics2D.gravity.y * jumpHeight); //variation of 'Velocity = sqrt(2 * Jump Height * Gravity)'
+    }
+
+    private IEnumerator JumpBuffer()
+    {
+        jumpBuffering = true;
+        yield return new WaitForSeconds(.12f);
+        jumpBuffering = false;
+    }
+
+
+    //public methods: (other classes will never change playermovement variables except via these methods (and groundcheck))
     public void SpeedChange(bool multiply, int amount) //amount = number of stages (-2, -1, 1, or 2)
     {
         for (int i = 0; i < amount; i++) //first update speedIncrease
@@ -163,30 +150,41 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
-    private void UpdateGravityScale()
-    {
-        rb.gravityScale = Mathf.Pow(jumpForce * speedIncrease, 2) / (2 * -Physics2D.gravity.y * jumpHeight); //variation of 'Velocity = sqrt(2 * Jump Height * Gravity)'
-    }
-
-    private IEnumerator JumpBuffer()
-    {
-        jumpBuffering = true;
-        yield return new WaitForSeconds(.12f);
-        jumpBuffering = false;
-    }
-
-    public void ToggleStun(bool on)
+    public void ToggleStun(bool on) //prevents player from acting
     {
         if (on)
+            stunStrength += 1;
+        else
+            stunStrength -= 1;
+
+        on = stunStrength > 0;
+
+        if (on)
+        {
             rb.velocity = new Vector2(0, rb.velocity.y);
+            environmentalVelocity = 0;
+        }
 
         isStunned = on;
     }
 
-    public void LockMovement(bool on)
+    public void ToggleFreeze(bool on) //locks player in place
     {
-        //locks horizontal movement, but not jumping, spells, or missiles
-        movementLocked = on;
+        if (on)
+            freezeStrength += 1;
+        else
+            freezeStrength -= 1;
+
+        on = freezeStrength > 0;
+
+        if (on)
+        {
+            environmentalVelocity = 0;
+            rb.velocity = Vector2.zero;
+        }
+
+        isFrozen = on;
+        ToggleGravity(!on);
     }
 
     public void ToggleGravity(bool on)
@@ -202,8 +200,14 @@ public class PlayerMovement : NetworkBehaviour
             UpdateGravityScale();
     }
 
-    public void GiveJump() //called by Electrify
+    public void GiveJump()
     {
         hasJump = true;
+    }
+
+    public void AddNewForce(Vector2 force)
+    {
+        environmentalVelocity += force.x;
+        rb.velocity += new Vector2(0, force.y);
     }
 }

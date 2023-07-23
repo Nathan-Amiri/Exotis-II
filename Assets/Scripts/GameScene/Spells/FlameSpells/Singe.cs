@@ -9,7 +9,7 @@ public class Singe : SpellBase
     public Rigidbody2D rb;
 
     private readonly float launchSpeed = 8;
-    private readonly float explodeForce = 25;
+    private readonly float explodeForce = 20;
 
     public override void OnSpawn(Player newPlayer, string newName)
     {
@@ -48,7 +48,8 @@ public class Singe : SpellBase
             if (!target.IsOwner) return;
 
             Vector2 explodeDirection = (col.transform.position - transform.position).normalized;
-            col.GetComponent<Rigidbody2D>().velocity = explodeDirection * explodeForce;
+            target.playerMovement.rb.velocity *= new Vector2(1, 0);
+            target.playerMovement.AddNewForce(explodeDirection * explodeForce);
             target.playerMovement.GiveJump();
 
             //damage detected on the client rather than on the server to ensure that damage and explosion always coincide

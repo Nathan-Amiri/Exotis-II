@@ -48,7 +48,7 @@ public class MapManager : NetworkBehaviour
             return;
         }
 
-        currentMap = 3;//availableMaps[Random.Range(0, availableMaps.Count)];
+        currentMap = 3;// availableMaps[Random.Range(0, availableMaps.Count)];
 
         tilemaps[currentMap].color = mapColors[currentMap];
 

@@ -126,6 +126,9 @@ public class Player : NetworkBehaviour
         NewGame();
 
         startUpdate = true;
+
+        transform.position = Vector3.zero;
+        playerMovement.rb.velocity = Vector3.zero;
     }
 
 
