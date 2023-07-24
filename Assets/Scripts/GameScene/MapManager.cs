@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using FishNet.Object;
-using FishNet;
+using System;
 
 public class MapManager : NetworkBehaviour
 {
@@ -15,8 +15,22 @@ public class MapManager : NetworkBehaviour
     public List<GameObject> maps = new();
     public List<Tilemap> tilemaps = new();
 
-    private readonly List<int> usedMaps = new();
+    public Vector2[][] mapSpawnPositions = new Vector2[][]
+    {
+        //player 1 position, player 2 position, player 3 position, player 4 position
+        new Vector2[] { new(-5.5f, -2.5f), new(5.5f, -2.5f), new(-7, 3), new(7, 3) }, //water map
+        new Vector2[] { new(-6, -2.5f), new(6, -2.5f), new(-7.5f, 4), new(7.5f, 4) }, //flame map
+        new Vector2[] { new(-2.5f, -2), new(2.5f, -2), new(-6.5f, 4.5f), new(6.5f, 4.5f) }, //wind map
+        new Vector2[] { new(-8.5f, -.5f), new(8.5f, -.5f), new(-2.5f, 4), new(2.5f, 4) }, //lightning map
+        new Vector2[] { new(-4.5f, 2.5f), new(4.5f, 2.5f), new(-4.5f, -3.5f), new(4.5f, -3.5f) }, //frost map
+        new Vector2[] { new(-3, -.5f), new(3, -.5f), new(-8, -3.5f), new(8, -3.5f) } //venom map
+    };
+
+    private int roundNumber = -1;
     private int currentMap = -1; //-1 = null
+
+    private bool hasRandomized;
+    private int[] rotationOrder = new int[6] { 0, 1, 2, 3, 4, 5 };
 
     private readonly Color32[] mapColors = new Color32[6]
     {
@@ -28,33 +42,65 @@ public class MapManager : NetworkBehaviour
         new Color32(23, 195, 0, 255) //venom
     };
 
-    public void LoadNewMap() //called by Player
+    [NonSerialized] public Player player; //set by Player. This client's owned player
+
+    [ServerRpc (RequireOwnership = false)]
+    private void RpcRandomizeOrder()
     {
-        if (currentMap != -1)
+        for (int i = 0; i < rotationOrder.Length; i++)
         {
-            maps[currentMap].SetActive(false);
-            usedMaps.Add(currentMap);
+            int tmp = rotationOrder[i];
+            int random = UnityEngine.Random.Range(0, rotationOrder.Length);
+            rotationOrder[i] = rotationOrder[random];
+            rotationOrder[random] = tmp;
         }
 
-        List<int> availableMaps = new();
-        for (int i = 0; i < maps.Count; i++)
-            availableMaps.Add(i);
-        foreach (int i in usedMaps)
-            availableMaps.Remove(i);
+        RpcSendOrder(rotationOrder);
+        hasRandomized = true;
+        LoadNewMap();
+    }
 
-        if (availableMaps.Count == 0)
+    [ObserversRpc (BufferLast = true)]
+    private void RpcSendOrder(int[] newOrder)
+    {
+        if (IsServer) return;
+
+        rotationOrder = newOrder;
+        hasRandomized = true;
+        LoadNewMap();
+    }
+
+    public void LoadNewMap() //called by Player
+    {
+        if (!hasRandomized)
         {
-            Debug.LogError("No available maps!");
+            if (IsServer)
+                RpcRandomizeOrder(); //get maporder from server
+
             return;
         }
 
-        currentMap = 3;// availableMaps[Random.Range(0, availableMaps.Count)];
+
+        if (currentMap != -1)
+            maps[currentMap].SetActive(false);
+
+        roundNumber += 1;
+        if (roundNumber == maps.Count)
+        {
+            EndGame();
+            return;
+        }
+        currentMap = rotationOrder[roundNumber];
+
 
         tilemaps[currentMap].color = mapColors[currentMap];
 
         maps[currentMap].SetActive(true);
 
-        if (InstanceFinder.IsServer)
+        player.SpawnPlayerOnMap(mapSpawnPositions[currentMap]);
+
+
+        if (IsServer)
         {
             if (currentMap == 0)
             {
@@ -81,5 +127,10 @@ public class MapManager : NetworkBehaviour
                     ServerManager.Spawn(element.gameObject);
                 }
         }
+    }
+
+    private void EndGame()
+    {
+
     }
 }

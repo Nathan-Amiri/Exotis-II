@@ -22,9 +22,9 @@ public class PlayerMovement : NetworkBehaviour
     [NonSerialized] public bool isGrounded; //set by GroundCheck, read by VenomAbilities
 
     [NonSerialized] public bool isStunned; //stunned = cannot act. read by player
-    private int stunStrength;
+    private int stunStrength = 1; //players start stunned
     private bool isFrozen; //freeze = frozen in place
-    private int freezeStrength;
+    private int freezeStrength = 1; //players start frozen
 
     private bool hasJump;
 
@@ -120,7 +120,8 @@ public class PlayerMovement : NetworkBehaviour
 
     private void UpdateGravityScale()
     {
-        rb.gravityScale = Mathf.Pow(jumpForce * speedIncrease, 2) / (2 * -Physics2D.gravity.y * jumpHeight); //variation of 'Velocity = sqrt(2 * Jump Height * Gravity)'
+        //variation of 'Velocity = sqrt(2 * Jump Height * Gravity)'
+        rb.gravityScale = Mathf.Pow(jumpForce * speedIncrease, 2) / (2 * -Physics2D.gravity.y * jumpHeight);
     }
 
     private IEnumerator JumpBuffer()
@@ -209,5 +210,17 @@ public class PlayerMovement : NetworkBehaviour
     {
         environmentalVelocity += force.x;
         rb.velocity += new Vector2(0, force.y);
+    }
+
+    public void NewRound()
+    {
+        stunStrength = 0;
+        ToggleStun(true);
+
+        freezeStrength = 0;
+        ToggleFreeze(true);
+
+        weightlessStrength = 1;
+        ToggleGravity(true);
     }
 }

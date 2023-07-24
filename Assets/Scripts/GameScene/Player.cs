@@ -22,7 +22,6 @@ public class Player : NetworkBehaviour
     [NonSerialized] public Animator countdownAnim;
     [NonSerialized] public TMP_Text countdownText;
     [NonSerialized] public TMP_Text winnerText;
-    [NonSerialized] public PlayAgain playAgain;
     [NonSerialized] public MapManager mapManager;
     [NonSerialized] public PlayerHUD playerHUD;
 
@@ -99,6 +98,8 @@ public class Player : NetworkBehaviour
             RpcSpawnSpell(ClientManager.Connection, charSelectInfo[5], 1);
             RpcSpawnSpell(ClientManager.Connection, charSelectInfo[6], 2);
             RpcSpawnSpell(ClientManager.Connection, charSelectInfo[7], 3);
+
+            mapManager.player = this;
         }
 
         shellColor = (Color32)GetType().GetField(charSelectInfo[1]).GetValue(this);
@@ -128,9 +129,7 @@ public class Player : NetworkBehaviour
         startUpdate = true;
 
         transform.position = Vector3.zero;
-        playerMovement.rb.velocity = Vector3.zero;
     }
-
 
     [ServerRpc]
     private void RpcSpawnSpell(NetworkConnection owner, string spellName, int spellNumber)
@@ -173,29 +172,20 @@ public class Player : NetworkBehaviour
         }
     }
 
-    public void NewGame() //run by PlayAgain
+    public void NewGame() //run on all players on all clients
     {
         missileAmount = 3;
         StartCoroutine(UnlockPlayers());
 
         if (IsOwner)
         {
-            winnerText.text = "";
+            mapManager.LoadNewMap();
 
-            if (GameManager.playerNumber == 1)
-                transform.position = new Vector2(-5.5f, -2.5f);
-            else if (GameManager.playerNumber == 2)
-                transform.position = new Vector2(5.5f, -2.5f);
-            else if (GameManager.playerNumber == 3)
-                transform.position = new Vector2(-7.5f, 3);
-            else if (GameManager.playerNumber == 4)
-                transform.position = new Vector2(7.5f, 3f);
+            winnerText.text = "";
 
             StartCoroutine(Countdown());
 
-            playerMovement.ToggleStun(true);
-
-            mapManager.LoadNewMap();
+            playerMovement.NewRound();
         }
 
         if (IsServer)
@@ -214,6 +204,12 @@ public class Player : NetworkBehaviour
                     alivePlayers++;
         }
     }
+
+    public void SpawnPlayerOnMap(Vector2[] currentMapSpawnPositions) //called by MapManager after new map has been loaded
+    {
+        transform.position = currentMapSpawnPositions[GameManager.playerNumber - 1];
+    }
+
 
     private IEnumerator Countdown()
     {
@@ -234,7 +230,10 @@ public class Player : NetworkBehaviour
         if (IsServer)
             isImmune = false;
         if (IsOwner)
+        {
             playerMovement.ToggleStun(false);
+            playerMovement.ToggleFreeze(false);
+        }
     }
 
     private void Update()
@@ -371,6 +370,7 @@ public class Player : NetworkBehaviour
     {
         transform.position = new Vector2(50, 0);
         playerMovement.ToggleStun(true);
+        playerMovement.ToggleFreeze(true);
     }
 
     [Server]
@@ -392,14 +392,13 @@ public class Player : NetworkBehaviour
     }
 
     [ObserversRpc]
-    private void RpcBeginReset(bool isWinner) //called on all player classes on all clients
+    private void RpcBeginReset(bool isWinner) //run on all player classes on all clients
     {
         StartCoroutine(SpellGameEnd());
+        StartCoroutine(WaitNewgame());
 
         if (isWinner)
             winnerText.text = name + " Wins!";
-        if (IsOwner)
-            StartCoroutine(PlayAgainScreen());
     }
     private IEnumerator SpellGameEnd()
     {
@@ -409,16 +408,13 @@ public class Player : NetworkBehaviour
         spell3.GameEnd();
     }
 
-    private IEnumerator PlayAgainScreen()
+    private IEnumerator WaitNewgame() //run on all player classes on all clients
     {
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(2.5f);
 
-        Color32[] lightAndDark = new Color32[2];
-        lightAndDark[0] = shellColor;
-        lightAndDark[1] = coreColor;
-
-        playAgain.NewPlayAgain(this, lightAndDark);
+        NewGame();
     }
+
 
     private const float maxPassedTime = 0.3f; //never change this!
 
