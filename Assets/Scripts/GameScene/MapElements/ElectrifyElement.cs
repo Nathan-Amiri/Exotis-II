@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ElectrifyElement : NetworkBehaviour
+public class ElectrifyElement : NetworkBehaviour, INetworkedElement
 {
     public SpriteRenderer sr;
     public Rigidbody2D anchorRB;
@@ -18,6 +18,12 @@ public class ElectrifyElement : NetworkBehaviour
 
     private Player swingingPlayer; //this client's player, if they're swinging on this tether
     private readonly Dictionary<LineRenderer, Player> enemySwingingPlayers = new(); //enemy players swinging on this tether
+
+
+    public int MapNumber() { return 3; }
+    public GameObject GetGameObject() { return gameObject; }
+    public void OnSpawn() { } //not necessary in this class--start is faster
+
 
     private void Start()
     {

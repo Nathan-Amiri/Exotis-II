@@ -6,6 +6,7 @@ using FishNet.Object.Synchronizing;
 using FishNet.Connection;
 using TMPro;
 using System;
+using System.Runtime.CompilerServices;
 
 public class Player : NetworkBehaviour
 {
@@ -73,26 +74,42 @@ public class Player : NetworkBehaviour
 
     public static int alivePlayers = 0; //number of players not eliminated. used by server only
     [NonSerialized] public bool isEliminated; //server only, read by Recharge
-    public delegate void OnGameEndAction();
-    public static event OnGameEndAction OnGameEnd;
+    public delegate void OnRoundEndAction();
+    public static event OnRoundEndAction OnRoundEnd;
 
     private void OnEnable()
     {
-        OnGameEnd += GameEnd;
-        PlayAgain.OnPlayAgain += NewGame;
+        OnRoundEnd += RoundEnd;
+        GameManager.OnNewRound += NewRound;
+        GameManager.OnGameEnd += GameEnd;
     }
     private void OnDisable()
     {
-        OnGameEnd -= GameEnd;
-        PlayAgain.OnPlayAgain -= NewGame;
+        OnRoundEnd -= RoundEnd;
+        GameManager.OnNewRound -= NewRound;
+        GameManager.OnGameEnd -= GameEnd;
     }
 
     public void OnSpawn()
     {
         name = charSelectInfo[0];
 
+        shellColor = (Color32)GetType().GetField(charSelectInfo[1]).GetValue(this);
+        coreColor = (Color32)GetType().GetField(charSelectInfo[2]).GetValue(this);
+
         if (IsOwner)
         {
+            PlayerPrefs.SetString("Username", "azeTrom");
+
+            PlayerScoreInfo newInfo = new()
+            {
+                shellColor = shellColor,
+                coreColor = coreColor,
+                username = PlayerPrefs.GetString("Username")
+            };
+            gameManager.RpcServerAddScoreInfo(newInfo, GameManager.playerNumber);
+
+
             GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
 
             RpcSpawnSpell(ClientManager.Connection, charSelectInfo[5], 1);
@@ -102,8 +119,6 @@ public class Player : NetworkBehaviour
             mapManager.player = this;
         }
 
-        shellColor = (Color32)GetType().GetField(charSelectInfo[1]).GetValue(this);
-        coreColor = (Color32)GetType().GetField(charSelectInfo[2]).GetValue(this);
 
         if (charSelectInfo[3] == "health")
             maxHealth += 3;
@@ -124,11 +139,9 @@ public class Player : NetworkBehaviour
         missileFillSpeed = 1;
         maxMissileBarWidth = playerHUD.missileBarPivot.transform.localScale.x;
 
-        NewGame();
+        NewRound();
 
         startUpdate = true;
-
-        transform.position = Vector3.zero;
     }
 
     [ServerRpc]
@@ -172,7 +185,7 @@ public class Player : NetworkBehaviour
         }
     }
 
-    public void NewGame() //run on all players on all clients
+    public void NewRound() //run on all players on all clients
     {
         missileAmount = 3;
         StartCoroutine(UnlockPlayers());
@@ -358,6 +371,8 @@ public class Player : NetworkBehaviour
         }
     }
 
+
+
     [Server]
     private void Eliminate()
     {
@@ -379,11 +394,11 @@ public class Player : NetworkBehaviour
         alivePlayers -= 1;
 
         if (alivePlayers == 1)
-            OnGameEnd?.Invoke();
+            OnRoundEnd?.Invoke();
     }
 
     [Server]
-    private void GameEnd() //called on server for all player classes
+    private void RoundEnd() //called on server for all player classes
     {
         if (!isEliminated)
             isImmune = true;
@@ -395,11 +410,15 @@ public class Player : NetworkBehaviour
     private void RpcBeginReset(bool isWinner) //run on all player classes on all clients
     {
         StartCoroutine(SpellGameEnd());
-        StartCoroutine(WaitNewgame());
-
         if (isWinner)
+        {
             winnerText.text = name + " Wins!";
+
+            if (IsOwner)
+                StartCoroutine(RoundEndDelay());
+        }
     }
+
     private IEnumerator SpellGameEnd()
     {
         yield return new WaitForSeconds(2);
@@ -408,11 +427,21 @@ public class Player : NetworkBehaviour
         spell3.GameEnd();
     }
 
-    private IEnumerator WaitNewgame() //run on all player classes on all clients
+    private IEnumerator RoundEndDelay() //run on winning client's owned player
     {
         yield return new WaitForSeconds(2.5f);
 
-        NewGame();
+        gameManager.RpcServerRoundWon(GameManager.playerNumber);
+        //if game is over, final scores will be invoked by gamemanager. Else, NewGame will be invoked instead
+    }
+
+    private void GameEnd(GameManager gm) //invoked by gamemanager on all players on all clients
+    {
+        if (IsOwner)
+        {
+            playerMovement.ToggleFreeze(true);
+            playerMovement.ToggleStun(true);
+        }
     }
 
 

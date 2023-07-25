@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TidalwaveElement : NetworkBehaviour
+public class TidalwaveElement : NetworkBehaviour, INetworkedElement
 {
     public Animator anim;
     public BoxCollider2D boxCollider;
@@ -20,6 +20,8 @@ public class TidalwaveElement : NetworkBehaviour
         new Vector2(-1, -1)
     };
 
+    public int MapNumber() { return 0; }
+    public GameObject GetGameObject() { return gameObject; }
     public void OnSpawn() //called by MapManager
     {
         if (!IsServer) return;

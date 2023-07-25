@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IcybreathElement : NetworkBehaviour
+public class IcybreathElement : NetworkBehaviour, INetworkedElement
 {
     private readonly Vector2[] spawnPositions = new Vector2[4]
     {
@@ -16,6 +16,10 @@ public class IcybreathElement : NetworkBehaviour
     private readonly float[] spawnZRotations = { 45, -45, 135, 225 };
 
     private bool icyGrow;
+
+
+    public int MapNumber() { return 4; }
+    public GameObject GetGameObject() { return gameObject; }
 
     public void OnSpawn() //called by MapManager
     {

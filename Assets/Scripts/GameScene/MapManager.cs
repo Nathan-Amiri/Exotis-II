@@ -7,15 +7,20 @@ using System;
 
 public class MapManager : NetworkBehaviour
 {
-    public TidalwaveElement tidalwaveElement;
-    public List<ElectrifyElement> electrifyElements;
-    public IcybreathElement icybreathElement;
-    public List<InfectElement> infectElements;
+    public FinalScores finalScores;
+
+    public List<GameObject> networkedElementGameObjects = new();
 
     public List<GameObject> maps = new();
     public List<Tilemap> tilemaps = new();
 
-    public Vector2[][] mapSpawnPositions = new Vector2[][]
+
+    [NonSerialized] public Player player; //set by Player. This client's owned player
+
+
+    private readonly List<INetworkedElement> networkedElements = new();
+
+    private readonly Vector2[][] mapSpawnPositions = new Vector2[][]
     {
         //player 1 position, player 2 position, player 3 position, player 4 position
         new Vector2[] { new(-5.5f, -2.5f), new(5.5f, -2.5f), new(-7, 3), new(7, 3) }, //water map
@@ -25,12 +30,6 @@ public class MapManager : NetworkBehaviour
         new Vector2[] { new(-4.5f, 2.5f), new(4.5f, 2.5f), new(-4.5f, -3.5f), new(4.5f, -3.5f) }, //frost map
         new Vector2[] { new(-3, -.5f), new(3, -.5f), new(-8, -3.5f), new(8, -3.5f) } //venom map
     };
-
-    private int roundNumber = -1;
-    private int currentMap = -1; //-1 = null
-
-    private bool hasRandomized;
-    private int[] rotationOrder = new int[6] { 0, 1, 2, 3, 4, 5 };
 
     private readonly Color32[] mapColors = new Color32[6]
     {
@@ -42,7 +41,18 @@ public class MapManager : NetworkBehaviour
         new Color32(23, 195, 0, 255) //venom
     };
 
-    [NonSerialized] public Player player; //set by Player. This client's owned player
+    private int roundNumber = -1;
+    private int currentMap = -1; //-1 = null
+
+    private bool hasRandomized;
+    private int[] rotationOrder = new int[6] { 0, 1, 2, 3, 4, 5 };
+
+    private void Awake()
+    {
+        //can't serialize interfaces, so they must be found and added manually
+        foreach (GameObject tmp in networkedElementGameObjects)
+            networkedElements.Add(tmp.GetComponent<INetworkedElement>());
+    }
 
     [ServerRpc (RequireOwnership = false)]
     private void RpcRandomizeOrder()
@@ -84,12 +94,13 @@ public class MapManager : NetworkBehaviour
         if (currentMap != -1)
             maps[currentMap].SetActive(false);
 
+        if (IsServer)
+            foreach (INetworkedElement element in networkedElements)
+                if (element.MapNumber() == currentMap)
+                    ServerManager.Despawn(element.GetGameObject());
+
+
         roundNumber += 1;
-        if (roundNumber == maps.Count)
-        {
-            EndGame();
-            return;
-        }
         currentMap = rotationOrder[roundNumber];
 
 
@@ -101,36 +112,14 @@ public class MapManager : NetworkBehaviour
 
 
         if (IsServer)
-        {
-            if (currentMap == 0)
+            foreach (INetworkedElement element in networkedElements)
             {
-                tidalwaveElement.gameObject.SetActive(true);
-                ServerManager.Spawn(tidalwaveElement.gameObject);
-                tidalwaveElement.OnSpawn();
-            }
-            else if (currentMap == 3)
-                foreach (ElectrifyElement element in electrifyElements)
-                {
-                    element.gameObject.SetActive(true);
-                    ServerManager.Spawn(element.gameObject);
-                }
-            else if (currentMap == 4)
-            {
-                icybreathElement.gameObject.SetActive(true);
-                ServerManager.Spawn(icybreathElement.gameObject);
-                icybreathElement.OnSpawn();
-            }
-            else if (currentMap == 5)
-                foreach (InfectElement element in infectElements)
-                {
-                    element.gameObject.SetActive(true);
-                    ServerManager.Spawn(element.gameObject);
-                }
-        }
-    }
+                if (element.MapNumber() != currentMap)
+                    continue;
 
-    private void EndGame()
-    {
-
+                element.GetGameObject().SetActive(true);
+                ServerManager.Spawn(element.GetGameObject());
+                element.OnSpawn();
+            }
     }
 }

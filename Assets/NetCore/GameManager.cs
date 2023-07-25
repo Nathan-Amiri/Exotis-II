@@ -6,6 +6,7 @@ using FishNet.Object;
 using FishNet.Connection;
 using FishNet.Managing.Scened;
 using FishNet.Transporting;
+using System;
 
 public class GameManager : NetworkBehaviour
 {
@@ -14,7 +15,7 @@ public class GameManager : NetworkBehaviour
     //general GameManager code:
 
     //server variables:
-    [HideInInspector] public int[] playerNumbers { get; private set; }
+    public int[] playerNumbers { get; private set; }
     private readonly int[] playerIDs = new int[4];
     private int sceneChangingPlayers;
     private int sceneLoadedPlayers;
@@ -203,10 +204,49 @@ public class GameManager : NetworkBehaviour
     //the scene where clients first connect, and which is loaded upon disconnecting
     private readonly string connectionScene = "CharSelect";
 
-    [HideInInspector] public string[] charSelectInfo = new string[8]; //filled by CharSelect, accessed by Setup
+    [NonSerialized] public string[] charSelectInfo = new string[8]; //filled by CharSelect, accessed by Setup
+
+    [NonSerialized] public PlayerScoreInfo[] playerScoreInfos = new PlayerScoreInfo[4];
+
+    private int roundNumber = 0;
+
+    public delegate void OnGameEndAction(GameManager gm);
+    public static event OnGameEndAction OnGameEnd;
+
+    public delegate void OnNewRoundAction();
+    public static event OnNewRoundAction OnNewRound;
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RpcServerAddScoreInfo(PlayerScoreInfo newInfo, int player)
+    {
+        RpcClientAddScoreInfo(newInfo, player);
+    }
+    [ObserversRpc (BufferLast = true)]
+    private void RpcClientAddScoreInfo(PlayerScoreInfo newInfo, int player)
+    {
+        playerScoreInfos[player - 1] = newInfo;
+    }
 
     private void UpdateAlivePlayers() //run on server
     {
         Player.alivePlayers -= 1;
+    }
+
+    [ServerRpc (RequireOwnership = false)]
+    public void RpcServerRoundWon(int winner)
+    {
+        roundNumber += 1;
+        RpcClientRoundWon(winner, roundNumber == 5);
+    }
+    [ObserversRpc]
+    private void RpcClientRoundWon(int winner, bool gameEnded)
+    {
+        playerScoreInfos[winner - 1].score += 1;
+
+        //invoke after updating score
+        if (gameEnded)
+            OnGameEnd?.Invoke(this); //tell FinalScore the game is over
+        else
+            OnNewRound?.Invoke(); //tell player to start a new round
     }
 }

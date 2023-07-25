@@ -3,8 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InfectElement : NetworkBehaviour
+public class InfectElement : NetworkBehaviour, INetworkedElement
 {
+    public int MapNumber() { return 5; }
+    public GameObject GetGameObject() { return gameObject; }
+    public void OnSpawn() { } //not necessary in this class
+
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (col.CompareTag("Player"))
