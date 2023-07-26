@@ -9,6 +9,8 @@ public class MapManager : NetworkBehaviour
 {
     public FinalScores finalScores;
 
+    public List<BackgroundColor> backgroundColors = new();
+
     public List<GameObject> networkedElementGameObjects = new();
 
     public List<GameObject> maps = new();
@@ -121,5 +123,9 @@ public class MapManager : NetworkBehaviour
                 ServerManager.Spawn(element.GetGameObject());
                 element.OnSpawn();
             }
+
+
+        foreach (BackgroundColor backgroundColor in backgroundColors)
+            backgroundColor.ChangeColor(currentMap);
     }
 }

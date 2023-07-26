@@ -45,6 +45,9 @@ TagManager:
   - name: Background
     uniqueID: 3974340661
     locked: 0
+  - name: TileBack
+    uniqueID: 1050386331
+    locked: 0
   - name: DeepSpellShell
     uniqueID: 425647485
     locked: 0

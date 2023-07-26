@@ -76,6 +76,10 @@ public class PlayerMovement : NetworkBehaviour
             float moveForce = moveSpeed * speedIncrease * moveInput;
             rb.velocity = new Vector2(moveForce + environmentalVelocity, rb.velocity.y);
 
+            //cancel x environmental velocity if overcome by x movement
+            if (environmentalVelocity * rb.velocity.x < 0) //if the directions were opposite
+                environmentalVelocity = 0;
+
             //x environmental drag
             environmentalVelocity *= 1 - drag * Time.fixedDeltaTime;
         }
