@@ -37,7 +37,7 @@ public class Poisoncloud : SpellBase
     {
         if (!col.CompareTag("Player"))
             return;
-
+        Debug.Log(col.name);
         if (!IsOwner && col.gameObject == player.gameObject)
         {
             player.spriteRenderer.enabled = false;

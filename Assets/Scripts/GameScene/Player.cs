@@ -27,11 +27,11 @@ public class Player : NetworkBehaviour
     [NonSerialized] public PlayerHUD playerHUD;
 
     //read by index
-    [NonSerialized] public Color32 frost = new(140, 228, 232, 255);
+    [NonSerialized] public Color32 water = new(35, 182, 255, 255);
+    [NonSerialized] public Color32 flame = new(255, 122, 0, 255);
     [NonSerialized] public Color32 wind = new(205, 205, 255, 255);
     [NonSerialized] public Color32 lightning = new(255, 236, 0, 255);
-    [NonSerialized] public Color32 flame = new(255, 122, 0, 255);
-    [NonSerialized] public Color32 water = new(35, 182, 255, 255);
+    [NonSerialized] public Color32 frost = new(140, 228, 232, 255);
     [NonSerialized] public Color32 venom = new(23, 195, 0, 255);
 
     //set by index, read by spellbase

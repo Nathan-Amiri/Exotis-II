@@ -8,7 +8,7 @@ public class TidalwaveElement : NetworkBehaviour, INetworkedElement
     public Animator anim;
     public BoxCollider2D boxCollider;
 
-    private readonly Vector2 spawnPosition = new(4.375f, 1.625f);
+    private readonly Vector2 spawnPosition = new(4.625f, 1.5f);
 
     private readonly Dictionary<Player, Coroutine> damagingCoroutines = new(); //server only
 
@@ -50,8 +50,8 @@ public class TidalwaveElement : NetworkBehaviour, INetworkedElement
     [ObserversRpc]
     private void RpcSpawnWave(Vector2 zone)
     {
-        //if zone is higher, use offset to get the new position (the y center of the map is not 0)
-        Vector2 newSpawnPosition = zone.y == -1 ? spawnPosition : spawnPosition + new Vector2(0, 1);
+        //if zone is higher, offset position (the y center of the map is not 0)
+        Vector2 newSpawnPosition = zone.y == -1 ? spawnPosition : spawnPosition + new Vector2(0, 1.5f);
         transform.position = newSpawnPosition * zone;
         anim.SetTrigger("FadeIn");
     }
