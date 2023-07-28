@@ -6,7 +6,6 @@ using FishNet.Object.Synchronizing;
 using FishNet.Connection;
 using TMPro;
 using System;
-using System.Runtime.CompilerServices;
 
 public class Player : NetworkBehaviour
 {
@@ -270,7 +269,8 @@ public class Player : NetworkBehaviour
 
         mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        if (Input.GetButtonDown("Missile") && IsClient && !playerMovement.isStunned && missileAmount >= 1 && !onMissileCooldown)
+        bool missileInput = Input.GetKeyDown(InputManager.InputIndex["Fire"]);
+        if (missileInput && IsClient && !playerMovement.isStunned && missileAmount >= 1 && !onMissileCooldown)
         {
             StartCoroutine(MissileCooldown());
             Vector2 fireDirection = (mousePosition - new Vector2(transform.position.x, transform.position.y)).normalized;
@@ -551,9 +551,9 @@ public class Player : NetworkBehaviour
     {
         if (playerMovement.isStunned) return;
 
-        if (Input.GetButtonDown("Spell1")) SelectSpell(1);
-        if (Input.GetButtonDown("Spell2")) SelectSpell(2);
-        if (Input.GetButtonDown("Spell3")) SelectSpell(3);
+        if (Input.GetKeyDown(InputManager.InputIndex["Spell1"])) SelectSpell(1);
+        if (Input.GetKeyDown(InputManager.InputIndex["Spell2"])) SelectSpell(2);
+        if (Input.GetKeyDown(InputManager.InputIndex["Spell3"])) SelectSpell(3);
     }
 
     private void SelectSpell(int spellNumber)

@@ -129,11 +129,11 @@ public class ElectrifyElement : NetworkBehaviour, INetworkedElement
         if (swingingPlayer != null)
         {
             //swing
-            float input = Input.GetAxisRaw("Horizontal");
+            float input = swingingPlayer.playerMovement.moveInput;
             Vector2 direction = -1 * Vector2.Perpendicular(anchorRB.transform.position - swingingPlayer.transform.position).normalized;
             swingingPlayer.playerMovement.rb.velocity = input * swingSpeed * direction;
 
-            if (Input.GetButtonDown("Jump"))
+            if (swingingPlayer.playerMovement.jumpInputDown)
             {
                 swingingPlayer.playerMovement.AddNewForce(input * endBoost * direction);
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -6,41 +7,16 @@ using UnityEngine.UI;
 
 public class SpellSelect : MonoBehaviour
 {
-    public CharSelect charSelect; //assigned in inspector
+    //assigned in inspector
+    public CharSelect charSelect;
+    public Button clearButton;
+    public List<GameObject> numbers = new();
+    public List<Button> buttons = new();
+    public List<GameObject> boxes = new();
+    public List<TMP_Text> texts = new();
 
-
-    private readonly Button[] buttons = new Button[6];
-    public Button button0; //^
-    public Button button1; //^
-    public Button button2; //^
-    public Button button3; //^
-    public Button button4; //^
-    public Button button5; //^
-    public Button clearButton; //^
-
-    private readonly GameObject[] boxes = new GameObject[6];
-    public GameObject box0; //^
-    public GameObject box1; //^
-    public GameObject box2; //^
-    public GameObject box3; //^
-    public GameObject box4; //^
-    public GameObject box5; //^
-
-    private readonly Image[] images = new Image[6];
-    public Image image0; //^
-    public Image image1; //^
-    public Image image2; //^
-    public Image image3; //^
-    public Image image4; //^
-    public Image image5; //^
-
-    private readonly TMP_Text[] texts = new TMP_Text[6];
-    public TMP_Text text0; //^
-    public TMP_Text text1; //^
-    public TMP_Text text2; //^
-    public TMP_Text text3; //^
-    public TMP_Text text4; //^
-    public TMP_Text text5; //^
+    private List<string> selectedAbilities = new();
+    private List<int> spellNumbers = new(); //used in charselect for importing loadout
 
     private readonly string[] waterAbilities = new string[] { "Flow", "Distortion", "Tidalwave" };
     private readonly string[] flameAbilities = new string[] { "Erupt", "Singe", "Heatup" };
@@ -49,39 +25,27 @@ public class SpellSelect : MonoBehaviour
     private readonly string[] frostAbilities = new string[] { "Icybreath", "Hail", "Freeze" };
     private readonly string[] venomAbilities = new string[] { "Fangedbite", "Infect", "Poisoncloud" };
 
-    private List<string> selectedAbilities = new();
-    private List<int> spellNumbers = new(); //used in charselect for importing loadout
-
-    private void Awake()
+    [NonSerialized] public Dictionary<string, string> descriptions = new() //read by SpellButton
     {
-        buttons[0] = button0;
-        buttons[1] = button1;
-        buttons[2] = button2;
-        buttons[3] = button3;
-        buttons[4] = button4;
-        buttons[5] = button5;
-
-        boxes[0] = box0;
-        boxes[1] = box1;
-        boxes[2] = box2;
-        boxes[3] = box3;
-        boxes[4] = box4;
-        boxes[5] = box5;
-
-        images[0] = image0;
-        images[1] = image1;
-        images[2] = image2;
-        images[3] = image3;
-        images[4] = image4;
-        images[5] = image5;
-
-        texts[0] = text0;
-        texts[1] = text1;
-        texts[2] = text2;
-        texts[3] = text3;
-        texts[4] = text4;
-        texts[5] = text5;
-    }
+        ["Flow"] = "Deal low damage to nearby enemies. If you hit one, heal yourself\nCooldown: 4",
+        ["Distortion"] = "Briefly turn invisible, summoning a decoy in your place\nCooldown: 8",
+        ["Tidalwave"] = "Summon a giant wave that surges forward, dealing high damage\nCooldown: 12",
+        ["Erupt"] = "Launch three fireballs that\ndeal high damage\nCooldown: 4",
+        ["Singe"] = "Throw out a fireball which deals high damage and, when touched, blasts you away\nCooldown: 8",
+        ["Heatup"] = "Channel to temporarily increase power and range\nCooldown: 12",
+        ["Swoop"] = "Quickly soar through the air, using your cursor to steer\nCooldown: 8",
+        ["Takeflight"] = "Temporarily gain the\nability to fly. Recast to go up, release to go down\nCooldown: 12",
+        ["Whirlwind"] = "Summon a powerful wind that blows you and/or enemies away\nCooldown: 4",
+        ["Electrify"] = "Uses static electricity to tether yourself to nearby terrain. Jump to release the tether\nCooldown: 4",
+        ["Blink"] = "Teleport a short distance away, leaving behind a zone which deals low damage\nCooldown: 8",
+        ["Recharge"] = "Channel to heal yourself and temporarily increase your speed\nCooldown: 12",
+        ["Icybreath"] = "Summon a long beam\nof ice as terrain\nCooldown: 12",
+        ["Hail"] = "Create a storm cloud, which rains down hail after a delay, dealing high damage\nCooldown: 4",
+        ["Freeze"] = "Create an icy zone. While inside, your speed is\nincreased and enemies are drastically slowed\nCooldown: 8",
+        ["Fangedbite"] = "Summon a set of jaws which snap forward, dealing high damage\nCooldown: 4",
+        ["Infect"] = "Your next 3 shots that hit terrain explode, spawning a poison cloud that deals low damage\nCooldown: 12",
+        ["Poisoncloud"] = "Summon a toxic cloud that deals high damage and hides you from enemies. Must be cast while on the ground\nCooldown: 8"
+    };
 
     public void ElementalSelected(string element1, string element2, Color32[] elementColors)
     {
@@ -95,8 +59,8 @@ public class SpellSelect : MonoBehaviour
             texts[i].text = element1Abilities[i];
             texts[i + 3].text = element2Abilities[i];
 
-            images[i].color = elementColors[0];
-            images[i + 3].color = elementColors[1];
+            buttons[i].image.color = elementColors[0];
+            buttons[i + 3].image.color = elementColors[1];
         }
     }
 
@@ -131,17 +95,20 @@ public class SpellSelect : MonoBehaviour
 
         clearButton.interactable = true;
 
+        buttons[spellNumber].interactable = false;
+
+        GameObject number = numbers[selectedAbilities.Count - 1];
+        float buttonY = buttons[spellNumber].transform.position.y;
+        number.transform.position = new Vector2(number.transform.position.x, buttonY);
+        number.SetActive(true);
+
         if (selectedAbilities.Count == 3)
         {
             charSelect.AbilitiesReady(selectedAbilities.ToArray(), spellNumbers.ToArray());
 
             foreach (Button button in buttons)
                 button.interactable = false;
-
-            return;
         }
-
-        buttons[spellNumber].interactable = false;
     }
 
     public void Clear() //called by clear button (and ElementalSelected)
@@ -151,6 +118,9 @@ public class SpellSelect : MonoBehaviour
 
         foreach (GameObject box in boxes)
             box.SetActive(false);
+
+        foreach (GameObject number in numbers)
+            number.SetActive(false);
 
         selectedAbilities = new();
         spellNumbers = new();

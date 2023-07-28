@@ -38,7 +38,7 @@ public class TakeFlight : SpellBase
 
         if (flying)
         {
-            int up = Input.GetButton("Jump") ? 1 : -1;
+            int up = player.playerMovement.jumpInput ? 1 : -1;
             player.playerMovement.rb.velocity = new Vector2(player.playerMovement.rb.velocity.x, 3 * up * player.playerMovement.speedIncrease);
         }
     }

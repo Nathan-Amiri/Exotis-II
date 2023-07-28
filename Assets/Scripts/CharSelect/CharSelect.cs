@@ -60,6 +60,8 @@ public class CharSelect : NetworkBehaviour
     private readonly string[] claimedElementals = new string[4]; //server only
     private readonly bool[] readyPlayers = new bool[4]; //server only
 
+    private bool tutorialOn;
+
 
     private void Awake()
     {
@@ -131,6 +133,9 @@ public class CharSelect : NetworkBehaviour
 
     public void SelectElemental(string newElemental, string newShellElement, string newCoreElement, string newStat1, string newStat2)
     {
+        if (tutorialOn)
+            error.text = "Choose three spells for your character. When you're finished, click Ready!";
+
         shellElement = newShellElement;
         coreElement = newCoreElement;
         stat1 = newStat1;
@@ -153,8 +158,8 @@ public class CharSelect : NetworkBehaviour
 
         highlight1.SetActive(true);
         highlight2.SetActive(true);
-        highlight1.transform.localPosition = new Vector2(167, stat1 == "power" ? -220 : -285);
-        highlight2.transform.localPosition = new Vector2(167, stat2 == "speed" ? -355 : -425);
+        highlight1.transform.localPosition = new Vector2(0, stat1 == "power" ? 105 : 35);
+        highlight2.transform.localPosition = new Vector2(0, stat2 == "speed" ? -105 : -35);
 
         spellSelect.ElementalSelected(shellElement, coreElement, currentColors);
 
@@ -299,7 +304,8 @@ public class CharSelect : NetworkBehaviour
         }
         else
         {
-            Debug.Log("no loadout found");
+            tutorialOn = true;
+            error.text = "Choose your character!";
             return;
         }
 

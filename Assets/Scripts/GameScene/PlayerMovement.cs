@@ -34,9 +34,9 @@ public class PlayerMovement : NetworkBehaviour
 
     public Rigidbody2D rb; //assigned in inspector, read by player, used by swoop
     
-    private float moveInput;
-    private bool jumpInputDown;
-    private bool jumpInput;
+    [NonSerialized] public float moveInput; //read by electrify
+    [NonSerialized] public bool jumpInputDown; //read by electrify
+    [NonSerialized] public bool jumpInput; //read by takeflight
     private bool jumpBuffering;
 
     private void Start()
@@ -57,12 +57,22 @@ public class PlayerMovement : NetworkBehaviour
             return;
         }
 
-        moveInput = isStunned ? 0 : Input.GetAxisRaw("Horizontal");
+        bool leftInput = Input.GetKey(InputManager.InputIndex["Left"]);
+        bool rightInput = Input.GetKey(InputManager.InputIndex["Right"]);
+        if ((!leftInput && !rightInput) || (leftInput && rightInput))
+            moveInput = 0;
+        else if (leftInput)
+            moveInput = -1;
+        else if (rightInput)
+            moveInput = 1;
 
-        if (Input.GetButtonDown("Jump"))
+
+        KeyCode jumpCode = InputManager.InputIndex["Jump"];
+
+        if (Input.GetKeyDown(jumpCode))
             jumpInputDown = true;
 
-        jumpInput = Input.GetButton("Jump"); //used for dynamic jump
+        jumpInput = Input.GetKey(jumpCode); //used for dynamic jump
     }
 
     private void FixedUpdate()

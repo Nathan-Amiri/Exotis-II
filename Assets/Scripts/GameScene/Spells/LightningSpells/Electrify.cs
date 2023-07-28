@@ -142,11 +142,11 @@ public class Electrify : SpellBase
         if (IsOwner && tetherHitPoint != default)
         {
             //swing
-            float input = Input.GetAxisRaw("Horizontal");
+            float input = player.playerMovement.moveInput;
             Vector2 direction = -1 * Vector2.Perpendicular(anchorRB.transform.position - player.transform.position).normalized;
             player.playerMovement.rb.velocity = input * swingSpeed * direction;
 
-            if (Input.GetButtonDown("Jump"))
+            if (player.playerMovement.jumpInputDown)
             {
                 player.playerMovement.AddNewForce(input * endBoost * direction);
 
