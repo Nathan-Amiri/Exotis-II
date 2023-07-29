@@ -81,6 +81,9 @@ TagManager:
   - name: MissileCore
     uniqueID: 1522982541
     locked: 0
+  - name: Border
+    uniqueID: 2920125597
+    locked: 0
   - name: HUD
     uniqueID: 3251869899
     locked: 0

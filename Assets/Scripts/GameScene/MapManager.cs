@@ -103,7 +103,7 @@ public class MapManager : NetworkBehaviour
 
 
         roundNumber += 1;
-        currentMap = 0;// rotationOrder[roundNumber];
+        currentMap = rotationOrder[roundNumber];
 
 
         tilemaps[currentMap].color = mapColors[currentMap];

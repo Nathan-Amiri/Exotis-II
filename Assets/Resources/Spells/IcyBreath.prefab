@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: -4600646738974639118}
   - component: {fileID: 3366871732283307108}
   m_Layer: 7
-  m_Name: Icybreath
+  m_Name: IcyBreath
   m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -233,7 +233,7 @@ MonoBehaviour:
   <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 0
   <SceneId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 11351966291576854159
+  <AssetPathHash>k__BackingField: 2865106893542441423
   _sceneNetworkObjects: []
 --- !u!50 &4970515617974827279
 Rigidbody2D:

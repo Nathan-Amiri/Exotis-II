@@ -183,7 +183,7 @@ GameObject:
   - component: {fileID: 8529433272368789295}
   - component: {fileID: 6774687538285441587}
   m_Layer: 0
-  m_Name: Poisoncloud
+  m_Name: PoisonCloud
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -253,7 +253,7 @@ MonoBehaviour:
   <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 0
   <SceneId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 1360168359660588811
+  <AssetPathHash>k__BackingField: 12479081999620656267
   _sceneNetworkObjects:
   - {fileID: 7221210874472525892}
   - {fileID: 0}
