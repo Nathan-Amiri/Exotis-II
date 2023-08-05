@@ -14,7 +14,9 @@ public class Heatup : SpellBase
         spellColor = player.flame;
 
         transform.SetParent(player.transform);
-        transform.position = player.transform.position + new Vector3(0, .45f);
+        heatAura.transform.SetParent(player.transform);
+        heatAura.transform.localPosition = Vector3.zero;
+        transform.position = player.transform.position + new Vector3(0, 1);
     }
 
     public override void TriggerSpell(Vector2 casterPosition, Vector2 aimPoint)

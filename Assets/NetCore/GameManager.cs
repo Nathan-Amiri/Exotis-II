@@ -236,7 +236,7 @@ public class GameManager : NetworkBehaviour
     public void RpcServerRoundWon(int winner)
     {
         roundNumber += 1;
-        RpcClientRoundWon(winner, roundNumber == 5);
+        RpcClientRoundWon(winner, roundNumber == 6);
     }
     [ObserversRpc]
     private void RpcClientRoundWon(int winner, bool gameEnded)

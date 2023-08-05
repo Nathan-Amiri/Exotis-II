@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using FishNet.Object;
-using UnityEngine.UI;
 
 public abstract class SpellBase : NetworkBehaviour
 {
@@ -33,7 +32,7 @@ public abstract class SpellBase : NetworkBehaviour
         spellLock = true;
     }
 
-    [NonSerialized] public Image spellGray; //set by Player, not used by derived class
+    [NonSerialized] public SpriteRenderer spellGray; //set by Player, not used by derived class
     private float remainingCooldown;
     protected IEnumerator StartCooldown()
     {
@@ -46,7 +45,7 @@ public abstract class SpellBase : NetworkBehaviour
         if (remainingCooldown > 0)
         {
             remainingCooldown -= Time.deltaTime;
-            spellGray.fillAmount = remainingCooldown / cooldown;
+            spellGray.material.SetFloat("_Arc1", 360 * (1 - (remainingCooldown / cooldown)));
         }
     }
 
@@ -64,7 +63,7 @@ public abstract class SpellBase : NetworkBehaviour
     {
         StopAllCoroutines();
         remainingCooldown = 0;
-        spellGray.fillAmount = 0;
+        spellGray.material.SetFloat("_Arc1", 360);
         spellLock = false;
     }
 }

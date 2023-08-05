@@ -25,12 +25,12 @@ public class MapManager : NetworkBehaviour
     private readonly Vector2[][] mapSpawnPositions = new Vector2[][]
     {
         //player 1 position, player 2 position, player 3 position, player 4 position
-        new Vector2[] { new(-5.5f, -2.5f), new(5.5f, -2.5f), new(-7, 3), new(7, 3) }, //water map
-        new Vector2[] { new(-6, -2.5f), new(6, -2.5f), new(-7.5f, 4), new(7.5f, 4) }, //flame map
-        new Vector2[] { new(-2.5f, -2), new(2.5f, -2), new(-6.5f, 4.5f), new(6.5f, 4.5f) }, //wind map
-        new Vector2[] { new(-8.5f, -.5f), new(8.5f, -.5f), new(-2.5f, 4), new(2.5f, 4) }, //lightning map
-        new Vector2[] { new(-4.5f, 2.5f), new(4.5f, 2.5f), new(-4.5f, -3.5f), new(4.5f, -3.5f) }, //frost map
-        new Vector2[] { new(-3, -.5f), new(3, -.5f), new(-8, -3.5f), new(8, -3.5f) } //venom map
+        new Vector2[] { new(-5.5f, -3f), new(5.5f, -3), new(-7, 2.5f), new(7, 2.5f) }, //water map
+        new Vector2[] { new(-6, -3f), new(6, -3), new(-7.5f, 3.5f), new(7.5f, 3.5f) }, //flame map
+        new Vector2[] { new(-2.5f, -2.5f), new(2.5f, -2.5f), new(-6.5f, 4), new(6.5f, 4) }, //wind map
+        new Vector2[] { new(-8.5f, -1), new(8.5f, -1), new(-2.5f, 3.5f), new(2.5f, 3.5f) }, //lightning map
+        new Vector2[] { new(-4.5f, 2), new(4.5f, 2), new(-4.5f, -4f), new(4.5f, -4) }, //frost map
+        new Vector2[] { new(-3, -1), new(3, -1), new(-8, -4), new(8, -4) } //venom map
     };
 
     private readonly Color32[] mapColors = new Color32[6]

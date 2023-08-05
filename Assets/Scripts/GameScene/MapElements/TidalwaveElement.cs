@@ -66,6 +66,7 @@ public class TidalwaveElement : NetworkBehaviour, INetworkedElement
     {
         if (col.CompareTag("Player") && IsServer)
         {
+            Debug.Log(col.GetComponent<Player>().IsOwner);
             Player target = col.GetComponent<Player>();
             Coroutine coroutine = StartCoroutine(DamagePlayer(target));
             damagingCoroutines.Add(target, coroutine);

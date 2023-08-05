@@ -13,13 +13,6 @@ public class SpellButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public TMP_Text descriptionText;
     public int spellNumber;
 
-    private Vector2 mousePosition;
-
-    private void Update()
-    {
-        mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-    }
-
     public void ButtonPress()
     {
         spellSelect.SelectSpell(spellNumber);

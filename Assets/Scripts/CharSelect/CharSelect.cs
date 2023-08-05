@@ -159,7 +159,7 @@ public class CharSelect : NetworkBehaviour
         highlight1.SetActive(true);
         highlight2.SetActive(true);
         highlight1.transform.localPosition = new Vector2(0, stat1 == "power" ? 105 : 35);
-        highlight2.transform.localPosition = new Vector2(0, stat2 == "speed" ? -105 : -35);
+        highlight2.transform.localPosition = new Vector2(0, stat2 == "speed" ? -35 : -105);
 
         spellSelect.ElementalSelected(shellElement, coreElement, currentColors);
 

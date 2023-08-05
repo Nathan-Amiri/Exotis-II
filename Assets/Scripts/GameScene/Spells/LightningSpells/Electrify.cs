@@ -17,7 +17,7 @@ public class Electrify : SpellBase
     private DistanceJoint2D tetherJoint;
 
     private readonly float maxTetherLength = 2.25f;
-    private readonly float swingSpeed = 9;
+    private readonly float swingSpeed = 7.5f;
     private readonly float endBoost = 10;
 
     public override void OnSpawn(Player newPlayer, string newName)
@@ -144,7 +144,7 @@ public class Electrify : SpellBase
             //swing
             float input = player.playerMovement.moveInput;
             Vector2 direction = -1 * Vector2.Perpendicular(anchorRB.transform.position - player.transform.position).normalized;
-            player.playerMovement.rb.velocity = input * swingSpeed * direction;
+            player.playerMovement.rb.velocity = input * player.playerMovement.speedIncrease * swingSpeed * direction;
 
             if (player.playerMovement.jumpInputDown)
             {

@@ -9,7 +9,6 @@ using TMPro;
 public class Setup : NetworkBehaviour
 {
     public GameObject playerPref; //assigned in inspector
-    public GameObject hud; //^
     public GameObject spellParent; //^
     public Animator countdownAnim; //^
     public TMP_Text countdownText; //^
@@ -58,7 +57,6 @@ public class Setup : NetworkBehaviour
         Player newPlayer = newPlayerObject.GetComponent<Player>();
 
         newPlayer.charSelectInfo = newInfo;
-        newPlayer.playerHUD = hud.transform.GetChild(newPlayerNumber).GetComponent<PlayerHUD>();
         newPlayer.spellParent = spellParent;
         newPlayer.gameManager = gameManager;
         newPlayer.countdownAnim = countdownAnim;

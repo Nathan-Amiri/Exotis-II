@@ -230,7 +230,7 @@ public class PlayerMovement : NetworkBehaviour
         freezeStrength = 0;
         ToggleFreeze(true);
 
+        //don't toggle, untoggling freeze during unlockplayers will toggle gravity
         weightlessStrength = 1;
-        ToggleGravity(true);
     }
 }
