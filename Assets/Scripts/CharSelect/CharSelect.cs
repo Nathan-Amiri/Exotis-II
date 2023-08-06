@@ -248,18 +248,18 @@ public class CharSelect : NetworkBehaviour
             if (gameManager.playerNumbers[i] != 0 && !readyPlayers[i])
                 return;
 
-        ////must have at least two players to connect
-        //int connectedPlayers = 0;
-        //foreach (int player in gameManager.playerNumbers)
-        //    if (player != 0)
-        //        connectedPlayers++;
-        //if (connectedPlayers == 1)
-        //{
-        //    RpcNotEnoughPlayers(conn);
-        //    return;
-        //}
+        //must have at least two players to connect
+        int connectedPlayers = 0;
+        foreach (int player in gameManager.playerNumbers)
+            if (player != 0)
+                connectedPlayers++;
+        if (connectedPlayers == 1)
+        {
+            RpcNotEnoughPlayers(conn);
+            return;
+        }
 
-        gameManager.SceneChange("GameScene");
+        gameManager.RequestSceneChange("GameScene");
     }
 
     [Server]

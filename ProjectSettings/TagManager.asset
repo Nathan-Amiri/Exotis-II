@@ -8,6 +8,7 @@ TagManager:
   - GameManager
   - SimpleManager
   - Aura
+  - NetworkManager
   layers:
   - Default
   - TransparentFX

@@ -68,7 +68,7 @@ public class FinalScores : MonoBehaviour
 
     public void SelectBackToLobby()
     {
-        gameManager.SceneChange("CharSelect");
+        gameManager.RequestSceneChange("CharSelect");
     }
 }
 public struct PlayerScoreInfo

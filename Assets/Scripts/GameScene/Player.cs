@@ -105,8 +105,6 @@ public class Player : NetworkBehaviour
 
         if (IsOwner)
         {
-            PlayerPrefs.SetString("Username", "azeTrom");
-
             PlayerScoreInfo newInfo = new()
             {
                 shellColor = shellColor,

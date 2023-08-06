@@ -68,15 +68,11 @@ public class MapManager : NetworkBehaviour
         }
 
         RpcSendOrder(rotationOrder);
-        hasRandomized = true;
-        LoadNewMap();
     }
 
     [ObserversRpc (BufferLast = true)]
     private void RpcSendOrder(int[] newOrder)
     {
-        if (IsServer) return;
-
         rotationOrder = newOrder;
         hasRandomized = true;
         LoadNewMap();

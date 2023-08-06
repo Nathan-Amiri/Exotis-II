@@ -100,7 +100,7 @@ public class GameManager : NetworkBehaviour
     //scene changing:
 
     [Server]
-    public void SceneChange(string newScene)
+    public void RequestSceneChange(string newScene)
     {
         TurnOnWaitCanvas();
 
@@ -111,11 +111,12 @@ public class GameManager : NetworkBehaviour
             if (playerNumbers[i] != 0)
                 sceneChangingPlayers++;
 
-        string currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-        SceneLoadData sceneLoadData = new(newScene);
+        SceneLoadData sceneLoadData = new(newScene)
+        {
+            ReplaceScenes = ReplaceOption.All
+        };
+
         NetworkManager.SceneManager.LoadGlobalScenes(sceneLoadData);
-        SceneUnloadData sceneUnloadData = new(currentScene);
-        NetworkManager.SceneManager.UnloadGlobalScenes(sceneUnloadData);
         //wait for beacon signal
     }
 
@@ -145,13 +146,13 @@ public class GameManager : NetworkBehaviour
     }
 
     //disconnecting:
-    public void Disconnect()
-    {
-        if (IsServer)
-            ServerManager.StopConnection(false);
-        else
-            ClientManager.StopConnection();
-    }
+    //public void Disconnect()
+    //{
+    //    if (IsServer)
+    //        ServerManager.StopConnection(false);
+    //    else
+    //        ClientManager.StopConnection();
+    //}
     public override void OnSpawnServer(NetworkConnection conn)
     {
         base.OnSpawnServer(conn);
