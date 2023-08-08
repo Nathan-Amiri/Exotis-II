@@ -8,6 +8,8 @@ public class InfectElement : NetworkBehaviour, INetworkedElement
     public int MapNumber() { return 5; }
     public GameObject GetGameObject() { return gameObject; }
     public void OnSpawn() { } //not necessary in this class
+    public void OnDespawn() { } //not necessary in this class
+
 
     private void OnTriggerEnter2D(Collider2D col)
     {

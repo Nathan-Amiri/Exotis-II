@@ -17,8 +17,10 @@ public class Electrify : SpellBase
     private DistanceJoint2D tetherJoint;
 
     private readonly float maxTetherLength = 2.25f;
-    private readonly float swingSpeed = 7.5f;
+    private readonly float swingSpeed = 325;
     private readonly float endBoost = 10;
+
+    private Vector2 swingDirection;
 
     public override void OnSpawn(Player newPlayer, string newName)
     {
@@ -141,20 +143,28 @@ public class Electrify : SpellBase
 
         if (IsOwner && tetherHitPoint != default)
         {
-            //swing
-            float input = player.playerMovement.moveInput;
-            Vector2 direction = -1 * Vector2.Perpendicular(anchorRB.transform.position - player.transform.position).normalized;
-            player.playerMovement.rb.velocity = input * player.playerMovement.speedIncrease * swingSpeed * direction;
 
             if (player.playerMovement.jumpInputDown)
             {
-                player.playerMovement.AddNewForce(input * endBoost * direction);
+                float input = player.playerMovement.moveInput;
+                player.playerMovement.AddNewForce(input * endBoost * swingDirection);
 
                 cooldown = 4; //default
                 StartCoroutine(StartCooldown());
                 DestroyTether();
             }
         }
+    }
+
+    private void FixedUpdate()
+    {
+        if (!IsOwner || tetherHitPoint == default) return;
+
+        //swing
+        float input = player.playerMovement.moveInput;
+        float speedIncrease = player.playerMovement.speedIncrease;
+        swingDirection = -1 * Vector2.Perpendicular(anchorRB.transform.position - player.transform.position).normalized;
+        player.playerMovement.rb.velocity = input * speedIncrease * swingSpeed * Time.fixedDeltaTime * swingDirection;
     }
 
     public override void GameEnd()

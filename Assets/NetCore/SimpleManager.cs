@@ -9,14 +9,11 @@ using Unity.Services.Core;
 using System.Threading.Tasks;
 using Unity.Services.Lobbies.Models;
 using Unity.Services.Lobbies;
-using FishNet.Transporting.FishyUnityTransport;
+using FishNet.Transporting.UTP;
 using Unity.Networking.Transport.Relay;
 using Unity.Services.Relay.Models;
 using Unity.Services.Relay;
-using FishNet.Managing.Client;
-using FishNet.Managing.Server;
 using FishNet;
-using System;
 
 public class SimpleManager : MonoBehaviour
 {
@@ -103,6 +100,8 @@ public class SimpleManager : MonoBehaviour
             escapeMenu.SetActive(!escapeMenu.activeSelf);
 
         exitDisconnectText.text = gameManager == null ? "Exit Game" : "Disconnect";
+        usernameField.interactable = gameManager == null;
+        roomNameField.interactable = gameManager == null;
     }
 
     private async Task ConnectToRelay() //run in Start
@@ -204,16 +203,16 @@ public class SimpleManager : MonoBehaviour
                 }
             };
 
-            Lobby lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, createLobbyOptions);
-
-            StartCoroutine(HandleLobbyHeartbeat());
+            currentLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers, createLobbyOptions);
 
             if (newRoomName == "")
                 Debug.Log("Created Public Lobby");
             else
-                Debug.Log("Created Private Lobby named " + lobby.Data["RoomName"].Value);
+                Debug.Log("Created Private Lobby named " + currentLobby.Data["RoomName"].Value);
 
-            TurnOnClient(true, lobby);
+            StartCoroutine(HandleLobbyHeartbeat());
+
+            TurnOnClient(true);
         }
         catch (LobbyServiceException e)
         {
@@ -299,10 +298,10 @@ public class SimpleManager : MonoBehaviour
                 return;
             }
 
-            Lobby lobby = await Lobbies.Instance.JoinLobbyByIdAsync(queryResponse.Results[0].Id);
-            Debug.Log("Joined Lobby named " + lobby.Data["RoomName"].Value);
+            currentLobby = await Lobbies.Instance.JoinLobbyByIdAsync(queryResponse.Results[0].Id);
+            Debug.Log("Joined Lobby named " + currentLobby.Data["RoomName"].Value);
 
-            TurnOnClient(false, lobby);
+            TurnOnClient(false);
         }
         catch (LobbyServiceException e)
         {
@@ -310,7 +309,7 @@ public class SimpleManager : MonoBehaviour
         }
     }
 
-    private async void TurnOnClient(bool host, Lobby lobby)
+    private async void TurnOnClient(bool host)
     {
         errorText.text = "Loading Room...";
         ToggleButtonsInteractable(false);
@@ -334,7 +333,7 @@ public class SimpleManager : MonoBehaviour
             try
             {
                 //update currentLobby
-                currentLobby = await Lobbies.Instance.UpdateLobbyAsync(lobby.Id, new UpdateLobbyOptions
+                currentLobby = await Lobbies.Instance.UpdateLobbyAsync(currentLobby.Id, new UpdateLobbyOptions
                 {
                     Data = new Dictionary<string, DataObject> //RoomName = S1 JoinCode = S2
                     {
@@ -348,19 +347,13 @@ public class SimpleManager : MonoBehaviour
                 Debug.Log(e);
             }
         }
-        else //if clientonly
-        {
-            currentLobby = lobby;
-
-            //GetJoinCode
+        else //if clientonly, get JoinCode
             joinCode = currentLobby.Data["JoinCode"].Value;
-        }
 
         //Set up JoinAllocation
         JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
         utp.SetRelayServerData(new RelayServerData(joinAllocation, "dtls"));
 
-        // Start Client Connection
         networkManager.ClientManager.StartConnection();
     }
 
@@ -381,6 +374,8 @@ public class SimpleManager : MonoBehaviour
                     InstanceFinder.ServerManager.StopConnection(true);
                 else
                     InstanceFinder.ClientManager.StopConnection();
+
+                currentLobby = null;
             }
             catch (LobbyServiceException e)
             {
@@ -392,6 +387,7 @@ public class SimpleManager : MonoBehaviour
     public void OnDisconnect() //called by GameManager
     {
         escapeMenu.SetActive(true);
+        currentLobby = null;
 
         _ = ConnectToRelay();
     }

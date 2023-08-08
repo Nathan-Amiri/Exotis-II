@@ -26,7 +26,7 @@ using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Networking.Transport;
 
-namespace FishNet.Transporting.FishyUnityTransport.BatchedQueue
+namespace FishNet.Transporting.UTP
 {
     /// <summary>Queue for batched messages meant to be sent through UTP.</summary>
     /// <remarks>
@@ -249,7 +249,7 @@ namespace FishNet.Transporting.FishyUnityTransport.BatchedQueue
                     {
                         writer.WriteInt(messageLength);
 
-                        var messageOffset = HeadIndex + reader.GetBytesRead();
+                        var messageOffset = reader.GetBytesRead();
                         WriteBytes(ref writer, (byte*)m_Data.GetUnsafePtr() + messageOffset, messageLength);
 
                         writerAvailable -= sizeof(int) + messageLength;

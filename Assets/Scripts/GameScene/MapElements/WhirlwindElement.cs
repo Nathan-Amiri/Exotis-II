@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class WhirlwindElement : MonoBehaviour
 {
-    private readonly float windForce = .22f; //identical force to Whirlwind
+    //identical force to Whirlwind
+    private readonly float windForce = 100;
 
-    private Player blownPlayer; //this client's player, if it's currently in the wind
+    //this client's player, if it's currently in the wind
+    private Player blownPlayer;
 
     private void OnTriggerEnter2D(Collider2D col)
     {
@@ -25,9 +27,9 @@ public class WhirlwindElement : MonoBehaviour
             blownPlayer = null;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (blownPlayer != null)
-            blownPlayer.playerMovement.AddNewForce(windForce * transform.right);
+            blownPlayer.playerMovement.AddNewForce(windForce * Time.fixedDeltaTime * transform.right);
     }
 }

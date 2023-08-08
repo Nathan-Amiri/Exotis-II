@@ -22,6 +22,7 @@ public class TidalwaveElement : NetworkBehaviour, INetworkedElement
 
     public int MapNumber() { return 0; }
     public GameObject GetGameObject() { return gameObject; }
+    public void OnDespawn() { } //not necessary in this class
     public void OnSpawn() //called by MapManager
     {
         if (!IsServer) return;

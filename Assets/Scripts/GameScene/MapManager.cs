@@ -95,7 +95,10 @@ public class MapManager : NetworkBehaviour
         if (IsServer)
             foreach (INetworkedElement element in networkedElements)
                 if (element.MapNumber() == currentMap)
+                {
+                    element.OnDespawn();
                     ServerManager.Despawn(element.GetGameObject());
+                }
 
 
         roundNumber += 1;

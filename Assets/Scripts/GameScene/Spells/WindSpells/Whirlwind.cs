@@ -8,7 +8,7 @@ public class Whirlwind : SpellBase
     public SpriteRenderer coreRenderer;
     public BoxCollider2D boxCollider;
 
-    private readonly float windForce = .22f;
+    private readonly float windForce = 100;
 
     //direction wind is blowing
     private Vector2 windDirection;
@@ -67,12 +67,10 @@ public class Whirlwind : SpellBase
             blownPlayer = null;
     }
 
-    protected override void Update()
+    private void FixedUpdate()
     {
-        base.Update();
-
         if (blownPlayer != null)
-            blownPlayer.playerMovement.AddNewForce(windForce * windDirection);
+            blownPlayer.playerMovement.AddNewForce(windForce * Time.fixedDeltaTime * windDirection);
     }
 
     public override void GameEnd()

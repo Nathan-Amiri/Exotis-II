@@ -21,6 +21,8 @@ public class IcybreathElement : NetworkBehaviour, INetworkedElement
     public int MapNumber() { return 4; }
     public GameObject GetGameObject() { return gameObject; }
 
+    public void OnDespawn() { } //not necessary in this class
+
     public void OnSpawn() //called by MapManager
     {
         if (!IsServer) return;
@@ -50,7 +52,9 @@ public class IcybreathElement : NetworkBehaviour, INetworkedElement
     private void RpcSpawnIce(int spawnInt)
     {
         transform.SetPositionAndRotation(spawnPositions[spawnInt], Quaternion.Euler(0, 0, spawnZRotations[spawnInt]));
-        StartCoroutine(IcyGrow());
+
+        if (gameObject.activeSelf) //if rpc is delayed until after gameobject is inactive (coroutines can't run on inactive objects)
+            StartCoroutine(IcyGrow());
     }
 
     [ObserversRpc]

@@ -13,11 +13,8 @@ public class CharSelect : NetworkBehaviour
 {
     [NonSerialized] public GameManager gameManager;
 
-    private CharImage[] avatars;
-    public CharImage p1Avatar; //assigned in inspector
-    public CharImage p2Avatar; //^
-    public CharImage p3Avatar; //^
-    public CharImage p4Avatar; //^
+    public List<TMP_Text> usernames = new();
+    public List<CharImage> avatars = new();
 
     //colors from lightest to darkest: (copied from Player) (must be public so they can be found in SelectElemental using GetField)
     [NonSerialized] public Color32 frost = new(140, 228, 232, 255); //^
@@ -57,20 +54,17 @@ public class CharSelect : NetworkBehaviour
 
     private readonly Color32[] currentColors = new Color32[2]; //currentColors[0] = lighter color, [1] = darker color
 
-    private readonly string[] claimedElementals = new string[4]; //server only
-    private readonly bool[] readyPlayers = new bool[4]; //server only
-
     private bool tutorialOn;
 
+    private Coroutine resetError;
+
+    //server only:
+    private readonly string[] claimedElementals = new string[4];
+    private readonly bool[] readyPlayers = new bool[4];
+    private readonly string[] serverUsernames = new string[4];
 
     private void Awake()
     {
-        avatars = new CharImage[4];
-        avatars[0] = p1Avatar;
-        avatars[1] = p2Avatar;
-        avatars[2] = p3Avatar;
-        avatars[3] = p4Avatar;
-
         emptyColors[0] = Color.black;
         emptyColors[1] = Color.gray;
     }
@@ -91,17 +85,17 @@ public class CharSelect : NetworkBehaviour
 
         ImportLoadout();
 
-        RpcChangeAvatar(GameManager.playerNumber, emptyColors);
+        RpcChangeAvatar(GameManager.playerNumber, emptyColors, PlayerPrefs.GetString("Username"));
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void RpcChangeAvatar(int newPlayer, Color32[] lightAndDark)
+    private void RpcChangeAvatar(int newPlayer, Color32[] lightAndDark, string username)
     {
-        ChangeAvatar(newPlayer, lightAndDark);
+        ChangeAvatar(newPlayer, lightAndDark, username);
     }
 
     [Server]
-    private void ChangeAvatar(int newPlayer, Color32[] lightAndDark)
+    private void ChangeAvatar(int newPlayer, Color32[] lightAndDark, string username)
     {
         CharImage avatar = avatars[newPlayer - 1];
         avatar.charShell.color = lightAndDark[0];
@@ -116,11 +110,14 @@ public class CharSelect : NetworkBehaviour
             x += 2; //i increases by 1, x increases by 2
         }
 
-        RpcUpdateAvatars(serverColors);
+        if (username != "")
+            serverUsernames[newPlayer - 1] = username;
+
+        RpcUpdateAvatars(serverColors, serverUsernames);
     }
 
     [ObserversRpc] //if this was a targetrpc, glitches would occur when multiple clients loaded into charselect simultaneously
-    private void RpcUpdateAvatars(Color32[] serverColors)
+    private void RpcUpdateAvatars(Color32[] serverColors, string[] serverUsernames)
     {
         int x = 0;
         for (int i = 0; i < 4; i++)
@@ -129,12 +126,15 @@ public class CharSelect : NetworkBehaviour
             avatars[i].charCore.color = serverColors[x + 1];
             x += 2; //i increases by 1, x increases by 2
         }
+
+        for (int i = 0; i < 4; i++)
+            usernames[i].text = serverUsernames[i];
     }
 
     public void SelectElemental(string newElemental, string newShellElement, string newCoreElement, string newStat1, string newStat2)
     {
         if (tutorialOn)
-            error.text = "Choose three spells for your character. When you're finished, click Ready!";
+            error.text = "Choose three spells for your character. When you're finished, click Ready!"; //don't reset
 
         shellElement = newShellElement;
         coreElement = newCoreElement;
@@ -144,7 +144,7 @@ public class CharSelect : NetworkBehaviour
         currentColors[0] = (Color32)GetType().GetField(shellElement).GetValue(this);
         currentColors[1] = (Color32)GetType().GetField(coreElement).GetValue(this);
 
-        RpcChangeAvatar(GameManager.playerNumber, emptyColors);
+        RpcChangeAvatar(GameManager.playerNumber, emptyColors, "");
         RpcChangeReadyStatus(ClientManager.Connection, GameManager.playerNumber, false);
 
         selectedElemental = newElemental;
@@ -204,13 +204,21 @@ public class CharSelect : NetworkBehaviour
     [TargetRpc]
     private void RpcElementalNotApproved(NetworkConnection conn)
     {
-        error.text = "Elemental has already been claimed. Please select another.";
+        string message = "Elemental has already been claimed. Please select another.";
+        error.text = message;
+        if (resetError != null)
+            StopCoroutine(resetError);
+        resetError = StartCoroutine(ResetError());
     }
 
     [TargetRpc]
     private void RpcNotEnoughPlayers(NetworkConnection conn)
     {
-        error.text = "Must have at least two players to start the game";
+        string message = "Must have at least two players to start the game";
+        error.text = message;
+        if (resetError != null)
+            StopCoroutine(resetError);
+        resetError = StartCoroutine(ResetError());
     }
 
     [TargetRpc]
@@ -232,7 +240,7 @@ public class CharSelect : NetworkBehaviour
 
         gameManager.charSelectInfo = charSelectInfo;
 
-        RpcChangeAvatar(GameManager.playerNumber, currentColors);
+        RpcChangeAvatar(GameManager.playerNumber, currentColors, "");
         RpcChangeReadyStatus(ClientManager.Connection, GameManager.playerNumber, true);
     }
 
@@ -268,7 +276,7 @@ public class CharSelect : NetworkBehaviour
         Color32[] lightAndDark = new Color32[2];
         lightAndDark[0] = Color.white;
         lightAndDark[1] = Color.white;
-        ChangeAvatar(disconnectedPlayer, lightAndDark);
+        ChangeAvatar(disconnectedPlayer, lightAndDark, "");
     }
 
     private void SaveLoadout(string[] charSelectInfo)
@@ -305,7 +313,7 @@ public class CharSelect : NetworkBehaviour
         else
         {
             tutorialOn = true;
-            error.text = "Choose your character!";
+            error.text = "Choose your character!"; //don't reset
             return;
         }
 
@@ -315,8 +323,14 @@ public class CharSelect : NetworkBehaviour
         for (int i = 0; i < 3; i++)
             spellSelect.SelectSpell(spellNumbers[i]);
     }
+
+    private IEnumerator ResetError()
+    {
+        yield return new WaitForSeconds(4);
+        error.text = "";
+    }
 }
-[System.Serializable]
+[Serializable]
 public class SaveData
 {
     public string[] elementalData;

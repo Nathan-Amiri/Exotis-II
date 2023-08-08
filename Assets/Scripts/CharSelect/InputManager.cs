@@ -56,7 +56,7 @@ public class InputManager : MonoBehaviour
         currentKey = newInput;
 
         currentButton.tmpText.fontStyle = TMPro.FontStyles.Italic; //turns off bold
-        currentButton.tmpText.fontSize = 15;
+        currentButton.tmpText.fontSize = 18;
         currentButton.tmpText.text = "Press new key...";
 
         waitingForInput = true;

@@ -13,11 +13,13 @@ public class ElectrifyElement : NetworkBehaviour, INetworkedElement
     private DistanceJoint2D tetherJoint;
 
     //values identical to Electrify
-    private readonly float swingSpeed = 9;
+    private readonly float swingSpeed = 325;
     private readonly float endBoost = 10;
 
     private Player swingingPlayer; //this client's player, if they're swinging on this tether
     private readonly Dictionary<LineRenderer, Player> enemySwingingPlayers = new(); //enemy players swinging on this tether
+
+    private Vector2 swingDirection;
 
 
     public int MapNumber() { return 3; }
@@ -126,19 +128,30 @@ public class ElectrifyElement : NetworkBehaviour, INetworkedElement
                 tether.SetPosition(1, enemy.transform.position);
             }
 
-        if (swingingPlayer != null)
+
+        if (swingingPlayer != null && swingingPlayer.playerMovement.jumpInputDown)
         {
-            //swing
             float input = swingingPlayer.playerMovement.moveInput;
-            Vector2 direction = -1 * Vector2.Perpendicular(anchorRB.transform.position - swingingPlayer.transform.position).normalized;
-            swingingPlayer.playerMovement.rb.velocity = input * swingSpeed * direction;
+            swingingPlayer.playerMovement.AddNewForce(input * endBoost * swingDirection);
 
-            if (swingingPlayer.playerMovement.jumpInputDown)
-            {
-                swingingPlayer.playerMovement.AddNewForce(input * endBoost * direction);
-
-                DestroyTether();
-            }
+            DestroyTether();
         }
+    }
+
+    private void FixedUpdate()
+    {
+        if (swingingPlayer == null) return;
+        
+        //swing
+        float input = swingingPlayer.playerMovement.moveInput;
+        float speedIncrease = swingingPlayer.playerMovement.speedIncrease;
+        swingDirection = -1 * Vector2.Perpendicular(anchorRB.transform.position - swingingPlayer.transform.position).normalized;
+        swingingPlayer.playerMovement.rb.velocity = input * speedIncrease * swingSpeed * Time.fixedDeltaTime * swingDirection;
+    }
+
+    public void OnDespawn()
+    {
+        if (IsOwner && swingingPlayer != null)
+            DestroyTether();
     }
 }
