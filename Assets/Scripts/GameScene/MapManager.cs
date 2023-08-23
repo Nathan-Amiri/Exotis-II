@@ -66,7 +66,6 @@ public class MapManager : NetworkBehaviour
             rotationOrder[i] = rotationOrder[random];
             rotationOrder[random] = tmp;
         }
-
         RpcSendOrder(rotationOrder);
     }
 

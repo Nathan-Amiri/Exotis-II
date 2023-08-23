@@ -134,7 +134,7 @@ public class CharSelect : NetworkBehaviour
     public void SelectElemental(string newElemental, string newShellElement, string newCoreElement, string newStat1, string newStat2)
     {
         if (tutorialOn)
-            error.text = "Choose three spells for your character. When you're finished, click Ready!"; //don't reset
+            error.text = "Choose three spells. When you're finished, click Ready!"; //don't reset
 
         shellElement = newShellElement;
         coreElement = newCoreElement;

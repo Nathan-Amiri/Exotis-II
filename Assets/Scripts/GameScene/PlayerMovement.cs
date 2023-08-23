@@ -92,6 +92,7 @@ public class PlayerMovement : NetworkBehaviour
 
         if (rb.gravityScale != 0) //turn off fastfall and dymanic jump when gravityless
         {
+            //subtract fall and lowjump multipliers by 1 to more accurately represent the multiplier (fallmultiplier = 2 means fastfall will be x2)
             if (rb.velocity.y < 0)
                 //fastfall not multiplied by speedIncrease to make walljumping easier when speed is high
                 rb.velocity += (fallMultiplier - 1) * Physics2D.gravity.y * Time.deltaTime * Vector2.up;
